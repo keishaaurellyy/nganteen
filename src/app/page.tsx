@@ -1,6 +1,46 @@
+"use client";
+
+import useCopyToClipboard from "@/hooks/components/useCopyToClipboard";
+import useCurrentDate from "@/hooks/data-fetch/useCurrentDate";
+import useFormattedDate from "@/hooks/format/useFormattedDate";
+import useRouterReady from "@/hooks/misc/useRouterReady";
+import useTimeout from "@/hooks/misc/useTimeout";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  // contoh penggunaan hooks useCopyToClipboard
+  const { copy, icon } = useCopyToClipboard({ iconSize: "small" });
+  const text = "Get Started by Editing";
+
+  // contoh penggunaan hooks useFormattedDate
+  const order_date = useFormattedDate({
+    date: "2025-04-19 10:00:00",
+    format: "EEEE, d MMMM yyyy",
+  });
+
+  //belum bs provide contoh penggunaan useDebounce krn belum ada input field
+  //belum bs provide contoh penggunaan useAppendSearchParams krn belum ada componentnya
+
+  //contoh penggunaan hooks useCurrentDate
+  const todaysDate = useCurrentDate();
+
+  //contoh penggunaan hooks useTimeout, gak berlaku untuk text doang
+  const [timeoutText, setTimeoutText] = useState("Loading...");
+  useTimeout(() => {
+    setTimeoutText("Done!");
+  }, 5000);
+
+  //contoh penggunaan hooks useRouterReady
+  const { router, isRouterReady } = useRouterReady();
+  useEffect(() => {
+    if (isRouterReady) {
+      router.push("/");
+    }
+  }, [isRouterReady, router]);
+
+  if (!isRouterReady) return null;
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
@@ -14,15 +54,26 @@ export default function Home() {
         />
         <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
+            {/* contoh penggunaan hooks useCopyToClipboard */}
+            {text}
+            <button onClick={() => copy(text)}>{icon}</button>
             <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
               src/app/page.tsx
             </code>
             .
           </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
+          {/* contoh penggunaan hooks useFormattedDate */}
+          <div className="flex flex-row items-center gap-2">
+            <div>Formatted date:</div>
+            <div>{order_date}</div>
+          </div>
+          {/* contoh penggunaan hooks useCurrentDate */}
+          <div className="flex flex-row items-center gap-2">
+            <div>Today&apos;s date is</div>
+            <div>{todaysDate?.toLocaleDateString()}</div>
+          </div>
+          {/* contoh penggunaan hooks useTimeout */}
+          <div className="font-bold">{timeoutText}</div>
         </ol>
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">
