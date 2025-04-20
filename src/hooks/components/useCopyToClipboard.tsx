@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { CheckCircle2Icon, CopyIcon } from "lucide-react";
-import { DEFAULT_TIMEOUT } from "@/const/default";
 
 type IconSizeOption = "small" | "medium" | "large";
 
@@ -18,7 +17,7 @@ type UseCopyToClipboardOptions = {
 };
 
 export default function useCopyToClipboard({
-  timeout = DEFAULT_TIMEOUT,
+  timeout = 1000,
   iconSize = "medium",
 }: UseCopyToClipboardOptions = {}) {
   const [copied, setCopied] = useState(false);
