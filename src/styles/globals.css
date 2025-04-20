@@ -1,26 +1,37 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply font-sans;
 }
+
+
+
+@layer utilities {
+  .text-4xl-bold      { @apply text-4xl font-bold; }
+  .text-2xl-bold      { @apply text-2xl font-bold; }
+  .text-lg-bold       { @apply text-lg font-bold; }
+
+  .text-base-bold     { @apply text-base font-bold; }
+  .text-base-semibold { @apply text-base font-semibold; }
+  .text-base-normal   { @apply text-base font-normal; }
+  .text-base-light    { @apply text-base font-light; }
+
+  .text-sm-bold       { @apply text-sm font-bold; }
+  .text-sm-semibold   { @apply text-sm font-semibold; }
+  .text-sm-normal     { @apply text-sm font-normal; }
+  .text-sm-light      { @apply text-sm font-light; }
+
+  .text-xs-bold       { @apply text-xs font-bold; }
+  .text-xs-semibold   { @apply text-xs font-semibold; }
+  .text-xs-normal     { @apply text-xs font-normal; }
+  .text-xs-light      { @apply text-xs font-light; }
+
+  .text-2xs-bold      { @apply text-2xs font-bold; }
+  .text-2xs-normal    { @apply text-2xs font-normal; }
+}
+

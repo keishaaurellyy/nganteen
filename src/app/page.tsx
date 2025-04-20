@@ -46,7 +46,7 @@ export default function Home() {
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <Image
           className="dark:invert"
-          src="/next.svg"
+          src="./logo/black-logo.svg"
           alt="Next.js logo"
           width={180}
           height={38}
@@ -69,7 +69,7 @@ export default function Home() {
           </div>
           {/* contoh penggunaan hooks useCurrentDate */}
           <div className="flex flex-row items-center gap-2">
-            <div>Today&apos;s date is</div>
+            <div className="text-2xl-bold rounded-sm shadow-md text-primary-500">Today&apos;s date is</div>
             <div>{todaysDate?.toLocaleDateString()}</div>
           </div>
           {/* contoh penggunaan hooks useTimeout */}
