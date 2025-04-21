@@ -35,7 +35,7 @@ export default function useCopyToClipboard({
   };
 
   const icon = copied ? (
-    <CheckCircle2Icon className="text-green-800" size={size} />
+    <CheckCircle2Icon className="text-success-medium" size={size} />
   ) : (
     <CopyIcon className="text-gray-600" size={size} />
   );
