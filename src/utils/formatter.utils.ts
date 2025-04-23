@@ -18,6 +18,21 @@ export function createUrlWithQueryParams(
     });
   
     const queryString = urlParams.toString();
-  
     return queryString ? `${path}?${queryString}` : path;
   }
+
+// Format angka ke Rupiah
+export function formatToRupiah(value: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(value);
+}
+
+// Kapitalisasi huruf pertama
+export function capitalizeFirstLetter(text: string): string {
+  if (!text) return '';
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
