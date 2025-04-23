@@ -8,7 +8,22 @@ import useTimeout from "@/hooks/misc/useTimeout";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+// import utils
+import {
+  isValidEmail,
+  isValidPassword,
+  isValidPhoneNumber,
+  isValidStudentId,
+} from "@/utils/validation.utils";
+
 export default function Home() {
+
+  // contoh penggunaan hooks useState
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [studentId, setStudentId] = useState("");
+
   // contoh penggunaan hooks useCopyToClipboard
   const { copy, icon } = useCopyToClipboard({ iconSize: "small" });
   const text = "Get Started by Editing";
@@ -69,7 +84,7 @@ export default function Home() {
           </div>
           {/* contoh penggunaan hooks useCurrentDate */}
           <div className="flex flex-row items-center gap-2">
-            <div className="text-2xl-bold rounded-sm shadow-md text-primary-500">Today&apos;s date is</div>
+            <div className="text-2xl-bold rounded-sm shadow-md text-tertiary-600">Today&apos;s date is</div>
             <div>{todaysDate?.toLocaleDateString()}</div>
           </div>
           {/* contoh penggunaan hooks useTimeout */}
@@ -101,7 +116,70 @@ export default function Home() {
             Read our docs
           </a>
         </div>
+
+        {/* --- VALIDASI TEST FORM --- */}
+        <div className="w-full max-w-sm space-y-4 mt-8 border-t pt-6">
+          <div className="text-lg font-bold">Cek Validasi</div>
+
+          {/* Email */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Email:</label>
+            <input
+              className="border px-3 py-2 rounded"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+            />
+            {!isValidEmail(email) && email.length > 0 && (
+              <span className="text-red-500 text-sm">Format email tidak valid.</span>
+            )}
+          </div>
+
+          {/* Password */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Password:</label>
+            <input
+              className="border px-3 py-2 rounded"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+            />
+            {!isValidPassword(password) && password.length > 0 && (
+              <span className="text-red-500 text-sm">
+                Minimal 8 karakter, mengandung huruf & angka.
+              </span>
+            )}
+          </div>
+
+          {/* Phone */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">No. HP:</label>
+            <input
+              className="border px-3 py-2 rounded"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+            {!isValidPhoneNumber(phone) && phone.length > 0 && (
+              <span className="text-red-500 text-sm">Nomor HP tidak valid.</span>
+            )}
+          </div>
+
+          {/* Student ID */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm">Student ID (10 digit):</label>
+            <input
+              className="border px-3 py-2 rounded"
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
+            />
+            {!isValidStudentId(studentId) && studentId.length > 0 && (
+              <span className="text-red-500 text-sm">Student ID harus 10 digit angka.</span>
+            )}
+          </div>
+        </div>
       </main>
+
+
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
