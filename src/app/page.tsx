@@ -15,9 +15,10 @@ import {
   isValidPhoneNumber,
   isValidStudentId,
 } from "@/utils/validation.utils";
+import { TextField } from "@/components/text-field";
+import { NotebookIcon } from "lucide-react";
 
 export default function Home() {
-
   // contoh penggunaan hooks useState
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,7 +85,9 @@ export default function Home() {
           </div>
           {/* contoh penggunaan hooks useCurrentDate */}
           <div className="flex flex-row items-center gap-2">
-            <div className="text-2xl-bold rounded-sm shadow-md text-tertiary-600">Today&apos;s date is</div>
+            <div className="text-2xl-bold rounded-sm shadow-md text-tertiary-600">
+              Today&apos;s date is
+            </div>
             <div>{todaysDate?.toLocaleDateString()}</div>
           </div>
           {/* contoh penggunaan hooks useTimeout */}
@@ -121,6 +124,22 @@ export default function Home() {
         <div className="w-full max-w-sm space-y-4 mt-8 border-t pt-6">
           <div className="text-lg font-bold">Cek Validasi</div>
 
+          {/* Contoh penggunaan TextField, kalau mau lebar masukin props multiline aja,
+          cmn ini belum bs required nya bingung*/}
+          <TextField label="Tag" placeholder="e.g. Dessert" />
+          <TextField
+            label="Notes"
+            placeholder="Input your order notes"
+            endAdornment={<NotebookIcon className="w-5 h-5" />}
+            readOnly
+          />
+          <TextField placeholder="First Name" required withAsterisk />
+          <TextField
+            multiline
+            label="Description"
+            placeholder="Input description"
+          />
+
           {/* Email */}
           <div className="flex flex-col gap-1">
             <label className="text-sm">Email:</label>
@@ -131,7 +150,9 @@ export default function Home() {
               type="email"
             />
             {!isValidEmail(email) && email.length > 0 && (
-              <span className="text-red-500 text-sm">Format email tidak valid.</span>
+              <span className="text-red-500 text-sm">
+                Format email tidak valid.
+              </span>
             )}
           </div>
 
@@ -160,7 +181,9 @@ export default function Home() {
               onChange={(e) => setPhone(e.target.value)}
             />
             {!isValidPhoneNumber(phone) && phone.length > 0 && (
-              <span className="text-red-500 text-sm">Nomor HP tidak valid.</span>
+              <span className="text-red-500 text-sm">
+                Nomor HP tidak valid.
+              </span>
             )}
           </div>
 
@@ -173,12 +196,13 @@ export default function Home() {
               onChange={(e) => setStudentId(e.target.value)}
             />
             {!isValidStudentId(studentId) && studentId.length > 0 && (
-              <span className="text-red-500 text-sm">Student ID harus 10 digit angka.</span>
+              <span className="text-red-500 text-sm">
+                Student ID harus 10 digit angka.
+              </span>
             )}
           </div>
         </div>
       </main>
-
 
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a

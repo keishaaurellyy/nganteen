@@ -2,7 +2,7 @@ export interface ServerMetaResponse {
     http_code: string;
   }
   
-  interface ServerErrorField {
+  export interface ServerErrorField {
     field: string;
     message: string;
   }

@@ -1,3 +1,6 @@
+import { ServerErrorResponse } from "@/const/server";
+import axios, { AxiosError } from "axios";
+
 export function createUrlWithQueryParams(
     path: string,
     queryParams: Record<
@@ -36,3 +39,9 @@ export function capitalizeFirstLetter(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+//Check apakah error dari Axios
+export function isAxiosError<ResponseType = ServerErrorResponse>(
+  error: unknown,
+): error is AxiosError<ResponseType> {
+  return axios.isAxiosError(error);
+}
