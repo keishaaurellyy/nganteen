@@ -1,0 +1,53 @@
+import { relations } from "drizzle-orm/relations";
+import { kitchens, items, buyers, orders, account, balance, orderItems } from "./schema";
+
+export const itemsRelations = relations(items, ({one}) => ({
+	kitchen: one(kitchens, {
+		fields: [items.kitchenId],
+		references: [kitchens.kitchenId]
+	}),
+}));
+
+export const kitchensRelations = relations(kitchens, ({many}) => ({
+	items: many(items),
+	orders: many(orders),
+	balances: many(balance),
+}));
+
+export const ordersRelations = relations(orders, ({one, many}) => ({
+	buyer: one(buyers, {
+		fields: [orders.buyerId],
+		references: [buyers.buyerId]
+	}),
+	kitchen: one(kitchens, {
+		fields: [orders.kitchenId],
+		references: [kitchens.kitchenId]
+	}),
+	orderItems: many(orderItems),
+}));
+
+export const buyersRelations = relations(buyers, ({many}) => ({
+	orders: many(orders),
+	accounts: many(account),
+}));
+
+export const accountRelations = relations(account, ({one}) => ({
+	buyer: one(buyers, {
+		fields: [account.buyerId],
+		references: [buyers.buyerId]
+	}),
+}));
+
+export const balanceRelations = relations(balance, ({one}) => ({
+	kitchen: one(kitchens, {
+		fields: [balance.kitchenId],
+		references: [kitchens.kitchenId]
+	}),
+}));
+
+export const orderItemsRelations = relations(orderItems, ({one}) => ({
+	order: one(orders, {
+		fields: [orderItems.orderId],
+		references: [orders.orderId]
+	}),
+}));
