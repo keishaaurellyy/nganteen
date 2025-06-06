@@ -16,6 +16,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@vercel/blob": "^1.1.1",
     "axios": "^1.8.4",
     "bcrypt": "^6.0.0",
     "class-variance-authority": "^0.7.0",
