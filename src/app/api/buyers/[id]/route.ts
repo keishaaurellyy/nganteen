@@ -1,0 +1,42 @@
+import { NextRequest, NextResponse } from "next/server";
+import { eq } from "drizzle-orm";
+import bcrypt from "bcrypt";
+import { db } from "@/db/client";
+import { buyers } from "@/drizzle/schema";
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+  const body = await request.json();
+
+  const buyerId = parseInt(id);
+  if (isNaN(buyerId)) {
+    return NextResponse.json({ error: "ID invalid." }, { status: 400 });
+  }
+
+  const updateData: any = { ...body };
+
+  try {
+    if (body.password) {
+      updateData.password = await bcrypt.hash(body.password, 10);
+    }
+    const result = await db
+      .update(buyers)
+      .set(updateData)
+      .where(eq(buyers.buyerId, buyerId))
+      .returning();
+    if (result.length === 0) {
+      return NextResponse.json({ error: "Buyer not found." }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      message: "Update buyer successful",
+      data: result[0],
+    });
+  } catch (err) {
+    console.error("PATCH buyer error:", err);
+    return NextResponse.json({ error: "Update buyer error." }, { status: 500 });
+  }
+}
