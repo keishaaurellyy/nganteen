@@ -12,7 +12,7 @@ export function isValidPassword(password: string): boolean {
 
 // Validasi nomor telepon Indonesia
 export function isValidPhoneNumber(phone: string): boolean {
-  const cleaned = phone.replace(/\s+/g, ''); // hapus spasi
+  const cleaned = phone.replace(/\s+/g, ""); // hapus spasi
   const phoneRegex = /^(?:\+62|62|0)8[1-9][0-9]{7,11}$/;
   return phoneRegex.test(cleaned);
 }
@@ -28,8 +28,32 @@ export function isValidStudentId(studentId: string): boolean {
 //     if (user.role !== 'kitchen') return false;
 //     if (order.status === 'incoming order' || order.status === 'order confirmed') return false;
 //     if (order.isCanceled) return false;
-  
+
 //     return true;
 // }
-  
 
+export function toFormDataWithArray(
+  data: any,
+  form: FormData = new FormData(),
+  namespace = ""
+): FormData {
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      const formKey = namespace ? `${namespace}[${key}]` : key;
+      const value = data[key];
+
+      if (value instanceof File) {
+        form.append(formKey, value);
+      } else if (Array.isArray(value)) {
+        value.forEach((val, i) => {
+          toFormDataWithArray(val, form, `${formKey}[${i}]`);
+        });
+      } else if (typeof value === "object" && value !== null) {
+        toFormDataWithArray(value, form, formKey);
+      } else if (value !== undefined) {
+        form.append(formKey, value);
+      }
+    }
+  }
+  return form;
+}
