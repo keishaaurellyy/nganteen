@@ -24,19 +24,19 @@ export default function Accordion({
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-2 text-left text-xs-bold text-neutral-900"
+        className="w-full flex items-center justify-between p-3 text-left text-sm-bold text-neutral-900"
       >
-        <span className="truncate">{label}</span>
+        <span>{label}</span>
         <span>{isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
       </button>
 
       <div
         className={cn(
-          "px-4 transition-all duration-1000 overflow-hidden",
+          "px-3 transition-all duration-1000 overflow-hidden",
           isOpen ? "pb-3 max-h-[500px] opacity-100" : "pb-0 max-h-0 opacity-0"
         )}
       >
-        <div className="text-xs-light text-neutral-900 break-words w-full max-w-full">
+        <div className="text-xs-normal text-neutral-900 break-words w-full max-w-full">
           {description}
         </div>
       </div>
