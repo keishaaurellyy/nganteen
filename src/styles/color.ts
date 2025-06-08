@@ -33,9 +33,10 @@ export const ColorClasses: Record<ColorVariant, ColorStyle> = {
   },
   neutral: {
     solid: "bg-neutral-900 hover:bg-neutral-800 text-neutral-100",
-    outline: "border-neutral-900 hover:bg-neutral-300 text-neutral-900",
+    outline: "border-neutral-900 text-neutral-900 hover:bg-neutral-900/10",
     icon: "text-neutral-900",
   },
+
   error: {
     solid: "bg-error-medium hover:bg-error-dark text-neutral-100",
     outline: "border-error-medium hover:bg-secondary-100 text-error-medium",
