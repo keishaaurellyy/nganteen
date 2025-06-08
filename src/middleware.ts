@@ -1,22 +1,21 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { auth } from "./lib/auth";
+import { getToken } from "next-auth/jwt";
 
 const adminRoutes = ["/admin"];
 const buyerRoutes = ["/buyer"];
 const kitchenRoutes = ["/kitchen"];
 
 export async function middleware(req: NextRequest) {
-  const session = await auth();
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET }); // ✅ tambahkan secret
 
   const path = req.nextUrl.pathname;
 
-  // Unauthorized
-  if (!session?.user?.role) {
+  if (!token?.role) {
     return NextResponse.redirect(new URL("/unauthorized", req.url));
   }
 
-  const role = session.user.role;
+  const role = token.role;
 
   if (role === "admin" && adminRoutes.some((r) => path.startsWith(r))) {
     return NextResponse.next();
@@ -30,7 +29,6 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Role not allowed to access route
   return NextResponse.redirect(new URL("/unauthorized", req.url));
 }
 
