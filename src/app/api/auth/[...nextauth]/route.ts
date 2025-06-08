@@ -18,6 +18,8 @@ export const authOptions: NextAuthOptions = {
         const email = credentials?.email;
         const password = credentials?.password;
         if (!email || !password) return null;
+
+        // Admin login (hardcoded)
         if (
           email === "nganteen.binus@gmail.com" &&
           password === "nganteenADMIN123"
@@ -30,7 +32,7 @@ export const authOptions: NextAuthOptions = {
           } as User;
         }
 
-        // Buyer
+        // Buyer login
         const [buyer] = await db
           .select()
           .from(buyers)
@@ -45,7 +47,7 @@ export const authOptions: NextAuthOptions = {
           } as User;
         }
 
-        // Kitchen
+        // Kitchen login
         const [kitchen] = await db
           .select()
           .from(kitchens)
@@ -73,11 +75,15 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.role = (user as any).role;
+      if (user) {
+        token.role = (user as any).role;
+      }
       return token;
     },
     async session({ session, token }) {
-      if (token?.role) (session.user as any).role = token.role;
+      if (token?.role) {
+        (session.user as any).role = token.role;
+      }
       return session;
     },
   },
