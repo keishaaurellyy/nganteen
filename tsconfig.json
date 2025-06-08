@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["next-auth"],
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "baseUrl": ".",
@@ -21,9 +22,15 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-     "@/drizzle/*": ["drizzle/*"]
+      "@/drizzle/*": ["drizzle/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src"
+  ],
   "exclude": ["node_modules"]
 }
