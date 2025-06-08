@@ -1,69 +1,58 @@
-// components/MonthDropdown.tsx
 import { useState } from "react";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { cn } from "@/config";
 
-const months = [
-  "January 2025",
-  "February 2025",
-  "March 2025",
-  "April 2025",
-  "May 2025",
-  "June 2025",
-  "July 2025",
-  "August 2025",
-  "September 2025",
-  "October 2025",
-  "November 2025",
-  "December 2025",
-];
-
-type MonthDropdownProps = {
-  selected: string | null;
-  onSelect: (value: string) => void;
+type DropdownProps<T> = {
+  items: T[];
+  selected: T | null;
+  onSelect: (value: T) => void;
+  placeholder?: string;
+  renderItem?: (item: T) => string; // Optional custom render
 };
 
-export default function MonthDropdown({ selected, onSelect }: MonthDropdownProps) {
+export default function Dropdown<T>({
+  items,
+  selected,
+  onSelect,
+  placeholder = "Select an option",
+  renderItem,
+}: DropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-md relative">
       <button
-  onClick={() => setIsOpen(!isOpen)}
-  className={cn(
-    "w-full bg-neutral-100 rounded-lg border border-neutral-300 px-4 py-4 flex items-center justify-between gap-auto text-neutral-900"
-  )}
->
-  <span className={cn(
-    "text-sm",
-    selected ? "font-semibold" : "font-normal"
-  )}>
-    {selected || "Choose month"}
-  </span>
-  {isOpen ? (
-    <ChevronUpIcon className="w-6 h-6 text-neutral-700" />
-  ) : (
-    <ChevronDownIcon className="w-6 h-6 text-neutral-700" />
-  )}
-</button>
-
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "w-full bg-neutral-100 rounded-lg border border-neutral-300 px-4 py-4 flex items-center justify-between text-neutral-900"
+        )}
+      >
+        <span className={cn("text-sm", selected ? "font-semibold" : "font-normal")}>
+          {selected ? (renderItem ? renderItem(selected) : String(selected)) : placeholder}
+        </span>
+        {isOpen ? (
+          <ChevronUpIcon className="w-6 h-6 text-neutral-700" />
+        ) : (
+          <ChevronDownIcon className="w-6 h-6 text-neutral-700" />
+        )}
+      </button>
 
       <div
         className={cn(
-          "transition-all overflow-hidden rounded-lg border border-neutral-300 bg-white mt-1",
+          "absolute left-0 right-0 z-10 transition-all overflow-hidden rounded-lg border border-neutral-300 bg-white mt-1 shadow-lg",
           isOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
         )}
       >
-        {months.map((month) => (
+        {items.map((item, index) => (
           <button
-            key={month}
+            key={index}
             onClick={() => {
-              onSelect(month);
+              onSelect(item);
               setIsOpen(false);
             }}
             className="w-full text-left px-4 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-100"
           >
-            {month}
+            {renderItem ? renderItem(item) : String(item)}
           </button>
         ))}
       </div>

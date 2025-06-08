@@ -8,7 +8,7 @@ import useFormattedDate from "@/hooks/format/useFormattedDate";
 import useRouterReady from "@/hooks/misc/useRouterReady";
 import useTimeout from "@/hooks/misc/useTimeout";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // import utils
 import {
@@ -29,15 +29,16 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/badge";
 import { Header } from "@/components/header";
-import KitchenStatus from "@/components/toggle";
 import { TextField } from "@/components/text-field";
 import { NotebookIcon } from "lucide-react";
 import Accordion from "@/components/accordion";
 import Searchbar from "@/components/searchbar";
 import { FAB } from "@/components/fab";
-import MonthDropdown from "@/components/dropdown";
 import Tooltip from "@/components/tooltip";
 import { Dialog } from "@/components/dialog";
+import Dropdown from "@/components/dropdown";
+import { generateMonths, getCurrentYear } from "@/utils/date.utils";
+import { KitchenStatus } from "./types/kitchen";
 
 export default function Home() {
   // contoh penggunaan hooks useState
@@ -45,6 +46,16 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [studentId, setStudentId] = useState("");
+  const [months, setMonths] = useState<string[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [status, setStatus] = useState<KitchenStatus | null>(null);
+
+  const statusOptions = useMemo(() => Object.values(KitchenStatus), []);
+
+  useEffect(() => {
+    const result = generateMonths(getCurrentYear());
+    setMonths(result);
+  }, []);
 
   // contoh penggunaan hooks useCopyToClipboard
   const { copy, icon } = useCopyToClipboard({ iconSize: "small" });
@@ -77,7 +88,7 @@ export default function Home() {
   };
 
   //contoh penggunaan dropdown
-  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  // const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
 
   const [showInput, setShowInput] = useState(false);
 
@@ -116,23 +127,33 @@ export default function Home() {
         <Tooltip message="This is a tooltip" position="bottom" />
         <Tooltip message="This is a tooltip" position="left" trigger="hover" />
         <Tooltip message="This is a tooltip" position="right" trigger="hover" />
-
         {/* With long text (will wrap at 300px max width) */}
         <Tooltip
           message="This is a very long tooltip message that will automatically wrap when it reaches the maximum width of 300 pixels while maintaining proper spacing and readability"
           position="top"
         />
-
         {/* contoh penggunaan Searchbar */}
         <Searchbar />
-
         {/* contoh penggunaan Dropdown */}
-        <MonthDropdown selected={selectedMonth} onSelect={setSelectedMonth} />
-
-        {/* contoh penggunaan Button */}
-        <KitchenStatus />
-
-        {/* {showDialog && (
+        {/* <MonthDropdown selected={selectedMonth} onSelect={setSelectedMonth} /> */}
+        {/* contoh penggunaan Dropdown Revisi*/}
+        <Dropdown
+          items={months}
+          selected={selectedMonth}
+          onSelect={setSelectedMonth}
+          placeholder="Choose month"
+        />
+        <Dropdown<KitchenStatus>
+        items={statusOptions}
+        selected={status}
+        onSelect={setStatus}
+        placeholder="Status"
+        renderItem={(item) =>
+          item === KitchenStatus.ACTIVE ? "ACTIVE" : "INACTIVE"
+        }
+      />
+        
+        {showDialog && (
           <Dialog
             color="success"
             icon={<MessageCircleQuestion />}
@@ -142,20 +163,7 @@ export default function Home() {
             onConfirm={handleOrder}
             onClose={() => setShowDialog(false)}
           />
-        )} */}
-
-
-{showDialog && (
-  <Dialog
-    color="success"
-    icon={<MessageCircleQuestion />}
-    title="Order Confirmation"
-    description="Are you sure you want to proceed your order? 🤔"
-    buttonLabel="Process Order"
-    onConfirm={handleOrder}
-    onClose={() => setShowDialog(false)}
-  />
-)}
+        )}
         <Image
           src="./logo/black-logo.svg"
           alt="Next.js logo"
@@ -163,7 +171,6 @@ export default function Home() {
           height={38}
           priority
         />
-
         {/* contoh penggunaan FAB */}
         <div className="w-full">
           <div className="grid grid-cols-4 gap-4 w-full my-4">
@@ -316,7 +323,6 @@ export default function Home() {
             />
           </div>
         </div>
-
         {/* contoh penggunaan Button */}
         <div className="grid grid-cols-2 gap-4 w-full">
           <Button
@@ -475,7 +481,6 @@ export default function Home() {
             Login
           </Button>
         </div>
-
         <div className="space-y-5">
           <Accordion
             label="How to Pay"
@@ -514,7 +519,6 @@ export default function Home() {
             variant="neutral"
           />
         </div>
-
         <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2 tracking-[-.01em]">
             {/* contoh penggunaan hooks useCopyToClipboard */}
@@ -548,7 +552,6 @@ export default function Home() {
             <Spinner size="extraLarge" />
           </div>
         </ol>
-
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <a
             className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
@@ -574,7 +577,6 @@ export default function Home() {
             Read our docs
           </a>
         </div>
-
         {/* --- VALIDASI TEST FORM --- */}
         <div className="w-full max-w-sm space-y-4 mt-8 border-t pt-6">
           <div className="text-lg font-bold">Cek Validasi</div>

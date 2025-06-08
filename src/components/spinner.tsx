@@ -1,4 +1,3 @@
-// Spinner.tsx
 import React, { forwardRef } from 'react';
 import { Loader2Icon } from 'lucide-react';
 import { cn } from '@/config';
@@ -13,7 +12,8 @@ type Color =
   | 'success'
   | 'error'
   | 'warning'
-  | 'form';
+  | 'form'
+  | 'globe';
 
 interface SpinnerProps extends React.ComponentPropsWithoutRef<'div'> {
   size?: Size;
@@ -60,6 +60,10 @@ const colorMap: Record<Color, Record<Variant, string>> = {
   form: {
     solid: 'text-neutral-900',
     outline: 'text-primary-500',
+  },
+  globe: {
+    solid: 'text-secondary-500',
+    outline: 'text-secondary-500',
   },
 };
 

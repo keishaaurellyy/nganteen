@@ -1,4 +1,3 @@
-// dialog.tsx
 import React from "react";
 import { Button } from "./button";
 import { Color, ColorClasses } from "@/styles/color";
@@ -6,7 +5,7 @@ import { Color, ColorClasses } from "@/styles/color";
 type DialogProps = {
   icon: React.ReactElement<{ className?: string }>;
   color: Extract<Color, "success" | "warning" | "error">;
-  size?: "small" | "medium" | "large"; // Prop size yang bisa diatur
+  size?: "small" | "medium" | "large";
   title: string;
   description: string;
   buttonLabel?: string;
@@ -77,3 +76,5 @@ export const Dialog: React.FC<DialogProps> = ({
     </div>
   );
 };
+
+Dialog.displayName = "Dialog";

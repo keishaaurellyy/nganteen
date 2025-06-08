@@ -4,9 +4,12 @@ import Spinner from "./spinner";
 import Show from "./show";
 import { Color, ColorClasses } from "@/styles/color";
 
+
 type ButtonVariant = "solid" | "outline";
 
+
 type ButtonSize = "small" | "medium" | "large";
+
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -16,6 +19,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
 }
+
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
@@ -41,10 +45,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className
     );
 
+
     const variantClasses = {
       solid: "text-neutral-100",
-      outline: `border-2 text-${color} bg-neutral-100`,
+      outline: `border-2 text-${color} bg-neutral-100/0`,
     };
+
 
     const sizeClasses = {
       small: "h-8 p-3 gap-2 rounded-md text-xs font-bold",
@@ -52,13 +58,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       large: "h-12 px-3 py-5 gap-2 rounded-xl text-base font-bold",
     };
 
+
     const iconSizeMap = {
       small: "h-4 w-4",
       medium: "h-5 w-5",
       large: "h-6 w-6",
     };
 
-    const iconSize = iconSizeMap[size]; // size di sini dari props
+
+    const iconSize = iconSizeMap[size];
+
 
     return (
       <button
@@ -106,6 +115,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
+
 Button.displayName = "Button";
+
 
 export { Button };

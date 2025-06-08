@@ -1,8 +1,10 @@
 "use client";
 
+
 import { ButtonHTMLAttributes, forwardRef } from "react";
 import { cn } from "@/config";
 import Spinner from "./spinner";
+
 
 type FABSize = "medium" | "large";
 type FABVariant = "solid" | "outline";
@@ -13,7 +15,9 @@ type FABColor =
   | "neutral"
   | "error"
   | "success"
-  | "warning";
+  | "warning"
+  | "globe"
+
 
 interface FABProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: FABSize;
@@ -22,6 +26,7 @@ interface FABProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   icon: React.ReactNode;
 }
+
 
 const FAB = forwardRef<HTMLButtonElement, FABProps>(
   (
@@ -40,15 +45,18 @@ const FAB = forwardRef<HTMLButtonElement, FABProps>(
     const baseClasses =
       "inline-flex items-center justify-center rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
 
+
     const sizeClasses = {
       large: "w-14 h-14", // 56px
       medium: "w-10 h-10", // 40px
     };
 
+
     const iconSizeMap = {
       large: "w-6 h-6", // 24px
       medium: "w-4 h-4", // 16px
     };
+
 
     const colorClasses: Record<FABColor, Record<FABVariant, string>> = {
       primary: {
@@ -86,9 +94,15 @@ const FAB = forwardRef<HTMLButtonElement, FABProps>(
         outline:
           "border-2 border-warning-medium hover:bg-primary-100 text-warning-medium",
       },
+      globe: {
+        solid: "bg-neutral-100 hover:bg-neutral-200 text-secondary-500",
+        outline: "border-2 border-neutral-100 hover:bg-primary-200 text-secondary-500",
+      },
     };
 
+
     const iconSize = iconSizeMap[size];
+
 
     return (
       <button
@@ -117,6 +131,8 @@ const FAB = forwardRef<HTMLButtonElement, FABProps>(
   }
 );
 
+
 FAB.displayName = "FAB";
+
 
 export { FAB };

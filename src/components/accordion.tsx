@@ -1,4 +1,3 @@
-// accordion.tsx
 import { cn } from "@/config";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { JSX, useState } from "react";
