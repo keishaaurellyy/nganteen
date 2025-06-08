@@ -1,12 +1,14 @@
 "use client";
 
+import Spinner from "@/components/spinner";
+import { Button } from "@/components/button";
 import useCopyToClipboard from "@/hooks/components/useCopyToClipboard";
 import useCurrentDate from "@/hooks/data-fetch/useCurrentDate";
 import useFormattedDate from "@/hooks/format/useFormattedDate";
 import useRouterReady from "@/hooks/misc/useRouterReady";
 import useTimeout from "@/hooks/misc/useTimeout";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // import utils
 import {
@@ -15,8 +17,28 @@ import {
   isValidPhoneNumber,
   isValidStudentId,
 } from "@/utils/validation.utils";
+import {
+  Check,
+  GraduationCap,
+  Loader2Icon,
+  MessageCircleQuestion,
+  Plus,
+  Store,
+  Trash2Icon,
+  TriangleAlert,
+} from "lucide-react";
+import { Badge } from "@/components/badge";
+import { Header } from "@/components/header";
 import { TextField } from "@/components/text-field";
 import { NotebookIcon } from "lucide-react";
+import Accordion from "@/components/accordion";
+import Searchbar from "@/components/searchbar";
+import { FAB } from "@/components/fab";
+import Tooltip from "@/components/tooltip";
+import { Dialog } from "@/components/dialog";
+import Dropdown from "@/components/dropdown";
+import { generateMonths, getCurrentYear } from "@/utils/date.utils";
+import { KitchenStatus } from "./types/kitchen";
 
 export default function Home() {
   // contoh penggunaan hooks useState
@@ -24,6 +46,16 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [studentId, setStudentId] = useState("");
+  const [months, setMonths] = useState<string[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [status, setStatus] = useState<KitchenStatus | null>(null);
+
+  const statusOptions = useMemo(() => Object.values(KitchenStatus), []);
+
+  useEffect(() => {
+    const result = generateMonths(getCurrentYear());
+    setMonths(result);
+  }, []);
 
   // contoh penggunaan hooks useCopyToClipboard
   const { copy, icon } = useCopyToClipboard({ iconSize: "small" });
@@ -47,6 +79,19 @@ export default function Home() {
     setTimeoutText("Done!");
   }, 5000);
 
+  //contoh penggunaan Dialog component
+  const [showDialog, setShowDialog] = useState(false);
+
+  const handleOrder = () => {
+    // Lakukan proses order
+    console.log("");
+  };
+
+  //contoh penggunaan dropdown
+  // const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+
+  const [showInput, setShowInput] = useState(false);
+
   //contoh penggunaan hooks useRouterReady
   const { router, isRouterReady } = useRouterReady();
   useEffect(() => {
@@ -58,16 +103,422 @@ export default function Home() {
   if (!isRouterReady) return null;
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+    <div className="max-w-sm min-h-screen justify-self-center">
+      {/*  contoh penggunaan Header */}
+
+      {/*  Dengan kedua icon */}
+      <Header leftIcon rightIcon="sidebar">
+        Order Page
+      </Header>
+
+      {/* Tanpa icon kanan */}
+      <Header leftIcon rightIcon="none">
+        Pilih kitchen
+      </Header>
+
+      {/* Tanpa icon kiri */}
+      <Header leftIcon={false} variant="logo" rightIcon="sidebar" />
+
+      {/* <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]"> */}
+      {/* <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start"> */}
+      <main className="p-5 flex flex-col gap-16 items-center sm:items-start">
+        {/* contoh penggunaan Tooltip */}
+        <Tooltip message="This is a tooltip" position="top" />
+        <Tooltip message="This is a tooltip" position="bottom" />
+        <Tooltip message="This is a tooltip" position="left" trigger="hover" />
+        <Tooltip message="This is a tooltip" position="right" trigger="hover" />
+        {/* With long text (will wrap at 300px max width) */}
+        <Tooltip
+          message="This is a very long tooltip message that will automatically wrap when it reaches the maximum width of 300 pixels while maintaining proper spacing and readability"
+          position="top"
+        />
+        {/* contoh penggunaan Searchbar */}
+        <Searchbar />
+        {/* contoh penggunaan Dropdown */}
+        {/* <MonthDropdown selected={selectedMonth} onSelect={setSelectedMonth} /> */}
+        {/* contoh penggunaan Dropdown Revisi*/}
+        <Dropdown
+          items={months}
+          selected={selectedMonth}
+          onSelect={setSelectedMonth}
+          placeholder="Choose month"
+        />
+        <Dropdown<KitchenStatus>
+        items={statusOptions}
+        selected={status}
+        onSelect={setStatus}
+        placeholder="Status"
+        renderItem={(item) =>
+          item === KitchenStatus.ACTIVE ? "ACTIVE" : "INACTIVE"
+        }
+      />
+        
+        {showDialog && (
+          <Dialog
+            color="success"
+            icon={<MessageCircleQuestion />}
+            title="Order Confirmation"
+            description="Are you sure you want to proceed your order? 🤔"
+            buttonLabel="Process Order"
+            onConfirm={handleOrder}
+            onClose={() => setShowDialog(false)}
+          />
+        )}
         <Image
-          className="dark:invert"
           src="./logo/black-logo.svg"
           alt="Next.js logo"
           width={180}
           height={38}
           priority
         />
+        {/* contoh penggunaan FAB */}
+        <div className="w-full">
+          <div className="grid grid-cols-4 gap-4 w-full my-4">
+            <FAB
+              onClick={() => setShowDialog(true)}
+              size="medium"
+              variant="solid"
+              color="warning"
+              icon={<Plus />}
+            />
+            <FAB size="medium" variant="solid" color="error" icon={<Plus />} />
+            <FAB
+              size="medium"
+              variant="solid"
+              color="success"
+              icon={<Plus />}
+            />
+          </div>
+          <div className="grid grid-cols-4 gap-4 w-full">
+            <FAB
+              size="medium"
+              variant="outline"
+              color="warning"
+              icon={<Plus />}
+            />
+            <FAB
+              size="medium"
+              variant="outline"
+              color="error"
+              icon={<Plus />}
+            />
+            <FAB
+              size="medium"
+              variant="outline"
+              color="success"
+              icon={<Plus />}
+            />
+          </div>
+
+          <div className="grid grid-cols-4 gap-4 w-full my-4">
+            <FAB
+              size="medium"
+              variant="solid"
+              color="primary"
+              icon={<Plus />}
+            />
+            <FAB
+              size="medium"
+              variant="solid"
+              color="secondary"
+              icon={<Plus />}
+            />
+            <FAB
+              size="medium"
+              variant="solid"
+              color="tertiary"
+              icon={<Plus />}
+            />
+            <FAB
+              size="medium"
+              variant="solid"
+              color="neutral"
+              icon={<Plus />}
+            />
+            <FAB
+              size="medium"
+              variant="outline"
+              color="primary"
+              icon={<Plus />}
+            />
+            <FAB
+              size="medium"
+              variant="outline"
+              color="secondary"
+              icon={<Plus />}
+            />
+            <FAB
+              size="medium"
+              variant="outline"
+              color="tertiary"
+              icon={<Plus />}
+            />
+            <FAB
+              size="medium"
+              variant="outline"
+              color="neutral"
+              icon={<Plus />}
+            />
+          </div>
+
+          <div className="grid grid-cols-4 gap-4 w-full my-4">
+            <FAB size="large" variant="solid" color="warning" icon={<Plus />} />
+            <FAB size="large" variant="solid" color="error" icon={<Plus />} />
+            <FAB size="large" variant="solid" color="success" icon={<Plus />} />
+          </div>
+          <div className="grid grid-cols-4 gap-4 w-full">
+            <FAB
+              size="large"
+              variant="outline"
+              color="warning"
+              icon={<Plus />}
+            />
+            <FAB size="large" variant="outline" color="error" icon={<Plus />} />
+            <FAB
+              size="large"
+              variant="outline"
+              color="success"
+              icon={<Plus />}
+            />
+          </div>
+
+          <div className="grid grid-cols-4 gap-4 w-full my-4">
+            <FAB size="large" variant="solid" color="primary" icon={<Plus />} />
+            <FAB
+              size="large"
+              variant="solid"
+              color="secondary"
+              icon={<Plus />}
+            />
+            <FAB
+              size="large"
+              variant="solid"
+              color="tertiary"
+              icon={<Plus />}
+            />
+            <FAB size="large" variant="solid" color="neutral" icon={<Plus />} />
+            <FAB
+              size="large"
+              variant="outline"
+              color="primary"
+              icon={<Plus />}
+            />
+            <FAB
+              size="large"
+              variant="outline"
+              color="secondary"
+              icon={<Plus />}
+            />
+            <FAB
+              size="large"
+              variant="outline"
+              color="tertiary"
+              icon={<Plus />}
+            />
+            <FAB
+              size="large"
+              variant="outline"
+              color="neutral"
+              icon={<Plus />}
+            />
+          </div>
+        </div>
+        {/* contoh penggunaan Button */}
+        <div className="grid grid-cols-2 gap-4 w-full">
+          <Button
+            variant="solid"
+            size="small"
+            color="primary"
+            leftIcon={<Loader2Icon />}
+            className="w-fit"
+          >
+            Small
+          </Button>
+          <Button
+            variant="solid"
+            size="small"
+            color="warning"
+            leftIcon={<TriangleAlert />}
+            className="w-fit"
+          >
+            Warning
+          </Button>
+          <Button
+            variant="solid"
+            size="medium"
+            color="secondary"
+            leftIcon={<Loader2Icon />}
+            className="w-fit"
+            onClick={() => setShowInput(true)}
+          >
+            Medium
+          </Button>
+
+          {showInput && <TextField placeholder="tes aja" />}
+          <Button
+            variant="solid"
+            size="medium"
+            color="error"
+            leftIcon={<Trash2Icon />}
+            className="w-fit"
+          >
+            Error
+          </Button>
+          <Button
+            variant="solid"
+            size="large"
+            color="tertiary"
+            leftIcon={<Loader2Icon />}
+            className="w-fit"
+          >
+            Large
+          </Button>
+          <Button
+            variant="solid"
+            size="large"
+            color="success"
+            leftIcon={<Check />}
+            className="w-fit"
+          >
+            Success
+          </Button>
+
+          <Button
+            variant="solid"
+            size="medium"
+            color="neutral"
+            leftIcon={<GraduationCap />}
+            className="w-fit"
+          >
+            Neutral
+          </Button>
+          <Button
+            variant="outline"
+            size="medium"
+            color="neutral"
+            leftIcon={<Store />}
+            className="w-fit"
+          >
+            Outline
+          </Button>
+
+          <Button
+            variant="outline"
+            size="small"
+            color="primary"
+            leftIcon={<Loader2Icon />}
+            className="w-fit"
+          >
+            Small
+          </Button>
+          <Button
+            variant="outline"
+            size="small"
+            color="warning"
+            leftIcon={<TriangleAlert />}
+            className="w-fit"
+          >
+            Warning
+          </Button>
+          <Button
+            variant="outline"
+            size="medium"
+            color="secondary"
+            leftIcon={<Loader2Icon />}
+            className="w-fit"
+          >
+            Medium
+          </Button>
+          <Button
+            variant="outline"
+            size="medium"
+            color="error"
+            leftIcon={<Trash2Icon />}
+            className="w-fit"
+          >
+            Error
+          </Button>
+          <Button
+            variant="outline"
+            size="large"
+            color="tertiary"
+            leftIcon={<Loader2Icon />}
+            className="w-fit"
+          >
+            Large
+          </Button>
+          <Button
+            variant="outline"
+            size="large"
+            color="success"
+            leftIcon={<Check />}
+            className="w-fit"
+          >
+            Success
+          </Button>
+          <Button
+            variant="solid"
+            size="large"
+            color="form"
+            className="w-full col-span-2"
+          >
+            Continue
+          </Button>
+          <Button
+            variant="solid"
+            size="large"
+            color="form"
+            className="w-full col-span-2"
+          >
+            Register
+          </Button>
+          <Button
+            variant="solid"
+            size="large"
+            color="form"
+            className="w-full col-span-2"
+          >
+            Login
+          </Button>
+        </div>
+        <div className="space-y-5">
+          <Accordion
+            label="How to Pay"
+            description={
+              <ol className="list-decimal list-inside space-y-1 break-words whitespace-normal">
+                <li>Screenshot the QR code above.</li>
+                <li>Open m-banking / e-wallet apps.</li>
+                <li>Pilih pembayaran melalui scan qris.</li>
+                <li>Masukan screenshot qr code dengan memilih gambar.</li>
+                <li>
+                  Input nominal sesuai total harga yang tertera pada halaman
+                  payment.
+                </li>
+                <li>Masukan PIN.</li>
+                <li>Pembayaran selesai.</li>
+              </ol>
+            }
+            variant="primary"
+          />
+          <Accordion
+            label="How to Pay"
+            description={
+              <ol className="list-decimal list-inside space-y-1 break-words whitespace-normal">
+                <li>Screenshot the QR code above.</li>
+                <li>Open m-banking / e-wallet apps.</li>
+                <li>Pilih pembayaran melalui scan qris.</li>
+                <li>Masukan screenshot qr code dengan memilih gambar.</li>
+                <li>
+                  Input nominal sesuai total harga yang tertera pada halaman
+                  payment.
+                </li>
+                <li>Masukan PIN.</li>
+                <li>Pembayaran selesai.</li>
+              </ol>
+            }
+            variant="neutral"
+          />
+        </div>
         <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2 tracking-[-.01em]">
             {/* contoh penggunaan hooks useCopyToClipboard */}
@@ -85,15 +536,22 @@ export default function Home() {
           </div>
           {/* contoh penggunaan hooks useCurrentDate */}
           <div className="flex flex-row items-center gap-2">
-            <div className="text-2xl-bold rounded-sm shadow-md text-tertiary-600">
+            <div className="text-2xl-bold rounded-sm shadow-md text-primary-500">
               Today&apos;s date is
             </div>
             <div>{todaysDate?.toLocaleDateString()}</div>
           </div>
           {/* contoh penggunaan hooks useTimeout */}
           <div className="font-bold">{timeoutText}</div>
-        </ol>
 
+          {/* contoh penggunaan Badge */}
+          <Badge>Kitchen</Badge>
+
+          {/* contoh penggunaan Spinner */}
+          <div className="flex justify-center items-center min-h-screen">
+            <Spinner size="extraLarge" />
+          </div>
+        </ol>
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <a
             className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
@@ -119,7 +577,6 @@ export default function Home() {
             Read our docs
           </a>
         </div>
-
         {/* --- VALIDASI TEST FORM --- */}
         <div className="w-full max-w-sm space-y-4 mt-8 border-t pt-6">
           <div className="text-lg font-bold">Cek Validasi</div>
@@ -131,7 +588,8 @@ export default function Home() {
             label="Notes"
             placeholder="Input your order notes"
             endAdornment={<NotebookIcon className="w-5 h-5" />}
-            readOnly
+            withAsterisk
+            // readOnly
           />
           <TextField placeholder="First Name" required withAsterisk />
           <TextField
