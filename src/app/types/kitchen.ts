@@ -3,6 +3,8 @@ export enum KitchenStatus {
   INACTIVE = "INACTIVE",
 }
 
+export type KitchenStatusType = `${KitchenStatus}`;
+
 export type Kitchen = {
   kitchen_id: number;
   kitchen_email: string;

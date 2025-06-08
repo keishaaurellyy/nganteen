@@ -7,7 +7,7 @@ import { DEFAULT_TIMEOUT } from "@/const/default";
 type IconSizeOption = "small" | "medium" | "large";
 
 const iconSizeMap: Record<IconSizeOption, number> = {
-  small: 16,
+  small: 18,
   medium: 24,
   large: 32,
 };
@@ -24,9 +24,9 @@ export default function useCopyToClipboard({
   const [copied, setCopied] = useState(false);
   const size = iconSizeMap[iconSize];
 
-  const copy = async (text: string | undefined) => {
+  const copy = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text ?? "");
+      await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), timeout);
     } catch (err) {

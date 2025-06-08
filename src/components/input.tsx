@@ -58,6 +58,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="flex flex-col space-y-1.5">
+        <div className="flex flex-row">
         {label && (
           <label
             className={cn(
@@ -68,9 +69,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             {label}
           </label>
         )}
-        <Show when={!!withAsterisk}>
+        <Show when={!!withAsterisk && !!label}>
           <span className="text-error-medium">&nbsp;*</span>
         </Show>
+        </div>
         <div className="relative w-full">
           {startAdornment && (
             <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-neutral-500 ">
