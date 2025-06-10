@@ -13,6 +13,13 @@ export const RegisterBuyerSchema = z
       .max(15, "Password must be at most 15 characters")
       .regex(/[0-9!@#$%^&*]/, "Password must contain number or symbol"),
     confirm_password: z.string().min(1, "Confirm password is required"),
+    first_name: z.string().optional(),
+    last_name: z.string().optional(),
+    phone_number: z
+      .string()
+      .regex(/^08[0-9]{8,12}$/, "Invalid Phone Number")
+      .optional(),
+    student_id_number: z.string().optional(),
   })
   .refine((data) => data.password === data.confirm_password, {
     message: "Passwords do not match",
@@ -21,9 +28,12 @@ export const RegisterBuyerSchema = z
 export type RegisterBuyer = z.infer<typeof RegisterBuyerSchema>;
 
 export const EditBuyerSchema = z.object({
-  first_name: z.string().min(1, "First name is required"),
+  first_name: z.string().optional(),
   last_name: z.string().optional(),
-  phone_number: z.string().regex(/^08[0-9]{8,12}$/, "Invalid Phone Number"),
+  phone_number: z
+    .string()
+    .regex(/^08[0-9]{8,12}$/, "Invalid Phone Number")
+    .optional(),
   student_id_number: z.string().optional(),
   university_email: z.string(),
 });
