@@ -17,12 +17,12 @@ export async function POST(
     return NextResponse.json({ error: parsed.error.errors }, { status: 400 });
   }
 
- const accountData = {
+const accountData = {
   buyerId: buyerId,
   createdDate: dayjs().toISOString(),
   bankName: parsed.data.bank_name,
   accountNumber: parsed.data.account_number,
-  accountName: parsed.data.account_name, 
+  accountName: parsed.data.account_name,
 };
 
 
