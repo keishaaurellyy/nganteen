@@ -7,7 +7,7 @@ type DropdownProps<T> = {
   selected: T | null;
   onSelect: (value: T) => void;
   placeholder?: string;
-  renderItem?: (item: T) => string; // Optional custom render
+  renderItem?: (item: T) => string;
 };
 
 export default function Dropdown<T>({
@@ -24,11 +24,17 @@ export default function Dropdown<T>({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "w-full bg-neutral-100 rounded-lg border border-neutral-300 px-4 py-4 flex items-center justify-between text-neutral-900"
+          "w-full bg-neutral-100 rounded-lg border border-neutral-300 px-4 py-4 flex items-center justify-between text-neutral-700"
         )}
       >
-        <span className={cn("text-sm", selected ? "font-semibold" : "font-normal")}>
-          {selected ? (renderItem ? renderItem(selected) : String(selected)) : placeholder}
+        <span
+          className={cn("text-sm", selected ? "font-semibold" : "font-normal")}
+        >
+          {selected
+            ? renderItem
+              ? renderItem(selected)
+              : String(selected)
+            : placeholder}
         </span>
         {isOpen ? (
           <ChevronUpIcon className="w-6 h-6 text-neutral-700" />
@@ -39,8 +45,10 @@ export default function Dropdown<T>({
 
       <div
         className={cn(
-          "absolute left-0 right-0 z-10 transition-all overflow-hidden rounded-lg border border-neutral-300 bg-white mt-1 shadow-lg",
-          isOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+          "absolute left-0 right-0 transition-all overflow-hidden rounded-lg border border-neutral-300 bg-white mt-1 shadow-lg z-50",
+          isOpen
+            ? "max-h-[400px] opacity-100 bg-neutral-100"
+            : "max-h-0 opacity-0"
         )}
       >
         {items.map((item, index) => (
@@ -50,7 +58,7 @@ export default function Dropdown<T>({
               onSelect(item);
               setIsOpen(false);
             }}
-            className="w-full text-left px-4 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-100"
+            className="w-full text-left px-4 py-3 text-sm font-semibold text-neutral-900 hover:bg-neutral-300"
           >
             {renderItem ? renderItem(item) : String(item)}
           </button>
