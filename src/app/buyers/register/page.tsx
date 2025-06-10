@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { UniversityName } from "@/app/types/buyer";
 import ReactSelect from "@/components/react-select";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function RegisterBuyerPage() {
   const {
@@ -58,7 +59,7 @@ export default function RegisterBuyerPage() {
         </span>
       </h1>
 
-      <div className="w-full max-w-[343px] flex justify-center mb-8 pt-[48px] pb-[48px]">
+      <div className="w-full max-w-[343px] flex justify-center mb-8 pt-12 pb-12">
         <Image
           className="w-[102px] h-[152px]"
           src="/logo/main-logo-n.svg"
@@ -159,6 +160,15 @@ export default function RegisterBuyerPage() {
           Continue
         </Button>
       </form>
+
+      <div className="flex justify-between text-center pt-4">
+        <Link href="/buyers/login">
+          <h2 className="text-xs font-normal">
+            Already have an account?&ensp;
+            <span className="text-primary-500 font-bold">Login</span>
+          </h2>
+        </Link>
+      </div>
     </div>
   );
 }
