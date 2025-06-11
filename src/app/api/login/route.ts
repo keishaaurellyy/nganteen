@@ -30,14 +30,6 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // please give a check if password more than 5 character and less than 15 character password accepted if not return error
-      if (password.length < 5 || password.length > 15) {
-        return NextResponse.json(
-          { error: "Password must be between 5 and 15 characters." },
-          { status: 400 }
-        );
-      }
-
       const passwordMatch = await bcrypt.compare(password, buyer.password);
       if (!passwordMatch) {
         return NextResponse.json({ error: "Wrong password." }, { status: 401 });
