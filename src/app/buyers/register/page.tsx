@@ -3,13 +3,13 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterBuyerSchema, RegisterBuyer } from "@/app/schema/buyer";
-import { TextField } from "@/components/text-field";
-import { Button } from "@/components/button";
+import { TextField } from "@/components/input/text-field";
+import { Button } from "@/components/input/button";
 import { registerBuyer } from "@/app/buyers/mutations/register";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { UniversityName } from "@/app/types/buyer";
-import ReactSelect from "@/components/react-select";
+import ReactSelect from "@/components/input/react-select";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 

@@ -1,10 +1,10 @@
-import { Header } from "@/components/header";
-import { Hero } from "@/app/home/components/hero";
-import Show from "@/components/show";
-import HistoryCard from "@/components/input/history-card";
-import NoHistoryOrder from "@/components/input/no-history-order";
+import { Header } from "@/components/input/header";
+import Show from "@/components/input/show";
+import HistoryCard from "@/components/buyers/history-card";
+import NoHistoryOrder from "@/components/buyers/no-history-order";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { Hero } from "@/components/buyers/hero";
 
 // sementara hardcode pake mockData
 const mockData = [
