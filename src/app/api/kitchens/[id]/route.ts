@@ -51,6 +51,7 @@ export async function PATCH(
         kitchenEmail: parsed.kitchen_email,
         kitchenPassword: hashedPassword ?? undefined,
         kitchenName: parsed.kitchen_name,
+        kitchenDescription: parsed.kitchen_description,
         adminName: parsed.admin_name,
         adminPhone: parsed.admin_phone,
         location: parsed.location,
@@ -109,7 +110,8 @@ export async function GET(
         status: kitchens.status,
         adminName: kitchens.adminName,
         adminPhone: kitchens.adminPhone,
-        kitchenEmail: kitchens.kitchenEmail
+        kitchenEmail: kitchens.kitchenEmail,
+        kitchenDescription: kitchens.kitchenDescription,
       })
       .from(kitchens)
       .where(eq(kitchens.kitchenId, kitchenId))
@@ -126,8 +128,8 @@ export async function GET(
       success: true,
       data: {
         ...kitchenData[0],
-        isOpen: kitchenData[0].status === "ACTIVE"
-      }
+        isOpen: kitchenData[0].status === "ACTIVE",
+      },
     };
 
     return NextResponse.json(response);

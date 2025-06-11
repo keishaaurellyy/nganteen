@@ -5,6 +5,7 @@ export const RegisterKitchenSchema = z.object({
   kitchen_email: z.string().email(),
   kitchen_password: z.string().min(5).max(15),
   kitchen_name: z.string().min(1),
+  kitchen_description: z.string().min(1),
   admin_name: z.string().min(1),
   admin_phone: z.string().regex(/^08[0-9]{8,12}$/, "Invalid phone number"),
   location: z
@@ -25,6 +26,7 @@ export const EditKitchenSchema = z
     kitchen_email: z.string().email().optional(),
     kitchen_password: z.string().min(5).max(15).optional(),
     kitchen_name: z.string().optional(),
+    kitchen_description: z.string().optional(),
     admin_name: z.string().optional(),
     admin_phone: z
       .string()

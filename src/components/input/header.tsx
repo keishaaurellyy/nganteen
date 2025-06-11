@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, PanelRight, PencilLine } from "lucide-react";
+import { ChevronLeft, LogOutIcon, PanelRight, PencilLine } from "lucide-react";
 import { cn } from "@/config";
 import { forwardRef, useState, useEffect } from "react";
 import Image from "next/image";
@@ -8,15 +8,15 @@ import Sidebar from "../buyers/sidebar";
 import { Buyer } from "@/app/types/buyer";
 import { useSession } from "next-auth/react";
 
-
 type HeaderVariant = "title" | "logo";
-type HeaderRightIcon = "sidebar" | "edit" | "none";
+type HeaderRightIcon = "sidebar" | "edit" | "none" | "logout";
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: HeaderVariant;
   leftIcon?: boolean;
   rightIcon?: HeaderRightIcon;
   onLeftIconClick?: () => void;
+  onRightIconClick?: () => void;
 }
 
 const Header = forwardRef<HTMLDivElement, HeaderProps>(
@@ -28,6 +28,7 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(
       rightIcon = "none",
       children,
       onLeftIconClick,
+      onRightIconClick,
       ...props
     },
     ref
@@ -52,21 +53,21 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(
 
     const { data: session } = useSession();
 
-useEffect(() => {
-  if (!session?.user?.buyer_id) return;
+    useEffect(() => {
+      if (!session?.user?.buyer_id) return;
 
-  const fetchBuyer = async () => {
-    try {
-      const res = await fetch(`/api/buyers/${session.user.buyer_id}`);
-      const json = await res.json();
-      setBuyer(json.data);
-    } catch (err) {
-      console.error("Failed to fetch buyer:", err);
-    }
-  };
+      const fetchBuyer = async () => {
+        try {
+          const res = await fetch(`/api/buyers/${session.user.buyer_id}`);
+          const json = await res.json();
+          setBuyer(json.data);
+        } catch (err) {
+          console.error("Failed to fetch buyer:", err);
+        }
+      };
 
-  fetchBuyer();
-}, [session]);
+      fetchBuyer();
+    }, [session]);
 
     const baseClasses = cn(
       "flex w-full h-[60px] px-5 py-3 items-center",
@@ -114,13 +115,22 @@ useEffect(() => {
             {rightIcon !== "none" && (
               <button
                 onClick={() => {
+                  if (onRightIconClick) onRightIconClick();
                   if (rightIcon === "sidebar") setSidebarOpen(true);
                 }}
                 className="text-neutral-900"
-                aria-label={rightIcon === "sidebar" ? "Menu" : "Edit"}
+                aria-label={
+                  rightIcon === "sidebar"
+                    ? "Menu"
+                    : rightIcon === "logout"
+                      ? "Logout"
+                      : "Edit"
+                }
               >
                 {rightIcon === "sidebar" ? (
                   <PanelRight size={24} />
+                ) : rightIcon === "logout" ? (
+                  <LogOutIcon size={24} />
                 ) : (
                   <PencilLine size={24} strokeWidth={1.5} />
                 )}
