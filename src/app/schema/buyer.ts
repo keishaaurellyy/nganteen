@@ -40,7 +40,7 @@ export const EditBuyerSchema = z.object({
 export type EditBuyer = z.infer<typeof EditBuyerSchema>;
 
 export const LoginBuyerSchema = z.object({
-  university_email: z.string().email("That's an invalid email"),
+  email: z.string().email("That's an invalid email"),
   password: z.string().min(1, "Password is required"),
 });
 export type LoginBuyer = z.infer<typeof LoginBuyerSchema>;

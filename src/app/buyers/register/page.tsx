@@ -157,7 +157,7 @@ export default function RegisterBuyerPage() {
           type="submit"
           className="flex gap-4 mb-8 justify-start w-full max-w-[343px]"
         >
-          Continue
+          Register
         </Button>
       </form>
 
