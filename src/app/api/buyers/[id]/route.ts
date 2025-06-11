@@ -5,6 +5,7 @@ import { db } from "@/db/client";
 import { buyers } from "@/drizzle/schema";
 
 export async function GET(
+  req: Request,
   { params }: { params: { id: string } }
 ) {
   const { id } = params;

@@ -4,12 +4,12 @@ export enum UniversityName {
 }
 
 export type Buyer = {
-  buyer_id: number;
-  first_name: string;
-  last_name?: string;
-  phone_number: string;
-  student_id_number?: string;
-  university_name: UniversityName;
-  university_email: string;
+  buyerId: number;
+  firstName: string;
+  lastName?: string;
+  phoneNumber: string;
+  studentIdNumber?: string;
+  universityName: UniversityName;
+  universityEmail: string;
   password: string;
 };
