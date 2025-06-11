@@ -1,9 +1,13 @@
+"use client";
+
 import { Header } from "@/components/input/header";
 import Show from "@/components/input/show";
 import HistoryCard from "@/components/buyers/history-card";
 import NoHistoryOrder from "@/components/buyers/no-history-order";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { Hero } from "@/components/buyers/hero";
 
 // sementara hardcode pake mockData
@@ -13,7 +17,62 @@ const mockData = [
   { name: "Sayap", quantity: 1, price: 8200 },
 ];
 
-export default async function HomePage() {
+type Buyer = {
+  buyerId: number;
+  firstName: string;
+  lastName: string;
+  universityEmail: string;
+};
+
+export default function HomePage() {
+  const { data: session, status } = useSession();
+  const [buyer, setBuyer] = useState<Buyer | null>(null);
+
+  useEffect(() => {
+    const fetchBuyer = async () => {
+      const buyerId = session?.user?.buyer_id;
+
+      if (!buyerId) {
+        console.warn("No buyer_id found in session");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/buyers/${buyerId}`, { cache: "no-store" });
+        const data = await res.json();
+        if (data?.success) {
+          setBuyer(data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch buyer:", error);
+      }
+    };
+
+    if (session?.user?.role === "buyer") {
+      fetchBuyer();
+    }
+  }, [session]);
+
+  console.log("Session status:", status);
+  console.log("Session data:", session);
+  console.log("Session.user:", session?.user);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Unauthorized
+      </div>
+    );
+  }
+
   const hasOrder = mockData.length > 0;
 
   return (
@@ -22,6 +81,7 @@ export default async function HomePage() {
       <Header leftIcon={false} variant="logo" rightIcon="sidebar" />
 
       <main className="space-y-4 px-5 pt-4 pb-10 flex flex-col">
+        <h1 className="text-2xl font-bold">Welcome, {buyer?.firstName} 👋</h1>
         {/* Hero */}
         <Hero />
 

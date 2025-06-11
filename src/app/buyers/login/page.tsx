@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginBuyer } from "@/app/buyers/mutations/login";
+import { signIn } from "next-auth/react";
 import { TextField } from "@/components/input/text-field";
 import { Button } from "@/components/input/button";
 import Image from "next/image";
@@ -23,21 +23,27 @@ export default function LoginBuyerPage() {
 
   const onSubmit = async (data: LoginBuyer) => {
     try {
-      const res = await loginBuyer("/api/login", { arg: data });
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+        role: "buyer",
+      });
 
-      if (res.user && res.user.role === "buyer") {
-        localStorage.setItem("buyerId", res.user.id);
+      console.log("Login result:", res);
+
+      if (res?.ok) {
+        const sessionRes = await fetch("/api/auth/session");
+        const session = await sessionRes.json();
+        const buyerId = session?.user?.buyer_id;
+        if (buyerId) localStorage.setItem("buyer_id", buyerId);
         router.push("/home");
       } else {
-        alert("Login gagal: User tidak ditemukan atau bukan buyer.");
+        alert("Login failed. Please check your email and password.");
       }
-    } catch (err: any) {
-      console.error("Login failed:", err);
-      if (err.response?.data?.error) {
-        alert(`Login gagal: ${err.response.data.error}`);
-      } else {
-        alert("Login gagal. Periksa email dan password Anda.");
-      }
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("An error occurred during login.");
     }
   };
 

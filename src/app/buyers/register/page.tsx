@@ -35,6 +35,11 @@ export default function RegisterBuyerPage() {
       const res = await registerBuyer("/api/buyers", { arg: data });
       console.log("Register Buyer Success:", res);
 
+      if (res?.data?.buyerId) {
+        localStorage.setItem("buyer_id", res.data.buyerId);
+        router.push("/home");
+      }
+
       router.push("/home");
     } catch (err) {
       console.error("Register Buyer Failed:", err);
