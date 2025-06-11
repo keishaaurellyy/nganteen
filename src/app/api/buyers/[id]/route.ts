@@ -24,19 +24,19 @@ export async function GET(
 
     if (!result || result.length === 0) {
       return NextResponse.json(
-        { success: false, error: "Buyer not found." }, 
+        { success: false, error: "Buyer not found." },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      data: result[0] 
+    return NextResponse.json({
+      success: true,
+      data: result[0],
     });
- } catch (err) {
+  } catch (err) {
     console.error(`GET buyer error for ID ${buyerId}:`, err);
     return NextResponse.json(
-      { success: false, error: "Failed to fetch buyer." }, 
+      { success: false, error: "Failed to fetch buyer." },
       { status: 500 }
     );
   }
