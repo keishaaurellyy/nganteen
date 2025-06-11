@@ -7,7 +7,7 @@ const buyerRoutes = ["/buyer"];
 const kitchenRoutes = ["/kitchen"];
 
 export async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET }); // ✅ tambahkan secret
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   const path = req.nextUrl.pathname;
 
@@ -33,5 +33,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/buyer/:path*", "/kitchen/:path*"],
+  matcher: ["/admin((?!/login).)*", "/buyer/:path*", "/kitchen/:path*"],
 };

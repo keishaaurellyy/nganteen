@@ -61,7 +61,7 @@ export default function LoginBuyerPage() {
       <div className="w-full max-w-[343px] flex justify-center mb-8 pt-12 pb-12">
         <Image
           className="w-[102px] h-[152px]"
-          src="/logo/main-logo-n.svg"
+          src="/logo/main-logo-N.svg"
           alt="Nganteen Logo"
           width={48}
           height={36}

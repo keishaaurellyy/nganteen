@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { kitchens } from "@/drizzle/schema";
-import bcrypt from "bcrypt";
 import { asc, eq, or } from "drizzle-orm";
 import { RegisterKitchenSchema } from "@/app/schema/kitchen";
 
@@ -27,14 +26,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(parsed.kitchen_password, 10);
-
     const inserted = await db
       .insert(kitchens)
       .values({
         kitchenEmail: parsed.kitchen_email,
-        kitchenPassword: hashedPassword,
+        kitchenPassword: parsed.kitchen_password,
         kitchenName: parsed.kitchen_name,
+        kitchenDescription: parsed.kitchen_description,
         adminName: parsed.admin_name,
         adminPhone: parsed.admin_phone,
         location: parsed.location,
@@ -70,7 +68,6 @@ export async function GET() {
       success: true,
       data: allKitchens,
     });
-    
   } catch (err) {
     console.error(err);
     return NextResponse.json(

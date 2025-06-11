@@ -1,11 +1,13 @@
 import { EditKitchen } from "@/app/schema/kitchen";
 import axios from "axios";
 
-export const editKitchen = async (
-  url: string,
-  { arg }: { arg: EditKitchen & { id: string } }
-) => {
+export const editKitchen = async ({
+  arg,
+}: {
+  arg: EditKitchen & { id: string };
+}) => {
   const { id, ...data } = arg;
-  const response = await axios.patch(`${url}/${id}`, data);
+
+  const response = await axios.patch(`/api/kitchens/${id}`, data);
   return response.data;
 };
