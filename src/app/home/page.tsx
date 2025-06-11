@@ -5,9 +5,6 @@ import HistoryCard from "@/components/input/history-card";
 import NoHistoryOrder from "@/components/input/no-history-order";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-// import { redirect } from "next/navigation";
 
 // sementara hardcode pake mockData
 const mockData = [
@@ -19,12 +16,6 @@ const mockData = [
 export default async function HomePage() {
   const hasOrder = mockData.length > 0;
 
-  const session = await getServerSession(authOptions);
-
-  // if (!session) {
-  //   redirect("/buyers/register");
-  // }
-
   return (
     <div className="min-h-screen w-full max-w-md justify-self-center">
       {/* Header */}
@@ -33,8 +24,6 @@ export default async function HomePage() {
       <main className="space-y-4 px-5 pt-4 pb-10 flex flex-col">
         {/* Hero */}
         <Hero />
-
-        <h1>Welcome, {session?.user.name}</h1>
 
         <section className="pt-3 space-y-4">
           {/* History Order */}
