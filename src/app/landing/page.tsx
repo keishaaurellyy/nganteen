@@ -1,11 +1,9 @@
 "use client";
 
-
 import Image from "next/image";
 import Link from "next/link";
 import { GraduationCap, Store } from "lucide-react";
-import { Button } from "@/components/button";
-
+import { Button } from "@/components/input/button";
 
 export default function LandingPage() {
   return (
@@ -21,7 +19,6 @@ export default function LandingPage() {
         />
       </div>
 
-
       {/* Headline */}
       <div className="w-full max-w-[343px] text-left mb-4">
         <h1 className="text-4xl font-bold leading-tight text-black">
@@ -32,12 +29,10 @@ export default function LandingPage() {
         </h1>
       </div>
 
-
       {/* Subtext */}
       <p className="text-base text-neutral-900/80 max-w-[343px] mb-6">
         Skip the wait — just quick bites with Nganteen!
       </p>
-
 
       {/* Buttons */}
       <div className="flex gap-4 mb-8 justify-start w-full max-w-[343px]">
@@ -64,7 +59,6 @@ export default function LandingPage() {
           </Button>
         </Link>
       </div>
-
 
       {/* Image preview */}
       <div className="w-full max-w-[343px] rounded-2xl overflow-hidden shadow-lg">

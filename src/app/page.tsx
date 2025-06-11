@@ -1,7 +1,7 @@
 "use client";
 
-import Spinner from "@/components/spinner";
-import { Button } from "@/components/button";
+import Spinner from "@/components/input/spinner";
+import { Button } from "@/components/input/button";
 import useCopyToClipboard from "@/hooks/components/useCopyToClipboard";
 import useCurrentDate from "@/hooks/data-fetch/useCurrentDate";
 import useFormattedDate from "@/hooks/format/useFormattedDate";
@@ -27,16 +27,16 @@ import {
   Trash2Icon,
   TriangleAlert,
 } from "lucide-react";
-import { Badge } from "@/components/badge";
-import { Header } from "@/components/header";
-import { TextField } from "@/components/text-field";
+import { Badge } from "@/components/input/badge";
+import { Header } from "@/components/input/header";
+import { TextField } from "@/components/input/text-field";
 import { NotebookIcon } from "lucide-react";
-import Accordion from "@/components/accordion";
-import Searchbar from "@/components/searchbar";
-import { FAB } from "@/components/fab";
-import Tooltip from "@/components/tooltip";
-import { Dialog } from "@/components/dialog";
-import Dropdown from "@/components/dropdown";
+import Accordion from "@/components/input/accordion";
+import Searchbar from "@/components/input/searchbar";
+import { FAB } from "@/components/input/fab";
+import Tooltip from "@/components/input/tooltip";
+import { Dialog } from "@/components/input/dialog";
+import Dropdown from "@/components/kitchens/dropdown";
 import { generateMonths, getCurrentYear } from "@/utils/date.utils";
 import { KitchenStatus } from "./types/kitchen";
 
@@ -144,15 +144,15 @@ export default function Home() {
           placeholder="Choose month"
         />
         <Dropdown<KitchenStatus>
-        items={statusOptions}
-        selected={status}
-        onSelect={setStatus}
-        placeholder="Status"
-        renderItem={(item) =>
-          item === KitchenStatus.ACTIVE ? "ACTIVE" : "INACTIVE"
-        }
-      />
-        
+          items={statusOptions}
+          selected={status}
+          onSelect={setStatus}
+          placeholder="Status"
+          renderItem={(item) =>
+            item === KitchenStatus.ACTIVE ? "ACTIVE" : "INACTIVE"
+          }
+        />
+
         {showDialog && (
           <Dialog
             color="success"

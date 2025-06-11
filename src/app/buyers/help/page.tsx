@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/button";
-import { Header } from "@/components/header";
-import Accordion from "@/components/accordion";
+import { Button } from "@/components/input/button";
+import { Header } from "@/components/input/header";
+import Accordion from "@/components/input/accordion";
 
 export default function HelpPage() {
   return (
@@ -63,8 +63,8 @@ export default function HelpPage() {
                   </p>
                   <p>
                     A confirmation pop-up will appear — tap <b>Process Order</b>{" "}
-                    to proceed with <b>QRIS payment</b>. Once completed, your
-                    order will be successfully placed.
+                    &nbsp; to proceed with <b>QRIS payment</b>. Once completed,
+                    your order will be successfully placed.
                   </p>
                 </div>
               }
@@ -75,8 +75,8 @@ export default function HelpPage() {
               label="How can I check my order status?"
               description={
                 <p>
-                  You can check your order status at the{" "}
-                  <b>bottom of the Home page</b>. Tap on it to view{" "}
+                  You can check your order status at the &nbsp;
+                  <b>bottom of the Home page</b>. Tap on it to view &nbsp;
                   <b>order details</b>.
                 </p>
               }
@@ -99,7 +99,7 @@ export default function HelpPage() {
               label="Where do I pick up my food?"
               description={
                 <p>
-                  Once the food is ready, you can pick it up{" "}
+                  Once the food is ready, you can pick it up &nbsp;
                   <b>at the canteen</b>. To find the kitchen’s location, check
                   their <b>unit number</b> in the <b>order details</b> page.
                 </p>
@@ -141,7 +141,7 @@ export default function HelpPage() {
               description={
                 <div className="space-y-3">
                   <p>
-                    If your order is <b>canceled by the kitchen</b>, a{" "}
+                    If your order is <b>canceled by the kitchen</b>, a &nbsp;
                     <b>refund form</b> will appear on your screen automatically.
                   </p>
                   <p>

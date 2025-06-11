@@ -1,6 +1,6 @@
 "use client";
 
-import { FAB } from "@/components/fab";
+import { FAB } from "@/components/input/fab";
 import { Globe } from "lucide-react";
 
 export const Hero = () => {
@@ -17,7 +17,9 @@ export const Hero = () => {
       <div className="relative z-10 flex justify-between items-center w-full">
         <div className="flex flex-col text-neutral-100">
           <h2 className="text-2xl font-bold shadow-2xl">Find your food 🍚</h2>
-          <p className="text-sm font-semibold">All the canteen hits in one place!</p>
+          <p className="text-sm font-semibold">
+            All the canteen hits in one place!
+          </p>
         </div>
         <FAB size="large" variant="solid" color="globe" icon={<Globe />} />
       </div>
