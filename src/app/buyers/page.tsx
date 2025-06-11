@@ -38,7 +38,9 @@ export default function HomePage() {
       }
 
       try {
-        const res = await fetch(`/api/buyers/${buyerId}`, { cache: "no-store" });
+        const res = await fetch(`/api/buyers/${buyerId}`, {
+          cache: "no-store",
+        });
         const data = await res.json();
         if (data?.success) {
           setBuyer(data.data);
@@ -81,14 +83,14 @@ export default function HomePage() {
       <Header leftIcon={false} variant="logo" rightIcon="sidebar" />
 
       <main className="space-y-4 px-5 pt-4 pb-10 flex flex-col">
-        <h1 className="text-2xl font-bold">Welcome, {buyer?.firstName} 👋</h1>
+        <h1 className="text-2xl font-bold">Hi, {buyer?.firstName} 👋</h1>
         {/* Hero */}
         <Hero />
 
         <section className="pt-3 space-y-4">
           {/* History Order */}
           <Link
-            href="/history-order"
+            href="/buyers/history-order"
             className="flex justify-between items-center"
           >
             <h2 className="text-lg-bold">

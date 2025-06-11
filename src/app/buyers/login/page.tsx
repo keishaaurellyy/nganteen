@@ -37,7 +37,7 @@ export default function LoginBuyerPage() {
         const session = await sessionRes.json();
         const buyerId = session?.user?.buyer_id;
         if (buyerId) localStorage.setItem("buyer_id", buyerId);
-        router.push("/home");
+        router.push("/buyers");
       } else {
         alert("Login failed. Please check your email and password.");
       }

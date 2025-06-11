@@ -44,7 +44,9 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
   return (
     <div
       className={`fixed inset-0 z-50 flex transition-opacity duration-300 ${
-        open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        open
+          ? "opacity-100 pointer-events-auto"
+          : "opacity-0 pointer-events-none"
       }`}
     >
       {/* Overlay */}
@@ -89,14 +91,26 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
 
           {/* Sidebar Buttons */}
           <div className="flex flex-col gap-1">
-            <SidebarButton icon={<Home size={24} />} label="Home" href="/home" />
+            <SidebarButton
+              icon={<Home size={24} />}
+              label="Home"
+              href="/buyers"
+            />
             <SidebarButton
               icon={<HandPlatter size={24} />}
               label="Explore Kitchen"
-              href="/view-all-kitchen"
+              href="/buyers/view-all-kitchen"
             />
-            <SidebarButton icon={<History size={24} />} label="Order History" href="/order-history" />
-            <SidebarButton icon={<LifeBuoy size={24} />} label="Help Center" href="/help" />
+            <SidebarButton
+              icon={<History size={24} />}
+              label="Order History"
+              href="/buyers/order-history"
+            />
+            <SidebarButton
+              icon={<LifeBuoy size={24} />}
+              label="Help Center"
+              href="/buyers/help"
+            />
           </div>
         </div>
 

@@ -4,7 +4,7 @@ import { ChevronLeft, PanelRight, PencilLine } from "lucide-react";
 import { cn } from "@/config";
 import { forwardRef, useState, useEffect } from "react";
 import Image from "next/image";
-import Sidebar from "../sidebar";
+import Sidebar from "../buyers/sidebar";
 import { Buyer } from "@/app/types/buyer";
 import { useSession } from "next-auth/react";
 
