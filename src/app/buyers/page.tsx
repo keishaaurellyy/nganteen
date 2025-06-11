@@ -1,3 +1,5 @@
+"use client";
+
 import { Header } from "@/components/input/header";
 import Show from "@/components/input/show";
 import HistoryCard from "@/components/buyers/history-card";
