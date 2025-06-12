@@ -51,6 +51,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (university_email === "nganteen.binus@gmail.com") {
+      return NextResponse.json(
+        { error: "This email is reserved." },
+        { status: 403 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const inserted = await db

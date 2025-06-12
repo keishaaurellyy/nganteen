@@ -9,6 +9,8 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Hero } from "@/components/buyers/hero";
+import { Buyer } from "../types/buyer";
+import { useRouter } from "next/navigation";
 
 // sementara hardcode pake mockData
 const mockData = [
@@ -17,16 +19,10 @@ const mockData = [
   { name: "Sayap", quantity: 1, price: 8200 },
 ];
 
-type Buyer = {
-  buyerId: number;
-  firstName: string;
-  lastName: string;
-  universityEmail: string;
-};
-
 export default function HomePage() {
   const { data: session, status } = useSession();
   const [buyer, setBuyer] = useState<Buyer | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBuyer = async () => {
@@ -67,10 +63,15 @@ export default function HomePage() {
     );
   }
 
-  if (!session) {
+  if (!session || session.user.role !== "buyer") {
+    router.replace("/unauthorized");
+    return;
+  }
+
+  if (!buyer) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Unauthorized
+        Buyer data not found.
       </div>
     );
   }
