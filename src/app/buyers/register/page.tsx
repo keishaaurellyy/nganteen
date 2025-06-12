@@ -12,6 +12,7 @@ import { UniversityName } from "@/app/types/buyer";
 import ReactSelect from "@/components/input/react-select";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 export default function RegisterBuyerPage() {
   const {
@@ -35,12 +36,24 @@ export default function RegisterBuyerPage() {
       const res = await registerBuyer("/api/buyers", { arg: data });
       console.log("Register Buyer Success:", res);
 
-      if (res?.data?.buyerId) {
-        localStorage.setItem("buyer_id", res.data.buyerId);
-        router.push("/buyers");
-      }
+      if (res?.buyer?.id) {
+        localStorage.setItem("buyer_id", res.buyer.id);
 
-      router.push("/buyers");
+        const loginRes = await signIn("credentials", {
+          redirect: false,
+          email: data.university_email,
+          password: data.password,
+        });
+
+        if (loginRes?.ok) {
+          router.push("/buyers");
+        } else {
+          console.error("Login after register failed", loginRes?.error);
+          router.push("/buyers/login");
+        }
+      } else {
+        console.error("Register failed, no buyerId returned");
+      }
     } catch (err) {
       console.error("Register Buyer Failed:", err);
     }
