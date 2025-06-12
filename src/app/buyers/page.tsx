@@ -68,14 +68,6 @@ export default function HomePage() {
     return;
   }
 
-  if (!buyer) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Buyer data not found.
-      </div>
-    );
-  }
-
   const hasOrder = mockData.length > 0;
 
   return (
