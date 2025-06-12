@@ -26,6 +26,13 @@ export async function POST(req: Request) {
       );
     }
 
+    if (parsed.kitchen_email === "nganteen.binus@gmail.com") {
+      return NextResponse.json(
+        { error: "This email is reserved." },
+        { status: 403 }
+      );
+    }
+
     const inserted = await db
       .insert(kitchens)
       .values({

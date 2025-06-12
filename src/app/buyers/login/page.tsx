@@ -27,17 +27,28 @@ export default function LoginBuyerPage() {
         redirect: false,
         email: data.email,
         password: data.password,
-        role: "buyer",
       });
 
       console.log("Login result:", res);
 
-      if (res?.ok) {
+      if (res?.ok && !res.error) {
         const sessionRes = await fetch("/api/auth/session");
         const session = await sessionRes.json();
+        const role = session?.user?.role;
         const buyerId = session?.user?.buyer_id;
-        if (buyerId) localStorage.setItem("buyer_id", buyerId);
-        router.push("/buyers");
+
+        if (role !== "buyer") {
+          router.replace("/unauthorized");
+          return;
+        }
+
+        if (!buyerId) {
+          alert("Invalid buyer session.");
+          return;
+        }
+
+        localStorage.setItem("buyer_id", buyerId);
+        router.replace("/buyers");
       } else {
         alert("Login failed. Please check your email and password.");
       }
