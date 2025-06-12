@@ -9,7 +9,11 @@ export default function HelpPage() {
   return (
     <div className="min-h-screen justify-self-center">
       {/* Header */}
-      <Header leftIcon rightIcon="none">
+      <Header
+        leftIcon
+        onLeftIconClick={() => window.history.back()}
+        rightIcon="none"
+      >
         Help
       </Header>
 
