@@ -1,20 +1,22 @@
 import { cn } from "@/config";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { JSX, useState } from "react";
+import { ReactNode } from "react";
 
 type AccordionProps = {
   label: string;
-  description: string | JSX.Element;
+  description: string | ReactNode;
   variant: "primary" | "neutral";
+  isOpen: boolean;
+  onToggle: () => void;
 };
 
 export default function Accordion({
   label,
   description,
   variant,
+  isOpen,
+  onToggle,
 }: AccordionProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <div
       className={cn(
@@ -23,7 +25,7 @@ export default function Accordion({
       )}
     >
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={onToggle}
         className="w-full flex items-center justify-between p-3 text-left text-sm-bold text-neutral-900"
       >
         <span>{label}</span>
@@ -36,12 +38,10 @@ export default function Accordion({
           isOpen ? "pb-3 max-h-[500px] opacity-100" : "pb-0 max-h-0 opacity-0"
         )}
       >
-        <div className="text-xs-normal text-neutral-900 break-words w-full max-w-full">
+        <div className="text-xs-normal text-neutral-900 break-words w-full max-w-full space-y-3 text-justify">
           {description}
         </div>
       </div>
     </div>
   );
 }
-
-Accordion.displayName = "Accordion";

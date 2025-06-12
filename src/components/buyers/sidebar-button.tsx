@@ -20,15 +20,19 @@ export default function SidebarButton({
 }: SidebarButtonProps) {
   const pathname = usePathname();
 
-  const isActive = href && pathname.startsWith(href);
+  const normalize = (path: string) => path.replace(/\/+$/, "");
+  const current = normalize(pathname);
+  const target = href ? normalize(href) : "";
+
+  const isActive = current === target;
 
   const baseClass =
     "flex items-center w-full p-3 rounded-lg transition gap-2 font-sm font-bold";
 
   const className = isLogout
-    ? `${baseClass} text-error-medium hover:bg-secondary-100`
+    ? `${baseClass} text-error-medium active:bg-secondary-100`
     : `${baseClass} text-neutral-800 ${
-        isActive ? "bg-primary-300" : "hover:bg-primary-100 active:bg-primary-100"
+        isActive ? "bg-primary-300" : "active:bg-primary-100 active:bg-primary-100"
       }`;
 
   if (href) {
