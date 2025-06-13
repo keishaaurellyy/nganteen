@@ -1,15 +1,18 @@
-import { orderStatus } from "@/drizzle/schema";
+import { OrderItems } from "./order-item";
 
-export type OrderStatus = (typeof orderStatus.enumValues)[number];
-
-export interface OrderItem {
-  name: string;
-  quantity: number;
-  price: number;
+export enum OrderStatus {
+  INCOMING = "INCOMING",
+  COOKING = "COOKING",
+  READY = "READY",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
 }
-
 export interface OrderData {
-  transactionId: string;
-  orderDate: string;
-  items: OrderItem[];
+  orderId?: number;
+  orderCode: string;
+  createdDate: string;
+  items: OrderItems[];
+  notes?: string;
+  totalPayment?: number;
+  status?: OrderStatus;
 }
