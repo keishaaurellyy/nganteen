@@ -44,7 +44,7 @@ export const EditKitchenSchema = z
 export type EditKitchen = z.infer<typeof EditKitchenSchema>;
 
 export const LoginKitchenSchema = z.object({
-  kitchen_email: z.string().email("That's an invalid email"),
-  kitchen_password: z.string().min(1, "Password is required"),
+  email: z.string().email("That's an invalid email"),
+  password: z.string().min(1, "Password is required"),
 });
 export type LoginKitchen = z.infer<typeof LoginKitchenSchema>;

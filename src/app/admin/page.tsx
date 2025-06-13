@@ -4,14 +4,23 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Kitchen } from "../types/kitchen";
-import KitchenTable from "@/components/kitchen-table";
+import KitchenTable from "@/components/admin/kitchen-table";
 import { Header } from "@/components/input/header";
 import { Button } from "@/components/input/button";
+import { getAllAccounts } from "../accounts/mutation/view";
+import { Account } from "../types/account";
+import AccountTable from "@/components/admin/account-table";
 
 export default function AdminHomePage() {
   const router = useRouter();
   const [kitchens, setKitchens] = useState<Kitchen[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [, setError] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const fetchKitchens = async () => {
@@ -33,6 +42,20 @@ export default function AdminHomePage() {
     fetchKitchens();
   }, []);
 
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const data = await getAllAccounts();
+        setAccounts(data);
+      } catch (err: any) {
+        setError("Failed to fetch accounts");
+        console.error(err);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
+
   return (
     <div className="min-h-screen w-full max-w-md justify-self-center">
       {/* Header */}
@@ -47,7 +70,7 @@ export default function AdminHomePage() {
         {/* Tabel Kitchen */}
         <section className="pt-3 space-y-4">
           <h1 className="text-lg font-bold text-neutral-700">Kitchen</h1>
-          <KitchenTable kitchens={kitchens} />
+          {isMounted && <KitchenTable kitchens={kitchens} />}
         </section>
 
         {/* Tabel Rekening */}
@@ -60,6 +83,12 @@ export default function AdminHomePage() {
         >
           Create Kitchen
         </Button>
+
+        {/* Tabel No Rekening  Buyers*/}
+        <section className="pt-3 space-y-4">
+          <h1 className="text-lg font-bold text-neutral-700">Accounts</h1>
+          {isMounted && <AccountTable accounts={accounts} />}
+        </section>
       </main>
     </div>
   );

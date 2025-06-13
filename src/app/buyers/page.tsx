@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import { Hero } from "@/components/buyers/hero";
 import { Buyer } from "../types/buyer";
 import { useRouter } from "next/navigation";
+import { getAccountById } from "../accounts/mutation/view";
+import { Button } from "@/components/input/button";
 import { OrderData } from "../types/order";
 
 export default function HomePage() {
@@ -67,6 +69,30 @@ export default function HomePage() {
     }
   }, [session]);
 
+  const handleAccountRedirect = async () => {
+    const buyerId = session?.user?.buyer_id;
+    if (!buyerId) return;
+
+    try {
+      const account = await getAccountById(buyerId);
+
+      if (account) {
+        router.push(
+          `/buyers/profile/account?edit=true&id=${account.accountId}`
+        );
+      } else {
+        // Kalau belum ada, redirect ke halaman register
+        router.push(`/buyers/profile/account`);
+      }
+    } catch (err) {
+      console.error("Failed to check account:", err);
+    }
+  };
+
+  console.log("Session status:", status);
+  console.log("Session data:", session);
+  console.log("Session.user:", session?.user);
+
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -91,6 +117,7 @@ export default function HomePage() {
         {/* Hero */}
         <Hero />
 
+        <Button onClick={handleAccountRedirect}>Account number</Button>
         <section className="pt-3 space-y-4">
           {/* History Order */}
           <Link

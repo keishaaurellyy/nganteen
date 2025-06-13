@@ -1,3 +1,5 @@
+"use client";
+
 import {
   forwardRef,
   useState,
@@ -59,19 +61,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col space-y-1.5">
         <div className="flex flex-row">
-        {label && (
-          <label
-            className={cn(
-              "text-sm font-bold",
-              error ? "text-error-medium" : "text-neutral-700"
-            )}
-          >
-            {label}
-          </label>
-        )}
-        <Show when={!!withAsterisk && !!label}>
-          <span className="text-error-medium">&nbsp;*</span>
-        </Show>
+          {label && (
+            <label
+              className={cn(
+                "text-sm font-bold",
+                error ? "text-error-medium" : "text-neutral-700"
+              )}
+            >
+              {label}
+            </label>
+          )}
+          <Show when={!!withAsterisk && !!label}>
+            <span className="text-error-medium">&nbsp;*</span>
+          </Show>
         </div>
         <div className="relative w-full">
           {startAdornment && (

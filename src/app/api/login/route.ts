@@ -55,11 +55,7 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const passwordMatch = await bcrypt.compare(
-        password,
-        kitchen.kitchenPassword
-      );
-      if (!passwordMatch) {
+      if (password !== kitchen.kitchenPassword) {
         return NextResponse.json({ error: "Wrong password." }, { status: 401 });
       }
 

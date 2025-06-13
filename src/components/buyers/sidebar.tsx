@@ -12,6 +12,7 @@ import Image from "next/image";
 import SidebarButton from "./sidebar-button";
 import { useEffect, useState } from "react";
 import { Buyer } from "@/app/types/buyer";
+import Link from "next/link";
 
 interface SidebarProps {
   open: boolean;
@@ -64,27 +65,31 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
         <div>
           {/* Top Section */}
           <div className="flex items-center justify-between pb-4">
-            <Image
-              src="/images/buyer.svg"
-              alt="Profile"
-              width={64}
-              height={64}
-              className="rounded-full border-2 border-primary-500"
-            />
+            <Link href="/buyers/profile" className="cursor-pointer">
+              <Image
+                src="/images/buyer.svg"
+                alt="Profile"
+                width={64}
+                height={64}
+                className="rounded-full border-2 border-primary-500"
+              />
+            </Link>
+
+            {/* Close Sidebar Button */}
             <button onClick={() => onOpenChange(false)}>
               <PanelRightClose className="text-neutral-800" size={24} />
             </button>
           </div>
 
           {/* Name & Email */}
-          <div className="flex flex-col">
+          <Link href="/buyers/profile" className="flex flex-col mb-2 cursor-pointer">
             <p className="text-base font-bold text-neutral-800">
               {buyer ? `${buyer.firstName} ${buyer.lastName}` : "Loading..."}
             </p>
             <p className="text-sm text-neutral-700">
               {buyer?.universityEmail || "Loading email..."}
             </p>
-          </div>
+          </Link>
 
           {/* Divider */}
           <div className="border-t border-neutral-400 my-5" />
