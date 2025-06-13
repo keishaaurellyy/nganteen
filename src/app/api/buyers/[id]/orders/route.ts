@@ -53,11 +53,11 @@ export async function GET(
         notes: order.notes,
         items: itemsOfOrder.map((item) => ({
           itemId: item.itemId,
-          name: item.itemName,
-          quantity: item.itemQty,
-          price: item.itemPrice,
+          itemName: item.itemName,
+          itemQty: item.itemQty,
+          itemPrice: item.itemPrice,
           totalPrice: item.totalItemPrice,
-          imageUrl: item.itemUrl,
+          itemUrl: item.itemUrl,
         })),
       };
     });

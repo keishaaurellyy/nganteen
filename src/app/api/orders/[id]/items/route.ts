@@ -1,4 +1,4 @@
-import { OrderItemListSchema } from "@/app/types/order-item";
+import { OrderItemListSchema } from "@/app/schema/order-item";
 import { db } from "@/db/client";
 import { orderItems } from "@/drizzle/schema";
 import { NextRequest, NextResponse } from "next/server";
