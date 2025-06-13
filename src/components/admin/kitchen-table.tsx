@@ -3,7 +3,7 @@
 import { Kitchen } from "@/app/types/kitchen";
 import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Show from "./input/show";
+import Show from "../input/show";
 
 interface KitchenTableProps {
   kitchens: Kitchen[];

@@ -16,7 +16,7 @@ export const kitchensRelations = relations(kitchens, ({many}) => ({
 
 export const accountRelations = relations(account, ({one}) => ({
 	buyer: one(buyers, {
-		fields: [account.buyerId],
+		fields: [account.id],
 		references: [buyers.buyerId]
 	}),
 }));
