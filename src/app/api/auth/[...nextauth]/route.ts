@@ -54,15 +54,13 @@ export const authOptions: NextAuthOptions = {
           .from(kitchens)
           .where(eq(kitchens.kitchenEmail, email));
 
-        if (
-          kitchen &&
-          (await bcrypt.compare(password, kitchen.kitchenPassword))
-        ) {
+        if (kitchen && password === kitchen.kitchenPassword) {
           return {
             id: String(kitchen.kitchenId),
             name: kitchen.kitchenName,
             email: kitchen.kitchenEmail,
             role: "kitchen",
+            kitchen_id: String(kitchen.kitchenId),
           } as User;
         }
 
@@ -80,6 +78,7 @@ export const authOptions: NextAuthOptions = {
         token.id = (user as any).id;
         token.role = (user as any).role;
         token.buyer_id = (user as any).buyer_id;
+        token.kitchen_id = (user as any).kitchen_id;
       }
       return token;
     },
@@ -88,6 +87,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).id = token.id;
         (session.user as any).role = token.role;
         (session.user as any).buyer_id = token.buyer_id;
+        (session.user as any).kitchen_id = token.kitchen_id;
       }
       return session;
     },

@@ -48,18 +48,18 @@ export default function LoginForm() {
         className="w-full max-w-[343px] space-y-4 overflow-visible"
       >
         <TextField
+          {...register("email")}
           placeholder="Email"
           type="email"
-          {...register("email")}
           error={!!errors.email}
           helperText={errors.email?.message}
           withAsterisk
         />
 
         <TextField
+          {...register("password")}
           placeholder="Password"
           type="password"
-          {...register("password")}
           error={!!errors.password}
           helperText={errors.password?.message}
           withAsterisk
