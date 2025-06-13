@@ -45,7 +45,7 @@ export default function Dropdown<T>({
 
       <div
         className={cn(
-          "absolute left-0 right-0 transition-all overflow-hidden rounded-lg border border-neutral-300 bg-white mt-1 shadow-lg z-50",
+          "absolute left-0 right-0 transition-all overflow-hidden rounded-lg border border-neutral-300 bg-neutral-100 mt-1 shadow-lg z-50",
           isOpen
             ? "max-h-[400px] opacity-100 bg-neutral-100"
             : "max-h-0 opacity-0"

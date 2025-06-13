@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  PanelRight,
+  PanelRightClose,
   Home,
   LogOut,
   LifeBuoy,
@@ -72,7 +72,7 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
               className="rounded-full border-2 border-primary-500"
             />
             <button onClick={() => onOpenChange(false)}>
-              <PanelRight size={24} />
+              <PanelRightClose className="text-neutral-800" size={24} />
             </button>
           </div>
 
