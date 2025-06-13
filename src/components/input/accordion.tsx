@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/config";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { ReactNode } from "react";

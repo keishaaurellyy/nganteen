@@ -1,4 +1,5 @@
-// components/Tooltip.tsx
+"use client";
+
 import { useState, useRef, useEffect } from "react";
 import { AlertCircle } from "lucide-react";
 import Show from "./show";
@@ -19,7 +20,7 @@ export default function Tooltip({
   const [show, setShow] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Handle click outside
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {
@@ -30,13 +31,13 @@ export default function Tooltip({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle hover events
+
   const hoverProps = trigger === "hover" ? {
     onMouseEnter: () => setShow(true),
     onMouseLeave: () => setShow(false),
   } : {};
 
-  // Position classes
+
   const positionClasses = {
     top: "bottom-full mb-2 left-1/2 -translate-x-1/2",
     bottom: "top-full mt-2 left-1/2 -translate-x-1/2",
