@@ -4,6 +4,44 @@ import bcrypt from "bcrypt";
 import { db } from "@/db/client";
 import { buyers } from "@/drizzle/schema";
 
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+  const buyerId = parseInt(id);
+
+  if (isNaN(buyerId) || buyerId <= 0) {
+    return NextResponse.json({ error: "Invalid buyer ID." }, { status: 400 });
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(buyers)
+      .where(eq(buyers.buyerId, buyerId))
+      .limit(1);
+
+    if (!result || result.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Buyer not found." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: result[0],
+    });
+  } catch (err) {
+    console.error(`GET buyer error for ID ${buyerId}:`, err);
+    return NextResponse.json(
+      { success: false, error: "Failed to fetch buyer." },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }

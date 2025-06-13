@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     first_name,
     last_name,
     phone_number,
-    student_id,
+    student_id_number,
     university_name,
     university_email,
     password,
@@ -43,6 +43,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // please give a check if password more than 5 character and less than 15 character password accepted if not return error
+    if (password.length < 5 || password.length > 15) {
+      return NextResponse.json(
+        { error: "Password must be between 5 and 15 characters." },
+        { status: 400 }
+      );
+    }
+
+    if (university_email === "nganteen.binus@gmail.com") {
+      return NextResponse.json(
+        { error: "This email is reserved." },
+        { status: 403 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const inserted = await db
@@ -51,7 +66,7 @@ export async function POST(request: NextRequest) {
         firstName: first_name,
         lastName: last_name,
         phoneNumber: phone_number,
-        studentIdNumber: student_id,
+        studentIdNumber: student_id_number,
         universityName: university_name,
         universityEmail: university_email,
         password: hashedPassword,

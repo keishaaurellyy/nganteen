@@ -51,6 +51,7 @@ export async function PATCH(
         kitchenEmail: parsed.kitchen_email,
         kitchenPassword: hashedPassword ?? undefined,
         kitchenName: parsed.kitchen_name,
+        kitchenDescription: parsed.kitchen_description,
         adminName: parsed.admin_name,
         adminPhone: parsed.admin_phone,
         location: parsed.location,
@@ -84,5 +85,59 @@ export async function PATCH(
 
     console.error("Update kitchen error:", err);
     return NextResponse.json({ error: "Server error." }, { status: 500 });
+  }
+}
+
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
+  const kitchenId = parseInt(params.id, 10);
+
+  if (isNaN(kitchenId)) {
+    return NextResponse.json(
+      { success: false, error: "Invalid kitchen ID" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const kitchenData = await db
+      .select({
+        id: kitchens.kitchenId,
+        name: kitchens.kitchenName,
+        location: kitchens.location,
+        status: kitchens.status,
+        adminName: kitchens.adminName,
+        adminPhone: kitchens.adminPhone,
+        kitchenEmail: kitchens.kitchenEmail,
+        kitchenDescription: kitchens.kitchenDescription,
+      })
+      .from(kitchens)
+      .where(eq(kitchens.kitchenId, kitchenId))
+      .limit(1);
+
+    if (kitchenData.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Kitchen not found" },
+        { status: 404 }
+      );
+    }
+
+    const response = {
+      success: true,
+      data: {
+        ...kitchenData[0],
+        isOpen: kitchenData[0].status === "ACTIVE",
+      },
+    };
+
+    return NextResponse.json(response);
+  } catch (err) {
+    console.error(`GET /kitchens/${kitchenId} error:`, err);
+    return NextResponse.json(
+      { success: false, error: "Failed to fetch kitchen data" },
+      { status: 500 }
+    );
   }
 }

@@ -1,16 +1,8 @@
 "use client";
 
-type OrderItem = {
-  name: string;
-  quantity: number;
-  price: number;
-};
+import type { OrderData } from "@/app/types/order";
 
-type HistoryCardProps = {
-  transactionId: string;
-  orderDate: string;
-  items: OrderItem[];
-};
+export type HistoryCardProps = OrderData;
 
 export default function HistoryCard({
   transactionId,
@@ -25,7 +17,7 @@ export default function HistoryCard({
   return (
     <div className="rounded-xl overflow-hidden text-sm w-full">
       {/* Card Header */}
-      <div className="bg-primary-500 flex justify-between items-center px-4 py-2 text-neutral-100 font-bold">
+      <div className="bg-neutral-600 flex justify-between items-center px-4 py-2 text-neutral-100 font-bold">
         <span>{transactionId}</span>
         <span>{orderDate}</span>
       </div>
@@ -45,7 +37,7 @@ export default function HistoryCard({
         </ul>
 
         {/* Total Paid */}
-        <div className="flex justify-between items-center bg-primary-100 font-bold px-4 py-2">
+        <div className="flex justify-between items-center bg-tertiary-100 font-bold px-4 py-2">
           <span>Total Paid</span>
           <span>Rp {total.toLocaleString("id-ID")}</span>
         </div>

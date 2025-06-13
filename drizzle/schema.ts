@@ -3,9 +3,9 @@ import {
   foreignKey,
   integer,
   text,
+  timestamp,
   unique,
   check,
-  timestamp,
   primaryKey,
   date,
   boolean,
@@ -53,34 +53,29 @@ export const items = pgTable(
   ]
 );
 
-export const buyers = pgTable(
-  "buyers",
+export const account = pgTable(
+  "account",
   {
-    buyerId: integer("buyer_id").primaryKey().generatedAlwaysAsIdentity({
-      name: "buyers_buyer_id_seq",
+    accountId: integer("account_id").primaryKey().generatedAlwaysAsIdentity({
+      name: "account_account_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
       maxValue: 2147483647,
       cache: 1,
     }),
-    firstName: text("first_name").notNull(),
-    lastName: text("last_name"),
-    phoneNumber: text("phone_number").notNull(),
-    studentIdNumber: text("student_id_number"),
-    universityName: universityName("university_name").notNull(),
-    universityEmail: text("university_email").notNull(),
-    password: text().notNull(),
+    buyerId: integer("buyer_id").notNull(),
+    bankName: text("bank_name").notNull(),
+    accountNumber: text("account_number").notNull(),
+    accountName: text("account_name").notNull(),
+    createdDate: timestamp("created_date", { mode: "string" }).notNull(),
   },
   (table) => [
-    unique("buyers_phone_number_key").on(table.phoneNumber),
-    unique("buyers_student_id_number_key").on(table.studentIdNumber),
-    unique("buyers_university_email_key").on(table.universityEmail),
-    check("format_phone_number", sql`phone_number ~ '^08[0-9]{8,12}$'::text`),
-    check(
-      "password_length",
-      sql`(char_length(password) >= 5) AND (char_length(password) <= 15)`
-    ),
+    foreignKey({
+      columns: [table.buyerId],
+      foreignColumns: [buyers.buyerId],
+      name: "buyer_id_fk",
+    }),
   ]
 );
 
@@ -95,13 +90,13 @@ export const orders = pgTable(
       maxValue: 2147483647,
       cache: 1,
     }),
-    orderCode: text("order_code").unique().notNull(), // <-- Tambahan
     buyerId: integer("buyer_id"),
     kitchenId: integer("kitchen_id"),
     notes: text(),
     totalPayment: integer("total_payment").notNull(),
     status: orderStatus().notNull(),
     createdDate: timestamp("created_date", { mode: "string" }).notNull(),
+    orderCode: text("order_code").notNull(),
   },
   (table) => [
     foreignKey({
@@ -114,6 +109,7 @@ export const orders = pgTable(
       foreignColumns: [kitchens.kitchenId],
       name: "kitchen_id_fk",
     }),
+    unique("orders_order_code_key").on(table.orderCode),
   ]
 );
 
@@ -135,6 +131,7 @@ export const kitchens = pgTable(
     adminPhone: text("admin_phone").notNull(),
     location: text().notNull(),
     status: kitchenStatus().notNull(),
+    kitchenDescription: text("kitchen_description").notNull(),
   },
   (table) => [
     unique("kitchens_admin_phone_key").on(table.adminPhone),
@@ -148,35 +145,30 @@ export const kitchens = pgTable(
   ]
 );
 
-export const account = pgTable(
-  "account",
+export const buyers = pgTable(
+  "buyers",
   {
-    accountId: integer("account_id").primaryKey().generatedAlwaysAsIdentity({
-      name: "account_account_id_seq",
+    buyerId: integer("buyer_id").primaryKey().generatedAlwaysAsIdentity({
+      name: "buyers_buyer_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
       maxValue: 2147483647,
       cache: 1,
     }),
-    buyerId: integer("buyer_id").notNull(),
-    orderId: integer("order_id"), // <-- Tambahan
-    bankName: text("bank_name").notNull(),
-    accountNumber: text("account_number").notNull(),
-    accountName: text("account_name").notNull(),
-    createdDate: timestamp("created_date", { mode: "string" }).notNull(),
+    firstName: text("first_name"),
+    lastName: text("last_name"),
+    phoneNumber: text("phone_number"),
+    studentIdNumber: text("student_id_number"),
+    universityName: universityName("university_name").notNull(),
+    universityEmail: text("university_email").notNull(),
+    password: text().notNull(),
   },
   (table) => [
-    foreignKey({
-      columns: [table.buyerId],
-      foreignColumns: [buyers.buyerId],
-      name: "buyer_id_fk",
-    }),
-    foreignKey({
-      columns: [table.orderId],
-      foreignColumns: [orders.orderId],
-      name: "order_id_fk",
-    }),
+    unique("buyers_phone_number_key").on(table.phoneNumber),
+    unique("buyers_student_id_number_key").on(table.studentIdNumber),
+    unique("buyers_university_email_key").on(table.universityEmail),
+    check("format_phone_number", sql`phone_number ~ '^08[0-9]{8,12}$'::text`),
   ]
 );
 

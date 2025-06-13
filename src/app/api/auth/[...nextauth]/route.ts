@@ -44,6 +44,7 @@ export const authOptions: NextAuthOptions = {
             name: `${buyer.firstName} ${buyer.lastName ?? ""}`,
             email: buyer.universityEmail,
             role: "buyer",
+            buyer_id: String(buyer.buyerId),
           } as User;
         }
 
@@ -76,13 +77,17 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.id = (user as any).id;
         token.role = (user as any).role;
+        token.buyer_id = (user as any).buyer_id;
       }
       return token;
     },
     async session({ session, token }) {
       if (token?.role) {
+        (session.user as any).id = token.id;
         (session.user as any).role = token.role;
+        (session.user as any).buyer_id = token.buyer_id;
       }
       return session;
     },

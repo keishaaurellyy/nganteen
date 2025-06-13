@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
         name: `${buyer.firstName} ${buyer.lastName ?? ""}`,
         email: buyer.universityEmail,
         role: "buyer",
+        buyer_id: String(buyer.buyerId),
       };
     } else if (role === "kitchen") {
       const [kitchen] = await db
