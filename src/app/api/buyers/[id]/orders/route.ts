@@ -1,5 +1,5 @@
 import { db } from "@/db/client";
-import { orders, orderItems, orderStatus } from "@/drizzle/schema";
+import { orderItems, orders, orderStatus } from "@/drizzle/schema";
 import { eq, and, inArray } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,8 +11,8 @@ export async function GET(
 ) {
   try {
     const buyerId = parseInt(params.id);
-    const rawStatus = req.nextUrl.searchParams.get("status")?.toUpperCase() || "COMPLETED";
-    const last = req.nextUrl.searchParams.get("last") === "true";
+    const rawStatus =
+      req.nextUrl.searchParams.get("status")?.toUpperCase() || "COMPLETED";
 
     if (isNaN(buyerId)) {
       return NextResponse.json({ error: "Invalid buyer_id" }, { status: 400 });
@@ -22,6 +22,7 @@ export async function GET(
     if (!validStatuses.includes(rawStatus as OrderStatus)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
+
     const status = rawStatus as OrderStatus;
 
     const foundOrders = await db
@@ -34,27 +35,29 @@ export async function GET(
       return NextResponse.json({ success: true, data: [] });
     }
 
-    const selectedOrders = last ? [foundOrders.at(-1)!] : foundOrders;
-    const orderIds = selectedOrders.map((o) => o.orderId);
-
+    const orderIds = foundOrders.map((o) => o.orderId);
     const items = await db
       .select()
       .from(orderItems)
       .where(inArray(orderItems.orderId, orderIds));
 
-    const grouped = selectedOrders.map((order) => {
+    const grouped = foundOrders.map((order) => {
       const itemsOfOrder = items.filter((i) => i.orderId === order.orderId);
       return {
-        transactionId: order.orderCode,
-        orderDate: new Date(order.createdDate).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
+        orderId: order.orderId,
+        orderCode: order.orderCode,
+        createdDate: order.createdDate,
+        totalPayment: order.totalPayment,
+        status: order.status,
+        kitchenId: order.kitchenId,
+        notes: order.notes,
         items: itemsOfOrder.map((item) => ({
+          itemId: item.itemId,
           name: item.itemName,
           quantity: item.itemQty,
           price: item.itemPrice,
+          totalPrice: item.totalItemPrice,
+          imageUrl: item.itemUrl,
         })),
       };
     });

@@ -48,10 +48,8 @@ export default function HomePage() {
 
       try {
         const res = await fetch(
-          `/api/orders/${buyerId}?status=COMPLETED&last=true`,
-          {
-            cache: "no-store",
-          }
+          `/api/buyers/${buyerId}/orders?status=COMPLETED&last=true`,
+          { cache: "no-store" }
         );
 
         const result = await res.json();
