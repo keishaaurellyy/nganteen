@@ -1,4 +1,3 @@
-// SidebarButton.tsx
 "use client";
 
 import Link from "next/link";
@@ -9,7 +8,7 @@ interface SidebarButtonProps {
   label: string;
   href?: string;
   onClick?: () => void;
-  variant?: "default" | "danger"; // 👈 tambahin ini
+  variant?: "default" | "danger";
 }
 
 export default function SidebarButton({
@@ -17,7 +16,7 @@ export default function SidebarButton({
   label,
   href,
   onClick,
-  variant = "default", // 👈 default ke "default"
+  variant = "default",
 }: SidebarButtonProps) {
   const pathname = usePathname();
 
