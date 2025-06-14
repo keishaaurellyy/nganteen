@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const BaseAccountSchema = z.object({
+  account_id: z.number().optional(),
   bank_name: z.string().min(1, "Bank name is required"),
   account_number: z.string().min(1, "Account number is required"),
   account_name: z.string().min(1, "Account name is required"),
