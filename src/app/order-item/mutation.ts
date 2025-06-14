@@ -1,5 +1,5 @@
 import axios from "axios";
-import { OrderItemList } from "../types/order-item";
+import { OrderItemList } from "../schema/order-item";
 
 export const passOrderItems = async (
   url: string,

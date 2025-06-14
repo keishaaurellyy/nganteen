@@ -1,27 +1,51 @@
-import { getServerSession } from "next-auth";
-import { OrderData } from "@/app/types/order";
-import HistoryCard from "@/components/buyers/history-card";
-import { authOptions } from "@/lib/auth-option";
+"use client";
+
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { Header } from "@/components/input/header";
+import Show from "@/components/input/show";
 import NoOrderHistory from "@/components/buyers/no-order-history";
+import HistoryCard from "@/components/buyers/history-card";
+import { OrderData } from "@/app/types/order";
 
-export default async function OrderHistoryPage() {
-  const session = await getServerSession(authOptions);
-  const buyerId = session?.user?.buyer_id;
+export default function OrderHistoryPage() {
+  const { data: session, status } = useSession();
+  const [orders, setOrders] = useState<OrderData[]>([]);
 
-  let orders: OrderData[] = [];
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const buyerId = session?.user?.buyer_id;
 
-  if (buyerId) {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
-    const res = await fetch(
-      `${baseUrl}/api/buyers/${buyerId}/orders?status=COMPLETED`,
-      { cache: "no-store" }
-    );
+      if (!buyerId) return;
 
-    if (res.ok) {
-      const result = await res.json();
-      orders = result.data || [];
+      try {
+        const res = await fetch(
+          `/api/buyers/${buyerId}/orders?status=COMPLETED`,
+          {
+            cache: "no-store",
+          }
+        );
+        const result = await res.json();
+
+        if (result.success && result.data) {
+          setOrders(result.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch orders:", err);
+      }
+    };
+
+    if (session?.user?.role === "buyer") {
+      fetchOrders();
     }
+  }, [session]);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -33,20 +57,23 @@ export default async function OrderHistoryPage() {
 
       {/* Order History */}
       <main className="px-5 pb-10 flex flex-col items-center">
-        {orders.length > 0 ? (
-          orders.map((order, idx) => (
+        <Show
+          when={orders.length > 0}
+          fallback={
+            <div className="flex flex-1 justify-items-center w-full min-h-[calc(100vh-27vh)]">
+              <NoOrderHistory />
+            </div>
+          }
+        >
+          {orders.map((order, index) => (
             <HistoryCard
-              key={idx}
-              transactionId={order.transactionId}
-              orderDate={order.orderDate}
+              key={index}
+              orderCode={order.orderCode}
+              createdDate={order.createdDate}
               items={order.items}
             />
-          ))
-        ) : (
-          <div className="flex flex-1 justify-items-center w-full min-h-[calc(100vh-27vh)]">
-            <NoOrderHistory />
-          </div>
-        )}
+          ))}
+        </Show>
       </main>
     </div>
   );
