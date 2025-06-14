@@ -1,7 +1,7 @@
 import { Kitchen } from "@/app/types/kitchen";
 import axios from "axios";
 
-export const viewAllKitchens = async (url: string) => {
+export const exploreKitchens = async (url: string) => {
   const response = await axios.get<{
     success: boolean;
     data: Kitchen[];
@@ -9,7 +9,7 @@ export const viewAllKitchens = async (url: string) => {
   return response.data;
 };
 
-export const viewKitchenById = async (
+export const exploreKitchensById = async (
   url: string,
   { arg }: { arg: { id: string } }
 ): Promise<Kitchen> => {

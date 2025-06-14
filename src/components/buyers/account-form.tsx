@@ -12,33 +12,12 @@ import {
   RegisterAccount,
   RegisterAccountSchema,
 } from "@/app/schema/account";
-import { Header } from "@/components/input/header";
 import { editAccount } from "@/app/accounts/mutation/edit";
 import { useEffect } from "react";
 import { getAccountById } from "@/app/accounts/mutation/view";
 import { registerAccount } from "@/app/accounts/mutation/register";
-
-function AccountWarningAlert() {
-  return (
-    <div className="w-full max-w-[343px] mt-4 border border-primary-500 bg-primary-100 text-yellow-800 text-sm px-4 py-3 rounded-md mb-6">
-      <div className="block text-xs font-bold mb-1 text-primary-500">
-        Double–Check Your Details!
-      </div>
-      <p className="text-2xs font-normal text-neutral-900">
-        Please provide the information below to process your full refund if
-        there’s any cancelled order. Refunds will be processed within 1×24
-        hours. If you don’t receive it,&nbsp;
-        <a
-          href="mailto:nganteen@gmail.com"
-          className="text-error-medium underline font-bold"
-        >
-          contact us
-        </a>
-        .
-      </p>
-    </div>
-  );
-}
+import AlertBox from "../input/alert-box";
+import Link from "next/link";
 
 export default function RegisterAccountPage() {
   const { data: session } = useSession();
@@ -99,21 +78,26 @@ export default function RegisterAccountPage() {
   };
 
   return (
-    <div className="min-h-screen max-w-md justify-self-center w-full bg-neutral-100 px-5 pt-[44px] pb-10 flex flex-col items-center">
-      <Header
-        leftIcon
-        onLeftIconClick={() => window.history.back()}
-        rightIcon="none"
-      >
-        Account Detail
-      </Header>
+    <div className="mt-4 bg-neutral-100 flex flex-col space-y-5">
+      <AlertBox
+        title="Double–Check Your Details!"
+        description={
+          <>
+            Please provide the information below to process your full refund if
+            there’s any cancelled order. Refunds will be processed within 1x24
+            hours. If you don’t receive it,&nbsp;
+            <Link
+              href="mailto:nganteen@gmail.com"
+              className="font-bold text-error-medium underline"
+            >
+              contact us
+            </Link>
+            .
+          </>
+        }
+      />
 
-      <AccountWarningAlert />
-
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-[343px] space-y-4"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <TextField
           placeholder="Bank or E–Wallet"
           type="text"
@@ -138,13 +122,11 @@ export default function RegisterAccountPage() {
           helperText={errors.account_name?.message}
           withAsterisk
         />
-        <Button
-          type="submit"
-          className="flex justify-center w-full max-w-[343px] bg-green-600 hover:bg-green-700"
-        >
+        <Button type="submit" size="medium" color="tertiary" className="w-full">
           Submit
         </Button>
       </form>
+      
     </div>
   );
 }

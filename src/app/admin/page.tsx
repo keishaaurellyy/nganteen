@@ -63,7 +63,7 @@ export default function AdminHomePage() {
         leftIcon={false}
         variant="logo"
         rightIcon="logout"
-        onRightIconClick={() => signOut({ callbackUrl: "/landing" })}
+        onRightIconClick={() => signOut({ callbackUrl: "/" })}
       />
 
       <main className="space-y-4 px-5 pt-4 pb-10 flex flex-col">

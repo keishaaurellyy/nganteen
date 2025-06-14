@@ -66,14 +66,14 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    const allKitchens = await db
+    const exploreKitchens = await db
       .select()
       .from(kitchens)
       .orderBy(asc(kitchens.kitchenName));
 
     return NextResponse.json({
       success: true,
-      data: allKitchens,
+      data: exploreKitchens,
     });
   } catch (err) {
     console.error(err);

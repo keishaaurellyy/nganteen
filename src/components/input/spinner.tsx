@@ -73,7 +73,7 @@ const Spinner = forwardRef<HTMLDivElement, SpinnerProps>(
       size === 'extraLarge' ? 'text-primary-500' : colorMap[color][variant];
 
     return (
-      <div ref={ref} className="flex justify-center items-center" {...props}>
+      <div ref={ref} className="flex justify-center items-center min-h-screen" {...props}>
         <Loader2Icon
           className={cn(spinnerColor, 'animate-spin [animation-duration:1s]')}
           size={sizeMap[size]}
