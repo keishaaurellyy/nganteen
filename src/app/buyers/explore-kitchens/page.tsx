@@ -55,6 +55,7 @@ export default function ExploreKitchenPage() {
               gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
             }}
           >
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
             {kitchens.map((kitchen, index) => (
               <Link href={`/kitchens/${kitchen.id}`} key={kitchen.id}>
                 <KitchenCard
@@ -64,6 +65,7 @@ export default function ExploreKitchenPage() {
                 />
               </Link>
             ))}
+            </div>
           </div>
         )}
       </main>

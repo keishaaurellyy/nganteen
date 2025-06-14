@@ -118,12 +118,12 @@ export default function HomePage() {
         <Hero />
 
         {/* All The Kitchens */}
-        <section className="space-y-2">
+        <section className="space-y-4">
           <Link
             href="/buyers/explore-kitchens"
             className="flex justify-between items-center"
           >
-            <h2 className="text-lg font-bold">
+            <h2 className="mt-3 text-lg font-bold">
               All The <span className="text-secondary-500">Kitchens</span>
             </h2>
             <ChevronRight className="h-6 w-6 text-neutral-900" />
@@ -148,7 +148,7 @@ export default function HomePage() {
             href="/buyers/order-history"
             className="flex justify-between items-center"
           >
-            <h2 className="text-lg font-bold">
+            <h2 className="mt-3 text-lg font-bold">
               Order <span className="text-secondary-500">History</span>
             </h2>
             <ChevronRight className="h-6 w-6 text-neutral-900" />
