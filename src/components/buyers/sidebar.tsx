@@ -13,6 +13,7 @@ import SidebarButton from "./sidebar-button";
 import { useEffect, useState } from "react";
 import { Buyer } from "@/app/types/buyer";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 interface SidebarProps {
   open: boolean;
@@ -82,7 +83,10 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
           </div>
 
           {/* Name & Email */}
-          <Link href="/buyers/profile" className="flex flex-col mb-2 cursor-pointer">
+          <Link
+            href="/buyers/profile"
+            className="flex flex-col mb-2 cursor-pointer"
+          >
             <p className="text-base font-bold text-neutral-800">
               {buyer ? `${buyer.firstName} ${buyer.lastName}` : "Loading..."}
             </p>
@@ -127,9 +131,9 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
             label="Logout"
             onClick={() => {
               localStorage.removeItem("buyer_id");
-              window.location.href = "/buyers/login";
+              signOut({ callbackUrl: "/" });
             }}
-            isLogout
+            variant="danger"
           />
         </div>
       </div>

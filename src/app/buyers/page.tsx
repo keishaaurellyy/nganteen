@@ -11,14 +11,23 @@ import { useEffect, useState } from "react";
 import { Hero } from "@/components/buyers/hero";
 import { Buyer } from "../types/buyer";
 import { useRouter } from "next/navigation";
-import { getAccountById } from "../accounts/mutation/view";
-import { Button } from "@/components/input/button";
 import { OrderData } from "../types/order";
+import KitchenCard from "@/components/buyers/kitchen-card";
+import Spinner from "@/components/input/spinner";
+
+interface Kitchen {
+  id: number;
+  kitchenName: string;
+  kitchenDescription: string;
+}
+
+const COLORS = ["primary", "secondary", "tertiary"] as const;
 
 export default function HomePage() {
   const { data: session, status } = useSession();
   const [buyer, setBuyer] = useState<Buyer | null>(null);
   const [lastOrder, setLastOrder] = useState<OrderData | null>(null);
+  const [kitchens, setKitchens] = useState<Kitchen[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -63,41 +72,31 @@ export default function HomePage() {
       }
     };
 
+    const fetchKitchens = async () => {
+      try {
+        const res = await fetch("/api/kitchens");
+        const data = await res.json();
+
+        if (data.success) {
+          setKitchens(data.data);
+        } else {
+          console.error("Failed to load kitchens:", data.error);
+        }
+      } catch (err) {
+        console.error("Error fetching kitchens:", err);
+      }
+    };
+
     if (session?.user?.role === "buyer") {
       fetchBuyer();
       fetchLastOrder();
+      fetchKitchens();
     }
   }, [session]);
 
-  const handleAccountRedirect = async () => {
-    const buyerId = session?.user?.buyer_id;
-    if (!buyerId) return;
-
-    try {
-      const account = await getAccountById(buyerId);
-
-      if (account) {
-        router.push(
-          `/buyers/profile/account?edit=true&id=${account.accountId}`
-        );
-      } else {
-        // Kalau belum ada, redirect ke halaman register
-        router.push(`/buyers/profile/account`);
-      }
-    } catch (err) {
-      console.error("Failed to check account:", err);
-    }
-  };
-
-  console.log("Session status:", status);
-  console.log("Session data:", session);
-  console.log("Session.user:", session?.user);
-
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
-      </div>
+      <Spinner size="extraLarge" />
     );
   }
 
@@ -112,14 +111,39 @@ export default function HomePage() {
       <Header leftIcon={false} variant="logo" rightIcon="sidebar" />
 
       <main className="space-y-4 px-5 pt-4 pb-10 flex flex-col">
+        {/* Greeting */}
         <h1 className="text-lg font-bold">Hi, {buyer?.firstName} 👋</h1>
 
         {/* Hero */}
         <Hero />
 
-        <Button onClick={handleAccountRedirect}>Account number</Button>
+        {/* All The Kitchens */}
+        <section className="space-y-2">
+          <Link
+            href="/buyers/explore-kitchens"
+            className="flex justify-between items-center"
+          >
+            <h2 className="text-lg font-bold">
+              All The <span className="text-secondary-500">Kitchens</span>
+            </h2>
+            <ChevronRight className="h-6 w-6 text-neutral-900" />
+          </Link>
+
+          <div className="flex gap-3 overflow-x-auto pb-1">
+            {kitchens.map((kitchen, index) => (
+              <Link href={`/kitchens/${kitchen.id}`} key={kitchen.id}>
+                <KitchenCard
+                  name={kitchen.kitchenName}
+                  color={COLORS[index % COLORS.length]}
+                  variant="home"
+                />
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* History Order */}
         <section className="pt-3 space-y-4">
-          {/* History Order */}
           <Link
             href="/buyers/order-history"
             className="flex justify-between items-center"

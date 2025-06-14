@@ -1,3 +1,4 @@
+// SidebarButton.tsx
 "use client";
 
 import Link from "next/link";
@@ -8,7 +9,7 @@ interface SidebarButtonProps {
   label: string;
   href?: string;
   onClick?: () => void;
-  isLogout?: boolean;
+  variant?: "default" | "danger"; // 👈 tambahin ini
 }
 
 export default function SidebarButton({
@@ -16,7 +17,7 @@ export default function SidebarButton({
   label,
   href,
   onClick,
-  isLogout = false,
+  variant = "default", // 👈 default ke "default"
 }: SidebarButtonProps) {
   const pathname = usePathname();
 
@@ -29,11 +30,15 @@ export default function SidebarButton({
   const baseClass =
     "flex items-center w-full p-3 rounded-lg transition gap-2 font-sm font-bold";
 
-  const className = isLogout
-    ? `${baseClass} text-error-medium active:bg-secondary-100`
-    : `${baseClass} text-neutral-800 ${
-        isActive ? "bg-primary-300" : "active:bg-primary-100 active:bg-primary-100"
-      }`;
+  let className = "";
+
+  if (variant === "danger") {
+    className = `${baseClass} text-error-medium active:bg-secondary-100`;
+  } else {
+    className = `${baseClass} text-neutral-800 ${
+      isActive ? "bg-primary-300" : "active:bg-primary-100"
+    }`;
+  }
 
   if (href) {
     return (
