@@ -1,160 +1,122 @@
 "use client";
 
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { EditKitchen, EditKitchenSchema } from "@/app/schema/kitchen";
-import { Kitchen, KitchenStatus } from "@/app/types/kitchen";
 import { useEffect, useState } from "react";
-import { editKitchen } from "@/app/kitchens/mutations/edit";
-import ReactSelect from "@/components/input/react-select";
 import { TextField } from "@/components/input/text-field";
 import { Button } from "@/components/input/button";
+import { EditAccount, EditAccountSchema } from "@/app/schema/account";
+import { Account } from "@/app/types/account";
+import { Header } from "@/components/input/header";
+import { editAccount } from "@/app/accounts/mutation/edit";
+import AlertBox from "@/components/input/alert-box";
+import Link from "next/link";
 
-export default function EditKitchenPage({ kitchen }: { kitchen: Kitchen }) {
+export default function EditAccountPage({ account }: { account: Account }) {
   const router = useRouter();
 
   const [mounted, setMounted] = useState(false);
 
   const {
-    control,
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<EditKitchen>({
-    resolver: zodResolver(EditKitchenSchema),
+  } = useForm<EditAccount>({
+    resolver: zodResolver(EditAccountSchema),
   });
 
   useEffect(() => {
     setMounted(true);
-    if (kitchen) {
+    if (account) {
       reset({
-        status: kitchen.status,
-        kitchen_email: kitchen.kitchenEmail,
-        kitchen_password: kitchen.kitchenPassword,
-        kitchen_name: kitchen.kitchenName,
-        admin_name: kitchen.adminName,
-        admin_phone: kitchen.adminPhone,
-        location: kitchen.location,
-        kitchen_description: kitchen.kitchenDescription,
+        bank_name: account.bankName,
+        account_number: account.accountNumber,
+        account_name: account.accountName,
       });
     }
-  }, [reset, kitchen]);
+  }, [reset, account]);
 
-  const onSubmit = async (data: EditKitchen) => {
+  const onSubmit = async (data: EditAccount) => {
     console.log("Form data:", data);
-    if (!kitchen?.kitchenId) return;
+    if (!account?.accountId) return;
     try {
-      await editKitchen({
-        arg: {
-          ...data,
-          kitchen_id: kitchen.kitchenId,
-          id: String(kitchen.kitchenId),
-        },
+      await editAccount(String(account.accountId), {
+        ...data,
+        account_id: account.accountId,
       });
-      router.push("/admin");
+      router.push("/buyers/profile");
     } catch (err) {
       console.error("Edit Kitchen Failed:", err);
     }
   };
 
-  const KITCHEN_STATUS = [
-    { label: "ACTIVE", value: KitchenStatus.ACTIVE },
-    { label: "INACTIVE", value: KitchenStatus.INACTIVE },
-  ];
-
-  // Hindari hydration mismatch dengan tidak render form sebelum mount
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen max-w-md justify-self-center w-full bg-neutral-100 px-5 pt-[44px] pb-10 flex flex-col items-center">
-      <h1 className="w-full max-w-[343px] mb-6 text-left text-lg font-bold text-primary-500">
-        Edit
-        <br />
-        <span className="text-neutral-900 font-normal">kitchen account</span>
-      </h1>
+    <div className="min-h-screen w-full max-w-md justify-self-center">
+      {/* Header */}
+      <Header leftIcon rightIcon="none">
+        Account Detail
+      </Header>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-[343px] space-y-4 overflow-visible"
-      >
-        <Controller
-          name="status"
-          control={control}
-          render={({ field }) => (
-            <ReactSelect
-              {...field}
-              placeholder="Kitchen Status"
-              options={KITCHEN_STATUS}
-              value={
-                KITCHEN_STATUS.find((opt) => opt.value === field.value) ?? null
-              }
-              onChange={(selected) => field.onChange(selected?.value)}
+      <main className="bg-neutral-100 px-5 pb-10 flex flex-col items-center">
+        <div className="mt-4 bg-neutral-100 flex flex-col space-y-5">
+          <AlertBox
+            title="Double–Check Your Details!"
+            description={
+              <>
+                Please provide the information below to process your full refund
+                if there’s any cancelled order. Refunds will be processed within
+                1x24 hours. If you don’t receive it,&nbsp;
+                <Link
+                  href="mailto:nganteen@gmail.com"
+                  className="font-bold text-error-medium underline"
+                >
+                  contact us
+                </Link>
+                .
+              </>
+            }
+          />
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <TextField
+              placeholder="Bank or E–Wallet"
+              type="text"
+              {...register("bank_name")}
+              error={!!errors.bank_name}
+              helperText={errors.bank_name?.message}
+              withAsterisk
             />
-          )}
-        />
-        <TextField
-          placeholder="Email"
-          type="email"
-          {...register("kitchen_email")}
-          error={!!errors.kitchen_email}
-          helperText={errors.kitchen_email?.message}
-          withAsterisk
-        />
-        <TextField
-          placeholder="Password"
-          type="password"
-          {...register("kitchen_password")}
-          error={!!errors.kitchen_password}
-          helperText={errors.kitchen_password?.message}
-          withAsterisk
-        />
-        <TextField
-          placeholder="Kitchen Name"
-          type="text"
-          {...register("kitchen_name")}
-          error={!!errors.kitchen_name}
-          helperText={errors.kitchen_name?.message}
-          withAsterisk
-        />
-        <TextField
-          placeholder="Admin Name"
-          type="text"
-          {...register("admin_name")}
-          error={!!errors.admin_name}
-          helperText={errors.admin_name?.message}
-        />
-        <TextField
-          placeholder="Admin Phone"
-          type="tel"
-          {...register("admin_phone")}
-          error={!!errors.admin_phone}
-          helperText={errors.admin_phone?.message}
-          withAsterisk
-        />
-        <TextField
-          placeholder="Location"
-          type="text"
-          {...register("location")}
-          error={!!errors.location}
-          helperText={errors.location?.message}
-        />
-        <TextField
-          placeholder="Description"
-          type="text"
-          {...register("kitchen_description")}
-          error={!!errors.kitchen_description}
-          helperText={errors.kitchen_description?.message}
-        />
-
-        <Button
-          type="submit"
-          className="flex gap-4 mb-8 justify-start w-full max-w-[343px]"
-        >
-          Edit Kitchen
-        </Button>
-      </form>
+            <TextField
+              placeholder="Account Number"
+              type="text"
+              {...register("account_number")}
+              error={!!errors.account_number}
+              helperText={errors.account_number?.message}
+              withAsterisk
+            />
+            <TextField
+              placeholder="Account Name"
+              type="text"
+              {...register("account_name")}
+              error={!!errors.account_name}
+              helperText={errors.account_name?.message}
+              withAsterisk
+            />
+            <Button
+              type="submit"
+              size="medium"
+              color="tertiary"
+              className="w-full"
+            >
+              Submit
+            </Button>
+          </form>
+        </div>
+      </main>
     </div>
   );
 }
