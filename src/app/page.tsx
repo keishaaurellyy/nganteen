@@ -4,8 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { GraduationCap, Store } from "lucide-react";
 import { Button } from "@/components/input/button";
+import { useEffect } from "react";
 
 export default function LandingPage() {
+  useEffect(() => {
+    document.body.classList.add("bg-primary-300");
+
+    return () => {
+      document.body.classList.remove("bg-primary-300");
+    };
+  }, []);
+
   return (
     <main className="min-h-screen w-full bg-primary-300 px-5 pt-[44px] pb-10 flex flex-col items-center">
       {/* Logo */}
@@ -63,7 +72,7 @@ export default function LandingPage() {
       {/* Image preview */}
       <div className="w-full max-w-[343px] rounded-2xl overflow-hidden shadow-lg">
         <Image
-          src="/images/mockup.svg"
+          src="/images/mockup.jpg"
           alt="App Preview"
           width={343}
           height={343}
