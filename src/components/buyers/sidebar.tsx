@@ -104,7 +104,7 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
             <SidebarButton
               icon={<HandPlatter size={24} />}
               label="Explore Kitchen"
-              href="/buyers/view-all-kitchen"
+              href="/buyers/explore-kitchens"
             />
             <SidebarButton
               icon={<History size={24} />}

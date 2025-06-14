@@ -87,6 +87,13 @@ export default function Home() {
     console.log("");
   };
 
+  //Penggunaan Accordion
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const handleToggle = (index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  };
+
   //contoh penggunaan dropdown
   // const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
 
@@ -499,26 +506,23 @@ export default function Home() {
               </ol>
             }
             variant="primary"
+            isOpen={openIndex === 0}
+            onToggle={() => handleToggle(0)}
           />
           <Accordion
-            label="How to Pay"
+            label="Another Question"
             description={
-              <ol className="list-decimal list-inside space-y-1 break-words whitespace-normal">
-                <li>Screenshot the QR code above.</li>
-                <li>Open m-banking / e-wallet apps.</li>
-                <li>Pilih pembayaran melalui scan qris.</li>
-                <li>Masukan screenshot qr code dengan memilih gambar.</li>
-                <li>
-                  Input nominal sesuai total harga yang tertera pada halaman
-                  payment.
-                </li>
-                <li>Masukan PIN.</li>
-                <li>Pembayaran selesai.</li>
-              </ol>
+              <p>
+                This is another answer, same structure. You can reuse it and
+                replace the content!
+              </p>
             }
             variant="neutral"
+            isOpen={openIndex === 1}
+            onToggle={() => handleToggle(1)}
           />
         </div>
+
         <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2 tracking-[-.01em]">
             {/* contoh penggunaan hooks useCopyToClipboard */}

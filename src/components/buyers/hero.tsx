@@ -23,7 +23,7 @@ export const Hero = () => {
             All the canteen hits in one place!
           </p>
         </div>
-        <Link href="/buyers/view-all-kitchens">
+        <Link href="/buyers/explore-kitchens">
           <FAB size="large" variant="solid" color="globe" icon={<Globe />} />
         </Link>
       </div>
