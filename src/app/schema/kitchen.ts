@@ -48,3 +48,9 @@ export const LoginKitchenSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 export type LoginKitchen = z.infer<typeof LoginKitchenSchema>;
+
+export const UpdateStatusSchema = z.object({
+  status: z.nativeEnum(KitchenStatus),
+});
+
+export type UpdateStatusKitchen = z.infer<typeof UpdateStatusSchema>;
