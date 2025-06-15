@@ -4,12 +4,8 @@ import Spinner from "./spinner";
 import Show from "./show";
 import { Color, ColorClasses } from "@/styles/color";
 
-
 type ButtonVariant = "solid" | "outline";
-
-
 type ButtonSize = "small" | "medium" | "large";
-
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -18,8 +14,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  iconOnly?: boolean; // ➕ Tambahan baru
 }
-
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
@@ -33,31 +29,35 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       children,
       disabled,
+      iconOnly = false,
       ...props
     },
     ref
   ) => {
     const baseClasses = cn(
-      "inline-flex py-3 items-center justify-center g-2 shrink-0 transition-colors",
+      "inline-flex items-center justify-center shrink-0 transition-colors",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2",
       "disabled:opacity-100 disabled:bg-neutral-400 disabled:pointer-events-none",
       "whitespace-nowrap",
       className
     );
 
-
     const variantClasses = {
       solid: "text-neutral-100",
       outline: `border-2 text-${color} bg-neutral-100/0`,
     };
 
-
     const sizeClasses = {
-      small: "h-8 p-3 gap-2 rounded-md text-xs font-bold",
-      medium: "h-10 px-3 py-4 gap-2 rounded-lg text-sm font-bold",
-      large: "h-12 px-3 py-5 gap-2 rounded-xl text-base font-bold",
+      small: iconOnly
+        ? "h-10 w-10 rounded-lg"
+        : "h-8 px-3 gap-2 rounded-md text-xs font-bold",
+      medium: iconOnly
+        ? "h-10 w-10 rounded-lg"
+        : "h-10 px-4 gap-2 rounded-lg text-sm font-bold",
+      large: iconOnly
+        ? "h-12 w-12 rounded-xl"
+        : "h-12 px-5 gap-2 rounded-xl text-base font-bold",
     };
-
 
     const iconSizeMap = {
       small: "h-4 w-4",
@@ -65,9 +65,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       large: "h-6 w-6",
     };
 
-
     const iconSize = iconSizeMap[size];
-
 
     return (
       <button
@@ -79,7 +77,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           sizeClasses[size],
           variant === "solid"
             ? ColorClasses[color].solid
-            : (ColorClasses[color].outline ?? ColorClasses[color].solid),
+            : ColorClasses[color].outline ?? ColorClasses[color].solid,
           {
             "pointer-events-none": isLoading,
           }
@@ -102,7 +100,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 {leftIcon}
               </span>
             )}
-            <span className="flex-1 text-center">{children}</span>
+            {!iconOnly && (
+              <span className="flex-1 text-center">{children}</span>
+            )}
             {rightIcon && (
               <span className={`flex items-center justify-center ${iconSize}`}>
                 {rightIcon}
@@ -115,8 +115,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
-
 Button.displayName = "Button";
-
 
 export { Button };
