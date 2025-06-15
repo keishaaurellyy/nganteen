@@ -11,6 +11,7 @@ declare module "next-auth" {
       email: string;
       role: "buyer" | "kitchen" | "admin";
       buyer_id?: string;
+      kitchen_id?: string;
     };
   }
 
