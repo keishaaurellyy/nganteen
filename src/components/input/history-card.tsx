@@ -8,7 +8,9 @@ export default function HistoryCard({
   createdDate,
   items,
 }: OrderData) {
-  const total_payment = items.reduce(
+  const safeItems = items ?? [];
+
+  const total_payment = safeItems.reduce(
     (sum, item) => sum + item.itemPrice * item.itemQty,
     0
   );
@@ -24,11 +26,13 @@ export default function HistoryCard({
       {/* List Items */}
       <div className="text-neutral-900 border-x border-b rounded-b-xl border-neutral-200 divide-y divide-neutral-400 divide-dashed">
         <ul className="px-4 py-3 space-y-1">
-          {items.map((item, idx) => (
+          {safeItems.map((item, idx) => (
             <li key={idx} className="flex justify-between items-center">
               <span className="flex-1">{item.itemName}</span>
               <span className="w-8 text-center">x{item.itemQty}</span>
-              <span className="w-20 text-right">Rp {item.itemPrice}</span>
+              <span className="w-20 text-right">
+                Rp {item.itemPrice.toLocaleString("id-ID")}
+              </span>
             </li>
           ))}
         </ul>
@@ -36,7 +40,7 @@ export default function HistoryCard({
         {/* Total Paid */}
         <div className="flex justify-between items-center bg-tertiary-100 font-bold px-4 py-2">
           <span>Total Paid</span>
-          <span>Rp {total_payment}</span>
+          <span>Rp {total_payment.toLocaleString("id-ID")}</span>
         </div>
       </div>
     </div>
