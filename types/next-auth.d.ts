@@ -10,6 +10,7 @@ declare module "next-auth" {
       name: string;
       email: string;
       role: "buyer" | "kitchen" | "admin";
+      kitchen_id?: string;
       buyer_id?: string;
       kitchen_id?: string;
     };
@@ -20,12 +21,14 @@ declare module "next-auth" {
     name: string;
     email: string;
     role: "buyer" | "kitchen" | "admin";
+    kitchen_id?: string;
     buyer_id?: string;
   }
 
   interface JWT {
     id: string;
     role: "buyer" | "kitchen" | "admin";
+    kitchen_id?: string;
     buyer_id?: string;
   }
 }

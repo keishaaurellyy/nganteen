@@ -2,8 +2,8 @@
 
 import { Header } from "@/components/input/header";
 import Show from "@/components/input/show";
-import HistoryCard from "@/components/buyers/history-card";
-import NoOrderHistory from "@/components/buyers/no-order-history";
+import HistoryCard from "@/components/input/history-card";
+import NoOrderHistory from "@/components/input/no-order-history";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -95,9 +95,7 @@ export default function HomePage() {
   }, [session]);
 
   if (status === "loading") {
-    return (
-      <Spinner size="extraLarge" />
-    );
+    return <Spinner size="extraLarge" />;
   }
 
   if (!session || session.user.role !== "buyer") {

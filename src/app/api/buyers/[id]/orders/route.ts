@@ -10,6 +10,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    
     const buyerId = parseInt(params.id);
     const rawStatus =
       req.nextUrl.searchParams.get("status")?.toUpperCase() || "COMPLETED";
@@ -36,6 +37,7 @@ export async function GET(
     }
 
     const orderIds = foundOrders.map((o) => o.orderId);
+
     const items = await db
       .select()
       .from(orderItems)

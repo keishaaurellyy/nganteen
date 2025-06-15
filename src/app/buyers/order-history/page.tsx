@@ -4,9 +4,10 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Header } from "@/components/input/header";
 import Show from "@/components/input/show";
-import NoOrderHistory from "@/components/buyers/no-order-history";
-import HistoryCard from "@/components/buyers/history-card";
+import NoOrderHistory from "@/components/input/no-order-history";
+import HistoryCard from "@/components/input/history-card";
 import { OrderData } from "@/app/types/order";
+import Spinner from "@/components/input/spinner";
 
 export default function OrderHistoryPage() {
   const { data: session, status } = useSession();
@@ -42,9 +43,7 @@ export default function OrderHistoryPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
-      </div>
+      <Spinner size="extraLarge"/>
     );
   }
 
@@ -56,7 +55,7 @@ export default function OrderHistoryPage() {
       </Header>
 
       {/* Order History */}
-      <main className="px-5 pb-10 flex flex-col items-center">
+      <main className="pt-4 px-5 pb-10 flex flex-col items-center">
         <Show
           when={orders.length > 0}
           fallback={
