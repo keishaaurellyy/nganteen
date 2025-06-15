@@ -13,7 +13,7 @@ export default function OrderDetailPage() {
   const router = useRouter();
 
   const handleSubmit = () => {
-    router.push("/buyers"); // Ganti sesuai halaman tujuan
+    router.push("/buyers");
   };
 
   return (

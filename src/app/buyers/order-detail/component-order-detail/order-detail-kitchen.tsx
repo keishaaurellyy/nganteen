@@ -97,6 +97,8 @@
 
 "use client";
 
+import { Copy } from "lucide-react";
+
 export default function OrderDetailKitchen() {
   return (
     <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
@@ -106,9 +108,9 @@ export default function OrderDetailKitchen() {
           Dapur Nietta&nbsp;
           <span className="text-xs font-semibold">| Blok A1</span>
         </h2>
-        <p className="text-2xs mt-1">
-          07 Mar 2025 03.50PM •&nbsp;
-          <span className="text-2xs font-semibold">TRX000001</span>
+        <p className="flex items-center text-xs mt-1">
+          07 Mar 2025 03.50PM&nbsp;
+          <span className="flex items-center text-xs font-semibold text-neutral-800">• TRX000001&nbsp;<span><Copy className="w-4 h-4 text-secondary-500" /></span></span>
         </p>
       </div>
     </div>
