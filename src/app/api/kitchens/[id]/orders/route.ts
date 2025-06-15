@@ -1,4 +1,3 @@
-// app/api/kitchens/[id]/orders/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { orders, orderItems } from "@/drizzle/schema";
