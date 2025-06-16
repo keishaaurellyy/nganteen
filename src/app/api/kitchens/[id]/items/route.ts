@@ -129,9 +129,9 @@ export async function PATCH(
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const kitchenId = parseInt(params.id);
+  const kitchenId = parseInt(context.params.id, 10);
 
   if (isNaN(kitchenId)) {
     return NextResponse.json({ error: "Invalid kitchen ID" }, { status: 400 });
@@ -142,6 +142,8 @@ export async function GET(
       .select()
       .from(itemsTable)
       .where(eq(itemsTable.kitchenId, kitchenId));
+
+    console.log("✅ kitchenItems:", kitchenItems);
 
     return NextResponse.json(kitchenItems, { status: 200 });
   } catch (error: any) {
