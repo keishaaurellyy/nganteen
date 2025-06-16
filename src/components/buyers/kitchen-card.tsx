@@ -3,7 +3,7 @@ import Image from "next/image";
 type KitchenCardVariant = "explore" | "home";
 
 interface KitchenCardProps {
-  name: string;
+  name?: string;
   description?: string;
   color?: "primary" | "secondary" | "tertiary";
   variant?: KitchenCardVariant;
@@ -34,7 +34,7 @@ export default function KitchenCard({
         >
           <Image
             src="/images/foodie-home.svg"
-            alt={name}
+            alt={name ?? "Kitchen Image"}
             width={101}
             height={101}
             className="h-[101px] object-contain rounded-lg"
@@ -62,7 +62,7 @@ export default function KitchenCard({
       <div className="mt-2 rounded-md overflow-hidden">
         <Image
           src="/images/foodie.svg"
-          alt={name}
+          alt={name ?? "Kitchen Image"}
           width={154}
           height={86}
           className="rounded-md object-contain w-full h-auto"

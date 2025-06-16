@@ -104,8 +104,8 @@ export async function GET(
   try {
     const kitchenData = await db
       .select({
-        id: kitchens.kitchenId,
-        name: kitchens.kitchenName,
+        kitchenId: kitchens.kitchenId,
+        kitchenName: kitchens.kitchenName,
         location: kitchens.location,
         status: kitchens.status,
         adminName: kitchens.adminName,
