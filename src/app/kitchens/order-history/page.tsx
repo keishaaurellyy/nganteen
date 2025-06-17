@@ -43,9 +43,7 @@ export default function OrderHistoryPage() {
   }, [session]);
 
   if (status === "loading") {
-    return (
-        <Spinner size="extraLarge" />
-    );
+    return <Spinner size="extraLarge" />;
   }
 
   return (
@@ -56,7 +54,7 @@ export default function OrderHistoryPage() {
       </Header>
 
       {/* Order History */}
-      <main className="pt-4 px-5 pb-10 flex flex-col items-center">
+      <main className="pt-4 px-5 pb-10 flex flex-col gap-6 items-center">
         <Show
           when={orders.length > 0}
           fallback={

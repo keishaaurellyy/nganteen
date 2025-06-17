@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, LogOutIcon, PanelRight, PencilLine } from "lucide-react";
+import { ChevronLeft, LogOutIcon, PanelRight, PlusIcon } from "lucide-react";
 import { cn } from "@/config";
 import { forwardRef, useState, useEffect } from "react";
 import Image from "next/image";
@@ -9,7 +9,7 @@ import { Buyer } from "@/app/types/buyer";
 import { useSession } from "next-auth/react";
 
 type HeaderVariant = "title" | "logo";
-type HeaderRightIcon = "sidebar" | "edit" | "none" | "logout";
+type HeaderRightIcon = "sidebar" | "create" | "none" | "logout";
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: HeaderVariant;
@@ -132,7 +132,7 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(
                 ) : rightIcon === "logout" ? (
                   <LogOutIcon size={24} />
                 ) : (
-                  <PencilLine size={24} strokeWidth={1.5} />
+                  <PlusIcon size={24} strokeWidth={1.5} />
                 )}
               </button>
             )}

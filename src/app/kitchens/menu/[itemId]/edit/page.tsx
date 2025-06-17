@@ -73,13 +73,15 @@ export default function EditItemPage() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-6 items-center"
-    >
-      <div className="w-full max-w-md min-h-screen justify-self-center space-y-4">
-        <Header variant="logo" />
-        <div className="flex flex-col gap-5 p-3 pb-3">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+      <Header
+        variant="logo"
+        onLeftIconClick={() => {
+          router.replace("/kitchens/menu");
+        }}
+      />
+      <div className="w-full flex flex-col px-5 py-2 max-w-md min-h-screen justify-self-center">
+        <div className="flex flex-col gap-5 py-5">
           <TextField
             label="Name"
             placeholder="Item name"
@@ -117,7 +119,7 @@ export default function EditItemPage() {
           type="submit"
           variant="solid"
           color="primary"
-          className="w-full"
+          className="w-full mt-2"
         >
           Modify
         </Button>
