@@ -13,7 +13,7 @@ export default function KitchenHomePage() {
       <Header leftIcon={false} variant="logo"></Header>
 
       <div className="px-5 pt-4 flex flex-col gap-4">
-        <KitchenInfo kitchenId={14} />
+        <KitchenInfo />
         <KitchenUpdateStatus />
         <KitchenOrder onGoing={2} history={3} />
         <KitchenActions />
