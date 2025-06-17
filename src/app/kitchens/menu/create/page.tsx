@@ -66,10 +66,10 @@ export default function CreateItemsForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <div className="w-full max-w-md min-h-screen justify-self-center">
-        <Header variant="logo" />
-        <div className="flex flex-row justify-between items-center px-3">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+      <Header variant="logo" />
+      <div className="w-full flex flex-col px-5 py-2 max-w-md min-h-screen justify-self-center">
+        <div className="flex flex-row justify-between items-center">
           <span className="font-bold text-xl">Items</span>
           <FAB
             onClick={() =>
@@ -91,7 +91,7 @@ export default function CreateItemsForm() {
         {fields.map((field, index) => (
           <div
             key={field.id}
-            className="flex flex-col gap-5 px-3 pb-3 border-b border-neutral-300"
+            className="flex flex-col gap-5 py-5 border-b border-neutral-300"
           >
             <TextField
               label="Name"
@@ -136,6 +136,7 @@ export default function CreateItemsForm() {
               onClick={() => remove(index)}
               size="medium"
               type="button"
+              className="w-fit self-end"
             >
               Delete
             </Button>
@@ -146,9 +147,9 @@ export default function CreateItemsForm() {
           type="submit"
           variant="solid"
           color="primary"
-          className="m-3 self-end"
+          className="flex gap-4 my-5 w-full"
         >
-          Submit Items
+          Create
         </Button>
       </div>
     </form>

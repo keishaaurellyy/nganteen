@@ -4,8 +4,8 @@ import { Header } from "@/components/input/header";
 import KitchenActions from "@/components/kitchens/home-actions";
 import KitchenInfo from "@/components/kitchens/home-info";
 import KitchenMenu from "@/components/kitchens/home-menu";
-import KitchenOrder from "@/components/kitchens/home-order";
 import KitchenUpdateStatus from "@/components/kitchens/home-status";
+import KitchenOrderStatusFetcher from "@/components/kitchens/kitchen-order-status-fetcher";
 
 export default function KitchenHomePage() {
   return (
@@ -15,7 +15,7 @@ export default function KitchenHomePage() {
       <div className="px-5 pt-4 flex flex-col gap-4">
         <KitchenInfo />
         <KitchenUpdateStatus />
-        <KitchenOrder onGoing={2} history={3} />
+        <KitchenOrderStatusFetcher />
         <KitchenActions />
         <KitchenMenu />
       </div>
