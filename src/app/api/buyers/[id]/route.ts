@@ -4,10 +4,8 @@ import bcrypt from "bcrypt";
 import { db } from "@/db/client";
 import { buyers } from "@/drizzle/schema";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { id } = params;
   const buyerId = parseInt(id);
 
@@ -42,10 +40,8 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { id } = params;
   const body = await request.json();
 

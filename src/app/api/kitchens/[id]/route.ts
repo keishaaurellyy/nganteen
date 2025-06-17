@@ -6,10 +6,8 @@ import { ZodError } from "zod";
 import bcrypt from "bcrypt";
 import { EditKitchenSchema } from "@/app/schema/kitchen";
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const kitchenId = parseInt(params.id, 10);
 
   if (isNaN(kitchenId)) {
@@ -90,9 +88,9 @@ export async function PATCH(
 
 export async function GET(
   req: NextRequest,
-  context: { params: Record<string, string> }
+  context: { params: Promise<Record<string, string>> }
 ) {
-  const { id } = context.params;
+  const { id } = (await context.params);
   const kitchenId = parseInt(id, 10);
 
   if (isNaN(kitchenId)) {

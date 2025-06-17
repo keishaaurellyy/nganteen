@@ -3,10 +3,8 @@ import { db } from "@/db/client";
 import { orderItems } from "@/drizzle/schema";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { orderId: string } }
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ orderId: string }> }) {
+  const params = await props.params;
   const orderId = parseInt(params.orderId);
   if (isNaN(orderId)) {
     return NextResponse.json({ error: "Invalid order ID" }, { status: 400 });

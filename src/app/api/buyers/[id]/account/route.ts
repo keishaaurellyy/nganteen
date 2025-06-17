@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const { params } = context;
 
@@ -35,10 +35,8 @@ export async function POST(
   return NextResponse.json({ message: "Account created" }, { status: 201 });
 }
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const buyerId = parseInt(params.id);
   if (isNaN(buyerId)) {
     return NextResponse.json({ error: "Invalid buyer ID" }, { status: 400 });
