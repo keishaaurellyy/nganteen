@@ -1,19 +1,28 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { DoorOpen, DoorClosed } from "lucide-react";
-import { KitchenStatus } from "@/app/types/kitchen";
+import { KitchenStatus as StatusEnum } from "@/app/types/kitchen";
 
 interface KitchenStatusProps {
   kitchenId: string;
+  initialStatus: StatusEnum;
 }
 
-export default function Toggle({ kitchenId }: KitchenStatusProps) {
-  const [isOpen, setIsOpen] = useState(true);
+export default function Toggle({
+  kitchenId,
+  initialStatus,
+}: KitchenStatusProps) {
+  const [isOpen, setIsOpen] = useState(initialStatus === StatusEnum.ACTIVE);
   const [isPending, startTransition] = useTransition();
 
+  // Sync state if initialStatus ever changes
+  useEffect(() => {
+    setIsOpen(initialStatus === StatusEnum.ACTIVE);
+  }, [initialStatus]);
+
   const updateStatus = async (
-    status: KitchenStatus.ACTIVE | KitchenStatus.INACTIVE
+    status: StatusEnum.ACTIVE | StatusEnum.INACTIVE
   ) => {
     try {
       const res = await fetch(`/api/kitchens/${kitchenId}/status`, {
@@ -34,7 +43,7 @@ export default function Toggle({ kitchenId }: KitchenStatusProps) {
   const handleSetOpen = (open: boolean) => {
     setIsOpen(open);
     startTransition(() =>
-      updateStatus(open ? KitchenStatus.ACTIVE : KitchenStatus.INACTIVE)
+      updateStatus(open ? StatusEnum.ACTIVE : StatusEnum.INACTIVE)
     );
   };
 

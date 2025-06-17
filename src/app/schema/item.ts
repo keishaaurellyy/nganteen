@@ -10,7 +10,6 @@ export const RegisterItemSchema = z.object({
   item_description: z.string().optional(),
   item_price: z.number().int().min(0, { message: "Price cannot be negative" }),
   item_stock: z.number().int().min(0, { message: "Stock cannot be negative" }),
-  item_url: z.instanceof(File).optional(),
 });
 
 export const ExtendedRegisterItemSchema = KitchenOperational.extend({
@@ -24,7 +23,6 @@ export const EditItemSchema = z.object({
   item_description: z.string().optional(),
   item_price: z.number().int().min(0).optional(),
   item_stock: z.number().int().min(0).optional(),
-  item_url: z.instanceof(File).optional(),
 });
 
 export const ExtendedEditItemSchema = KitchenOperational.extend({

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { kitchens } from "@/drizzle/schema";
@@ -6,7 +8,10 @@ import { ZodError } from "zod";
 import bcrypt from "bcrypt";
 import { EditKitchenSchema } from "@/app/schema/kitchen";
 
-export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+export async function PATCH(
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
   const params = await props.params;
   const kitchenId = parseInt(params.id, 10);
 
@@ -86,11 +91,12 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   }
 }
 
+// GET handler
 export async function GET(
   req: NextRequest,
   context: { params: Promise<Record<string, string>> }
 ) {
-  const { id } = (await context.params);
+  const { id } = await context.params;
   const kitchenId = parseInt(id, 10);
 
   if (isNaN(kitchenId)) {

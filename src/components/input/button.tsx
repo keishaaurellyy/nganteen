@@ -14,7 +14,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  iconOnly?: boolean; // ➕ Tambahan baru
+  iconOnly?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -77,9 +77,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           sizeClasses[size],
           variant === "solid"
             ? ColorClasses[color].solid
-            : ColorClasses[color].outline ?? ColorClasses[color].solid,
+            : (ColorClasses[color].outline ?? ColorClasses[color].solid),
           {
-            "pointer-events-none": isLoading,
+            "pointer-events-none opacity-50": isLoading || disabled,
           }
         )}
         ref={ref}
@@ -89,9 +89,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         <Show
           when={!isLoading}
           fallback={
-            <span className="flex items-center justify-center w-full">
+            <div className="flex items-center justify-center gap-2">
               <Spinner size={size} color={color} variant={variant} />
-            </span>
+              {!iconOnly && <span className="text-sm">Loading...</span>}
+            </div>
           }
         >
           <>

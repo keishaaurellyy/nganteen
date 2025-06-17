@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { kitchens, items, buyers, account, orders, balance, orderItems } from "./schema";
+import { kitchens, items, buyers, account, orders, orderItems } from "./schema";
 
 export const itemsRelations = relations(items, ({one}) => ({
 	kitchen: one(kitchens, {
@@ -11,7 +11,6 @@ export const itemsRelations = relations(items, ({one}) => ({
 export const kitchensRelations = relations(kitchens, ({many}) => ({
 	items: many(items),
 	orders: many(orders),
-	balances: many(balance),
 }));
 
 export const accountRelations = relations(account, ({one}) => ({
@@ -36,13 +35,6 @@ export const ordersRelations = relations(orders, ({one, many}) => ({
 		references: [kitchens.kitchenId]
 	}),
 	orderItems: many(orderItems),
-}));
-
-export const balanceRelations = relations(balance, ({one}) => ({
-	kitchen: one(kitchens, {
-		fields: [balance.kitchenId],
-		references: [kitchens.kitchenId]
-	}),
 }));
 
 export const orderItemsRelations = relations(orderItems, ({one}) => ({

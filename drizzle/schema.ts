@@ -1,4 +1,4 @@
-import { pgTable, foreignKey, integer, text, timestamp, unique, check, primaryKey, date, boolean, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, foreignKey, integer, text, timestamp, unique, check, primaryKey, pgEnum } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const kitchenStatus = pgEnum("kitchen_status", ['ACTIVE', 'INACTIVE'])
@@ -13,7 +13,6 @@ export const items = pgTable("items", {
 	itemDescription: text("item_description"),
 	itemPrice: integer("item_price").notNull(),
 	itemStock: integer("item_stock").notNull(),
-	itemUrl: text("item_url"),
 }, (table) => [
 	foreignKey({
 			columns: [table.kitchenId],
@@ -94,29 +93,12 @@ export const buyers = pgTable("buyers", {
 	check("format_phone_number", sql`phone_number ~ '^08[0-9]{8,12}$'::text`),
 ]);
 
-export const balance = pgTable("balance", {
-	kitchenId: integer("kitchen_id").notNull(),
-	periodMonth: date("period_month").notNull(),
-	totalIncome: integer("total_income").notNull(),
-	totalRefund: integer("total_refund"),
-	isFeePaid: boolean("is_fee_paid").notNull(),
-	feePaymentDate: date("fee_payment_date").notNull(),
-}, (table) => [
-	foreignKey({
-			columns: [table.kitchenId],
-			foreignColumns: [kitchens.kitchenId],
-			name: "kitchen_id_fk"
-		}),
-	primaryKey({ columns: [table.kitchenId, table.periodMonth], name: "balance_pk"}),
-]);
-
 export const orderItems = pgTable("order_items", {
 	orderId: integer("order_id").notNull(),
 	itemId: integer("item_id").notNull(),
 	itemName: text("item_name").notNull(),
 	itemPrice: integer("item_price").notNull(),
 	itemQty: integer("item_qty").notNull(),
-	itemUrl: text("item_url"),
 	totalItemPrice: integer("total_item_price").notNull(),
 }, (table) => [
 	foreignKey({
