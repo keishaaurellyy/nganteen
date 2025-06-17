@@ -6,7 +6,6 @@
 // import ItemCard from "./items/item-card";
 // import { useSession } from "next-auth/react";
 // import Show from "../input/show";
-import Image from "next/image";
 import { TextField } from "../input/text-field";
 import { SearchIcon } from "lucide-react";
 
@@ -48,7 +47,7 @@ export default function KitchenItemsView() {
   //     </div>
   //   );
   return (
-    <div className="space-y-3 px-3">
+    <div className="space-y-4 px-3">
       {/* Search Bar */}
       <TextField
         className="w-full rounded-md bg-neutral-100 text-sm"
@@ -56,64 +55,37 @@ export default function KitchenItemsView() {
         endAdornment={<SearchIcon className="w-4" />}
       />
       {/* Items 1 */}
-      <div className="flex flex-row items-center gap-4 border-b border-neutral-400 pb-4">
-        <div className="w-24 h-24 flex-shrink-0 relative rounded-md overflow-hidden">
-          <Image
-            src={"/images/foodie-home.svg"}
-            alt={"items"}
-            fill
-            className="object-cover"
-          />
-        </div>
-        <div className="flex flex-col justify-between gap-2 w-full">
+      <div className="flex flex-row justify-between border-b border-neutral-400 pb-4">
+        <div className="flex flex-col w-full gap-2">
           <p className="font-semibold text-base">Ayam Geprek</p>
-          <p className="text-xs font-light">
-            Dengan bumbu bawang bawang yang wangi
-          </p>
-          <div className="flex flex-row justify-between items-end">
-            <span className="font-semibold text-sm">30.000</span>
-            <span className="font-semibold text-sm">Stock:&nbsp;100</span>
-          </div>
+          <p className="text-xs font-light">Pedas rawit, bisa request level</p>
+        </div>
+        <div className="flex flex-col w-full gap-2 items-end">
+          <p className="font-semibold text-base">20.000</p>
+          <p className="text-xs font-light">Stock: 200</p>
         </div>
       </div>
       {/* Items 2 */}
-      <div className="flex flex-row items-center gap-4 border-b border-neutral-400 pb-4">
-        <div className="w-24 h-24 flex-shrink-0 relative rounded-md overflow-hidden">
-          <Image
-            src={"/images/foodie-home.svg"}
-            alt={"items"}
-            fill
-            className="object-cover"
-          />
-        </div>
-        <div className="flex flex-col gap-2 w-full justify-between">
+      <div className="flex flex-row justify-between border-b border-neutral-400 pb-4">
+        <div className="flex flex-col w-full gap-2">
           <p className="font-semibold text-base">Ayam Bakar</p>
           <p className="text-xs font-light">Bumbu manis kecap gurih</p>
-          <div className="flex flex-row justify-between items-end">
-            <span className="font-semibold text-sm">30.000</span>
-            <span className="font-semibold text-sm">Stock:&nbsp;100</span>
-          </div>
+        </div>
+        <div className="flex flex-col w-full gap-2 items-end">
+          <p className="font-semibold text-base">30.000</p>
+          <p className="text-xs font-light">Stock: 100</p>
         </div>
       </div>
       {/* Items 3 */}
-      <div className="flex flex-row items-center gap-4 border-b border-neutral-400 pb-4">
-        <div className="w-24 h-24 flex-shrink-0 relative rounded-md overflow-hidden">
-          <Image
-            src={"/images/foodie-home.svg"}
-            alt={"items"}
-            fill
-            className="object-cover"
-          />
-        </div>
-        <div className="flex flex-col gap-2 w-full justify-between">
+      <div className="flex flex-row justify-between border-b border-neutral-400 pb-4">
+        <div className="flex flex-col w-full gap-2">
           <p className="font-semibold text-base">Sayur Asem</p>
-          <p className="text-xs font-light">Pedas gurih pakai sambal terasi</p>
-          <div className="flex flex-row justify-between items-end">
-            <span className="font-semibold text-error-medium text-sm">
-              Not Available
-            </span>
-            <span className="font-semibold text-sm">Stock:&nbsp;60</span>
-          </div>
+          <p className="text-xs font-light">Dengan sambal terasi</p>
+          <p className="font-medium text-error-medium text-sm">Not available</p>
+        </div>
+        <div className="flex flex-col w-full gap-2 items-end">
+          <p className="font-semibold text-base">15.000</p>
+          <p className="text-xs font-light">Stock: 0</p>
         </div>
       </div>
     </div>

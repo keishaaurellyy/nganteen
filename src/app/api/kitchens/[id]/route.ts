@@ -89,10 +89,11 @@ export async function PATCH(
 }
 
 export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Record<string, string> }
 ) {
-  const kitchenId = parseInt(params.id, 10);
+  const { id } = context.params;
+  const kitchenId = parseInt(id, 10);
 
   if (isNaN(kitchenId)) {
     return NextResponse.json(
@@ -124,15 +125,13 @@ export async function GET(
       );
     }
 
-    const response = {
+    return NextResponse.json({
       success: true,
       data: {
         ...kitchenData[0],
         isOpen: kitchenData[0].status === "ACTIVE",
       },
-    };
-
-    return NextResponse.json(response);
+    });
   } catch (err) {
     console.error(`GET /kitchens/${kitchenId} error:`, err);
     return NextResponse.json(
