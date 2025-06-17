@@ -37,7 +37,7 @@ export default function KitchenInfo({ kitchenId }: Props) {
           <Badge>Kitchen</Badge>
         </div>
         <p className="text-sm">
-          {data.location} | {data.kitchenDescription}
+          {data.location}&ensp;|&ensp;{data.kitchenDescription}
         </p>
       </div>
     </div>
