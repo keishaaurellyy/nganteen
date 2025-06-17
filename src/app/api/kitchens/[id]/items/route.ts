@@ -1,14 +1,19 @@
+export const dynamic = "force-dynamic";
+
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/db/client";
+import { items as itemsTable } from "@/drizzle/schema";
 import {
   ExtendedEditItemSchema,
   ExtendedRegisterItemSchema,
   RegisterItem,
 } from "@/app/schema/item";
-import { db } from "@/db/client";
-import { NextRequest, NextResponse } from "next/server";
-import { items as itemsTable } from "@/drizzle/schema";
 import { and, eq } from "drizzle-orm";
 
-export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+export async function POST(
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
   const params = await props.params;
   const kitchenId = parseInt(params.id);
   if (isNaN(kitchenId)) {
@@ -22,13 +27,12 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
     let index = 0;
 
     while (formData.has(`items[${index}].item_name`)) {
-      const item: any = {
+      const item = {
         item_name: formData.get(`items[${index}].item_name`)?.toString() ?? "",
         item_description:
           formData.get(`items[${index}].item_description`)?.toString() ?? "",
         item_price: Number(formData.get(`items[${index}].item_price`) ?? 0),
         item_stock: Number(formData.get(`items[${index}].item_stock`) ?? 0),
-        item_url: formData.get(`items[${index}].item_url`) as File | null,
       };
       items.push(item);
       index++;
@@ -42,7 +46,6 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
       itemDescription: item.item_description ?? "",
       itemPrice: item.item_price,
       itemStock: item.item_stock,
-      itemUrl: null,
     }));
 
     const inserted = await db.insert(itemsTable).values(newItems).returning();
@@ -59,7 +62,10 @@ export async function POST(req: NextRequest, props: { params: Promise<{ id: stri
   }
 }
 
-export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+export async function PATCH(
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
   const params = await props.params;
   const kitchenId = parseInt(params.id);
   if (isNaN(kitchenId)) {
@@ -72,7 +78,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
   let index = 0;
 
   while (formData.has(`items[${index}].item_id`)) {
-    const item: any = {
+    const item = {
       item_id: Number(formData.get(`items[${index}].item_id`)),
       item_name: formData.get(`items[${index}].item_name`)?.toString(),
       item_description: formData
@@ -102,7 +108,6 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
             itemDescription: item.item_description,
             itemPrice: item.item_price,
             itemStock: item.item_stock,
-            itemUrl: item.item_url ? null : undefined,
           })
           .where(
             and(
