@@ -8,10 +8,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { items as itemsTable } from "@/drizzle/schema";
 import { and, eq } from "drizzle-orm";
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const kitchenId = parseInt(params.id);
   if (isNaN(kitchenId)) {
     return NextResponse.json({ error: "Invalid kitchen ID" }, { status: 400 });
@@ -61,10 +59,8 @@ export async function POST(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const kitchenId = parseInt(params.id);
   if (isNaN(kitchenId)) {
     return NextResponse.json({ error: "Invalid kitchen ID" }, { status: 400 });
@@ -129,9 +125,9 @@ export async function PATCH(
 
 export async function GET(
   _req: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const kitchenId = parseInt(context.params.id, 10);
+  const kitchenId = parseInt((await context.params).id, 10);
 
   if (isNaN(kitchenId)) {
     return NextResponse.json({ error: "Invalid kitchen ID" }, { status: 400 });

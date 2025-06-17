@@ -6,10 +6,8 @@ import { eq, and, inArray } from "drizzle-orm";
 const validStatuses = ["INCOMING", "COOKING", "READY", "COMPLETED", "CANCELLED"] as const;
 type OrderStatus = typeof validStatuses[number];
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const kitchenId = Number(params.id);
   const { searchParams } = new URL(req.url);
   const rawStatus = searchParams.get("status")?.toUpperCase() ?? null;
