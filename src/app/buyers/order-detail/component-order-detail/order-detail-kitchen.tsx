@@ -95,13 +95,65 @@
 //   );
 // }
 
+// ---------------------------------------------------------------------------
+// "use client";
+
+// import { Copy } from "lucide-react";
+
+// export default function OrderDetailKitchen() {
+//   return (
+//     <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
+//       {/* Dapur Info */}
+//       <div className="border border-neutral-400 rounded-lg p-3">
+//         <h2 className="text-base font-bold">
+//           Dapur Nietta&nbsp;
+//           <span className="text-xs font-semibold">| Blok A1</span>
+//         </h2>
+//         <p className="flex items-center text-xs mt-1">
+//           07 Mar 2025 03.50PM&nbsp;
+//           <span className="flex items-center text-xs font-semibold text-neutral-800">• TRX000001&nbsp;<span><Copy className="w-4 h-4 text-secondary-500" /></span></span>
+//         </p>
+//       </div>
+//     </div>
+//   );
+// }
+
 "use client";
 
-import { Copy } from "lucide-react";
+import { Copy, MessageCircleX } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Dialog } from "@/components/input/dialog";
 
 export default function OrderDetailKitchen() {
+  const router = useRouter();
+  const [showDialog, setShowDialog] = useState(false);
+
+  const handleConfirm = () => {
+    setShowDialog(false);
+    router.push("/buyers/profile/account"); // ganti dengan page tujuan kamu
+  };
+
   return (
     <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
+      {/* Dialog Overlay */}
+      {showDialog && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+          <Dialog
+            icon={<MessageCircleX />}
+            color="error"
+            size="medium"
+            title="Kitchen Cancelled Order"
+            description="We’re sorry—the kitchen couldn’t fulfill your order.
+To request a refund, please fill in your account details on the
+profile page 👇"
+            buttonLabel="Fill Account Detail"
+            onConfirm={handleConfirm}
+            onClose={() => setShowDialog(false)}
+          />
+        </div>
+      )}
+
       {/* Dapur Info */}
       <div className="border border-neutral-400 rounded-lg p-3">
         <h2 className="text-base font-bold">
@@ -110,7 +162,18 @@ export default function OrderDetailKitchen() {
         </h2>
         <p className="flex items-center text-xs mt-1">
           07 Mar 2025 03.50PM&nbsp;
-          <span className="flex items-center text-xs font-semibold text-neutral-800">• TRX000001&nbsp;<span><Copy className="w-4 h-4 text-secondary-500" /></span></span>
+          <span className="flex items-center text-xs font-semibold text-neutral-800">
+            • TRX000001&nbsp;
+            <span>
+              <Copy
+                className="w-4 h-4 text-secondary-500 cursor-pointer"
+                onClick={() => {
+                  // Optional: bisa copy ke clipboard juga kalau mau
+                  setShowDialog(true); // Tampilkan dialog
+                }}
+              />
+            </span>
+          </span>
         </p>
       </div>
     </div>

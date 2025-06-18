@@ -67,9 +67,7 @@ export default function ContractPolicyPage() {
                 <div className="space-y-3">
                   <p>
                     The platform charges a fixed fee of <b>Rp100.000/month</b>.
-                    tPayments are made to the admin’s bank account, which can be
-                    found by going to&nbsp;
-                    <b>Home &gt; Balance &gt; Platform Fee</b>.
+                    Payments are made to the admin’s bank account.
                   </p>
                   <p>
                     Please complete your payment by the&nbsp;
@@ -169,10 +167,10 @@ export default function ContractPolicyPage() {
                     account within <b>24 hours</b>.
                   </p>
                   <p>
-                    Failure to refund within this timeframe will result in
+                    Failure to refund within this timeframe will lead to
                     a&nbsp;
                     <b>
-                      temporary suspension from receiving new orders for 3 days
+                      deactivation of your account
                     </b>
                     .
                   </p>

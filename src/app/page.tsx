@@ -53,7 +53,7 @@ export default function LandingPage() {
             leftIcon={<GraduationCap />}
             className="w-fit"
           >
-            Customer
+            Buyer
           </Button>
         </Link>
         <Link href="/kitchens/login">

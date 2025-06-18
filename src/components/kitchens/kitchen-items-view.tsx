@@ -37,7 +37,7 @@ export default function KitchenItemsView() {
   }, [kitchenId]);
 
   return (
-    <div className="space-y-4 px-3">
+    <div className="space-y-4 px-1">
       {/* Search Bar */}
       <SearchBar data={items} keyword="itemName" onFilter={setFilteredItems} />
 

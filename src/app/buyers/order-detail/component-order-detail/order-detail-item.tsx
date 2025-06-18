@@ -8,17 +8,17 @@ export default function OrderDetailItem() {
         <h3 className="font-bold text-sm mb-1">Item Details</h3>
         <div className="flex justify-between items-center py-1">
           <span className="flex-1 text-sm">
-            Ayam Geprek Mozarella
+            Nasi Putih
           </span>
-          <span className="w-8 text-center text-sm ">x2</span>
-          <span className="w-20 text-right text-sm">Rp 12.000</span>
+          <span className="w-8 text-center text-sm ">x1</span>
+          <span className="w-20 text-right text-sm">Rp 7.000</span>
         </div>
         <div className="flex justify-between items-center space-y-1">
           <span className="flex-1 text-sm ">
-            Mie Goreng Sambal Matah
+            Ayam Bakar
           </span>
           <span className="w-8 text-center text-sm ">x1</span>
-          <span className="w-20 text-right text-sm ">Rp 12.000</span>
+          <span className="w-20 text-right text-sm ">Rp 19.000</span>
         </div>
       </div>
     </div>
