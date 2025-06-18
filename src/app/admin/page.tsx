@@ -10,6 +10,9 @@ import { Button } from "@/components/input/button";
 import { getAllAccounts } from "../accounts/mutation/view";
 import { Account } from "../types/account";
 import AccountTable from "@/components/admin/account-table";
+import { OrderData, OrderStatus } from "../types/order";
+import { getAllOrders } from "./mutation/view";
+import OrderTable from "@/components/admin/order-table";
 
 export default function AdminHomePage() {
   const router = useRouter();
@@ -17,6 +20,7 @@ export default function AdminHomePage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [, setError] = useState("");
   const [isMounted, setIsMounted] = useState(false);
+  const [orders, setOrders] = useState<OrderData[]>([]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -56,6 +60,20 @@ export default function AdminHomePage() {
     fetchAccounts();
   }, []);
 
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const data = await getAllOrders();
+        setOrders(data);
+      } catch (err: any) {
+        setError("Failed to fetch orders");
+        console.error(err);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
   return (
     <div className="min-h-screen w-full max-w-md justify-self-center">
       {/* Header */}
@@ -88,6 +106,19 @@ export default function AdminHomePage() {
         <section className="pt-3 space-y-4">
           <h1 className="text-lg font-bold text-neutral-700">Accounts</h1>
           {isMounted && <AccountTable accounts={accounts} />}
+        </section>
+
+        <section className="pt-3 space-y-4">
+          <h1 className="text-lg font-bold text-neutral-700">
+            Cancelled Orders
+          </h1>
+          {isMounted && (
+            <OrderTable
+              orders={orders.filter(
+                (order) => order.status === OrderStatus.CANCELLED
+              )}
+            />
+          )}
         </section>
       </main>
     </div>

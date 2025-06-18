@@ -8,6 +8,8 @@ export enum OrderStatus {
   CANCELLED = "CANCELLED",
 }
 export interface OrderData {
+  buyerId?: number;
+  kitchenId?: number;
   orderId?: number;
   orderCode: string;
   createdDate: string;
