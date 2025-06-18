@@ -7,8 +7,7 @@ export default function OrderDetailNote() {
       <div className="rounded-lg p-3 border border-neutral-400">
         <h3 className="font-bold text-sm mb-1">Order Notes</h3>
         <p className="text-xs text-neutral-800">
-          Mau sambel yang banyak, sambelnya dipisah saja, tidak pakai timun.
-          Terimakasih, ya!
+          Minta sambel ya
         </p>
       </div>
 
@@ -17,7 +16,7 @@ export default function OrderDetailNote() {
         <h3 className="font-bold text-sm mb-1">Payment Details</h3>
         <div className="flex justify-between text-base font-bold text-green-600 mt-2">
           <span>TOTAL</span>
-          <span className="text-tertiary-600">Rp 36.000</span>
+          <span className="text-tertiary-600">Rp 26.000</span>
         </div>
       </div>
     </div>

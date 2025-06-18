@@ -130,7 +130,7 @@ export default function KitchenItemsView() {
       {/* Floating Basket Button */}
       {cartItems.length > 0 && (
         <button
-          onClick={() => router.push("/")}
+          onClick={() => router.push("/buyers/preview-order")}
           className="fixed bottom-4 left-4 right-4 z-50 bg-primary-500 hover:bg-primary-600 text-neutral-100 flex items-center justify-between px-5 py-3 rounded-xl shadow-md transition-colors"
         >
           <span className="text-base font-bold">
