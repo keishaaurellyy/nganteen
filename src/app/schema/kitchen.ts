@@ -22,11 +22,10 @@ export type RegisterKitchen = z.infer<typeof RegisterKitchenSchema>;
 
 export const EditKitchenSchema = z
   .object({
-    kitchen_id: z.number(),
     kitchen_email: z.string().email().optional(),
     kitchen_password: z.string().min(5).max(15).optional(),
     kitchen_name: z.string().optional(),
-    kitchen_description: z.string().optional(),
+    kitchen_description: z.string().nullish(),
     admin_name: z.string().optional(),
     admin_phone: z
       .string()

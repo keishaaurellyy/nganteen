@@ -1,6 +1,7 @@
 "use client";
 
 import Select from "react-select";
+import { useEffect, useState } from "react";
 
 type Option = {
   value: string;
@@ -20,6 +21,14 @@ export default function ReactSelect({
   options,
   placeholder,
 }: Props) {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
+
+  if (!isReady) return null;
+
   return (
     <Select
       value={value}
