@@ -2,18 +2,46 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
-import { kitchens } from "@/drizzle/schema";
-import { eq, and, ne, or } from "drizzle-orm";
-import { ZodError } from "zod";
-import bcrypt from "bcrypt";
+import { kitchens as kitchensTable } from "@/drizzle/schema";
 import { EditKitchenSchema } from "@/app/schema/kitchen";
+import { eq } from "drizzle-orm";
+
+export async function GET(
+  _req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { id } = await context.params;
+  const kitchenId = parseInt(id, 10);
+
+  if (isNaN(kitchenId)) {
+    return NextResponse.json({ error: "Invalid kitchen ID" }, { status: 400 });
+  }
+
+  try {
+    const kitchen = await db
+      .select()
+      .from(kitchensTable)
+      .where(eq(kitchensTable.kitchenId, kitchenId));
+
+    if (!kitchen || kitchen.length === 0) {
+      return NextResponse.json({ error: "Kitchen not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(kitchen[0], { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: "Failed to fetch kitchen", details: error?.message ?? error },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PATCH(
   req: NextRequest,
-  props: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const params = await props.params;
-  const kitchenId = parseInt(params.id, 10);
+  const { id } = await context.params;
+  const kitchenId = parseInt(id, 10);
 
   if (isNaN(kitchenId)) {
     return NextResponse.json({ error: "Invalid kitchen ID" }, { status: 400 });
@@ -21,126 +49,31 @@ export async function PATCH(
 
   try {
     const body = await req.json();
-    const parsed = EditKitchenSchema.parse(body);
-
-    const conflict = await db
-      .select()
-      .from(kitchens)
-      .where(
-        and(
-          ne(kitchens.kitchenId, kitchenId),
-          or(
-            eq(kitchens.kitchenEmail, parsed.kitchen_email ?? ""),
-            eq(kitchens.adminPhone, parsed.admin_phone ?? ""),
-            eq(kitchens.location, parsed.location ?? "")
-          )
-        )
-      );
-
-    if (conflict.length > 0) {
-      return NextResponse.json(
-        { error: "Email, phone, or location already used by another kitchen." },
-        { status: 409 }
-      );
-    }
-
-    const hashedPassword = parsed.kitchen_password
-      ? await bcrypt.hash(parsed.kitchen_password, 10)
-      : undefined;
+    const validated = EditKitchenSchema.parse(body);
 
     const updated = await db
-      .update(kitchens)
+      .update(kitchensTable)
       .set({
-        kitchenEmail: parsed.kitchen_email,
-        kitchenPassword: hashedPassword ?? undefined,
-        kitchenName: parsed.kitchen_name,
-        kitchenDescription: parsed.kitchen_description,
-        adminName: parsed.admin_name,
-        adminPhone: parsed.admin_phone,
-        location: parsed.location,
-        status: parsed.status,
+        kitchenEmail: validated.kitchen_email,
+        kitchenPassword: validated.kitchen_password,
+        kitchenName: validated.kitchen_name,
+        kitchenDescription: validated.kitchen_description,
+        adminName: validated.admin_name,
+        adminPhone: validated.admin_phone,
+        location: validated.location,
+        status: validated.status,
       })
-      .where(eq(kitchens.kitchenId, kitchenId))
+      .where(eq(kitchensTable.kitchenId, kitchenId))
       .returning();
 
-    if (updated.length === 0) {
-      return NextResponse.json(
-        { error: "Kitchen not found." },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({
-      message: "Kitchen updated successfully.",
-      kitchen: {
-        id: updated[0].kitchenId,
-        email: updated[0].kitchenEmail,
-        name: updated[0].kitchenName,
-      },
-    });
-  } catch (err) {
-    if (err instanceof ZodError) {
-      return NextResponse.json(
-        { error: err.flatten().fieldErrors },
-        { status: 400 }
-      );
-    }
-
-    console.error("Update kitchen error:", err);
-    return NextResponse.json({ error: "Server error." }, { status: 500 });
-  }
-}
-
-// GET handler
-export async function GET(
-  req: NextRequest,
-  context: { params: Promise<Record<string, string>> }
-) {
-  const { id } = await context.params;
-  const kitchenId = parseInt(id, 10);
-
-  if (isNaN(kitchenId)) {
+    return NextResponse.json({ updated }, { status: 200 });
+  } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: "Invalid kitchen ID" },
+      {
+        error: "Failed to update kitchen",
+        details: error?.errors ?? error?.message,
+      },
       { status: 400 }
-    );
-  }
-
-  try {
-    const kitchenData = await db
-      .select({
-        kitchenId: kitchens.kitchenId,
-        kitchenName: kitchens.kitchenName,
-        location: kitchens.location,
-        status: kitchens.status,
-        adminName: kitchens.adminName,
-        adminPhone: kitchens.adminPhone,
-        kitchenEmail: kitchens.kitchenEmail,
-        kitchenDescription: kitchens.kitchenDescription,
-      })
-      .from(kitchens)
-      .where(eq(kitchens.kitchenId, kitchenId))
-      .limit(1);
-
-    if (kitchenData.length === 0) {
-      return NextResponse.json(
-        { success: false, error: "Kitchen not found" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        ...kitchenData[0],
-        isOpen: kitchenData[0].status === "ACTIVE",
-      },
-    });
-  } catch (err) {
-    console.error(`GET /kitchens/${kitchenId} error:`, err);
-    return NextResponse.json(
-      { success: false, error: "Failed to fetch kitchen data" },
-      { status: 500 }
     );
   }
 }
