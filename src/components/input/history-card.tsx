@@ -1,6 +1,7 @@
 "use client";
 
 import type { OrderData } from "@/app/types/order";
+import { cn } from "@/config";
 import dayjs from "dayjs";
 
 export default function HistoryCard({
@@ -8,6 +9,7 @@ export default function HistoryCard({
   totalPayment,
   createdDate,
   items,
+  status,
 }: OrderData) {
   const safeItems = items ?? [];
 
@@ -34,8 +36,15 @@ export default function HistoryCard({
         </ul>
 
         {/* Total Paid */}
-        <div className="flex justify-between items-center bg-tertiary-100 font-bold px-4 py-2">
-          <span>Total Paid</span>
+        <div
+          className={cn(
+            "flex justify-between items-center font-bold px-4 py-2",
+            status === "CANCELLED"
+              ? "bg-secondary-100 text-error-700"
+              : "bg-tertiary-100"
+          )}
+        >
+          <span>{status === "CANCELLED" ? "Cancelled" : "Total Paid"}</span>
           <span>Rp {totalPayment.toLocaleString("id-ID")}</span>
         </div>
       </div>

@@ -2,13 +2,14 @@
 
 import { OrderData } from "@/app/types/order";
 import Show from "@/components/input/show";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function OrderDetailNoteAndPayment() {
+export default function OrderDetailNoteAndPayment({
+  orderId,
+}: {
+  orderId: string | null;
+}) {
   const [order, setOrder] = useState<OrderData | null>(null);
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId");
   useEffect(() => {
     if (!orderId) return;
 

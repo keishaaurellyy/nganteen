@@ -3,10 +3,13 @@
 import { OrderData } from "@/app/types/order";
 import useCopyToClipboard from "@/hooks/components/useCopyToClipboard";
 import dayjs from "dayjs";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function OrderDetailKitchen() {
+export default function OrderDetailKitchen({
+  orderId,
+}: {
+  orderId: string | null;
+}) {
   // const router = useRouter();
   // const [showDialog, setShowDialog] = useState(false);
 
@@ -16,8 +19,6 @@ export default function OrderDetailKitchen() {
   // };
 
   const [order, setOrder] = useState<OrderData | null>(null);
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId");
   useEffect(() => {
     if (!orderId) return;
 
@@ -53,24 +54,6 @@ export default function OrderDetailKitchen() {
 
   return (
     <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
-      {/* Dialog Overlay
-      {showDialog && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-          <Dialog
-            icon={<MessageCircleX />}
-            color="error"
-            size="medium"
-            title="Kitchen Cancelled Order"
-            description="We’re sorry—the kitchen couldn’t fulfill your order.
-To request a refund, please fill in your account details on the
-profile page 👇"
-            buttonLabel="Fill Account Detail"
-            onConfirm={handleConfirm}
-            onClose={() => setShowDialog(false)}
-          />
-        </div>
-      )} */}
-
       <div className="border border-neutral-400 rounded-lg p-3">
         <h2 className="text-base font-bold">
           {kitchenName}&nbsp;

@@ -54,7 +54,7 @@ export default function HomePage() {
 
       try {
         const res = await fetch(
-          `/api/buyers/${buyerId}/orders?status=COMPLETED&last=true`,
+          `/api/buyers/${buyerId}/orders?status=COMPLETED&status=CANCELLED&last=true`,
           { cache: "no-store" }
         );
 
@@ -154,7 +154,7 @@ export default function HomePage() {
           </Link>
 
           <Show when={!!lastOrder} fallback={<NoOrderHistory />}>
-            <HistoryCard {...lastOrder!} />
+            <HistoryCard {...lastOrder!} status={lastOrder?.status} />
           </Show>
         </section>
       </main>

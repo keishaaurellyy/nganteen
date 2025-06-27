@@ -1,13 +1,14 @@
 "use client";
 
 import { OrderItems } from "@/app/types/order-item";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function OrderDetailItem() {
+export default function OrderDetailItem({
+  orderId,
+}: {
+  orderId: string | null;
+}) {
   const [items, setItems] = useState<OrderItems[]>([]);
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId");
 
   useEffect(() => {
     if (!orderId) return;

@@ -1,7 +1,7 @@
 import { CreateOrderSchema } from "@/app/schema/order-item";
 import { db } from "@/db/client";
 import { orderItems, orders, orderStatus } from "@/drizzle/schema";
-import { eq, and, inArray, desc } from "drizzle-orm";
+import { eq, and, inArray, desc, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { items as itemsTable } from "@/drizzle/schema";
 
@@ -48,6 +48,12 @@ export async function POST(
       }
     }
 
+    const randomCode = Math.floor(Math.random() * 900000)
+      .toString()
+      .padStart(6, "0");
+
+    const wibDate = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString();
+
     const [order] = await db
       .insert(orders)
       .values({
@@ -56,8 +62,8 @@ export async function POST(
         notes: notes ?? null,
         totalPayment: total_payment,
         status: "INCOMING",
-        createdDate: new Date().toISOString(),
-        orderCode: `TRX${Math.floor(0 + Math.random() * 900000)}`,
+        createdDate: wibDate,
+        orderCode: `TRX${randomCode}`,
       })
       .returning({ orderId: orders.orderId });
 
@@ -71,6 +77,15 @@ export async function POST(
     }));
 
     await db.insert(orderItems).values(orderItemValues);
+
+    for (const item of items) {
+      await db
+        .update(itemsTable)
+        .set({
+          itemStock: sql`${itemsTable.itemStock} - ${item.item_qty}`,
+        })
+        .where(eq(itemsTable.itemId, item.item_id));
+    }
 
     return NextResponse.json({
       success: true,
@@ -93,33 +108,36 @@ export async function GET(
 
   try {
     const buyerId = parseInt(params.id);
-    const rawStatus =
-      req.nextUrl.searchParams.get("status")?.toUpperCase() || "COMPLETED";
-    const lastOnly = req.nextUrl.searchParams.get("last") === "true";
-
     if (isNaN(buyerId)) {
       return NextResponse.json({ error: "Invalid buyer_id" }, { status: 400 });
     }
 
-    const validStatuses = orderStatus.enumValues;
-    if (!validStatuses.includes(rawStatus as OrderStatus)) {
-      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
-    }
+    const lastOnly = req.nextUrl.searchParams.get("last") === "true";
 
-    const status = rawStatus as OrderStatus;
+    const rawStatuses = req.nextUrl.searchParams
+      .getAll("status")
+      .map((s) => s.toUpperCase());
+    const statuses: OrderStatus[] =
+      rawStatuses.length > 0
+        ? (rawStatuses.filter((s) =>
+            orderStatus.enumValues.includes(s as OrderStatus)
+          ) as OrderStatus[])
+        : ["COMPLETED"];
+
+    if (statuses.length === 0) {
+      return NextResponse.json(
+        { error: "Invalid status values" },
+        { status: 400 }
+      );
+    }
 
     const query = db
       .select()
       .from(orders)
-      .where(and(eq(orders.buyerId, buyerId), eq(orders.status, status)))
+      .where(and(eq(orders.buyerId, buyerId), inArray(orders.status, statuses)))
       .orderBy(desc(orders.createdDate));
 
-    let foundOrders;
-    if (lastOnly) {
-      foundOrders = await query.limit(1);
-    } else {
-      foundOrders = await query;
-    }
+    const foundOrders = lastOnly ? await query.limit(1) : await query;
 
     if (foundOrders.length === 0) {
       return NextResponse.json({ success: true, data: [] });

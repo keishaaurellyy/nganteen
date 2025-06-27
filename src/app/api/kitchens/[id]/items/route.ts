@@ -142,7 +142,8 @@ export async function GET(
     const kitchenItems = await db
       .select()
       .from(itemsTable)
-      .where(eq(itemsTable.kitchenId, kitchenId));
+      .where(eq(itemsTable.kitchenId, kitchenId))
+      .orderBy(itemsTable.itemName);
 
     console.log("✅ kitchenItems:", kitchenItems);
 

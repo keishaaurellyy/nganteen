@@ -13,7 +13,7 @@ export default function AccountPage() {
 
       <main className="bg-neutral-100 px-5 pb-10 flex flex-col items-center">
         {/* Form */}
-        <Suspense fallback={<Spinner size="extraLarge"/>}>
+        <Suspense fallback={<Spinner size="extraLarge" />}>
           <RegisterAccountPage />
         </Suspense>
       </main>

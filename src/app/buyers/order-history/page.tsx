@@ -21,7 +21,7 @@ export default function OrderHistoryPage() {
 
       try {
         const res = await fetch(
-          `/api/buyers/${buyerId}/orders?status=COMPLETED`,
+          `/api/buyers/${buyerId}/orders?status=COMPLETED&status=CANCELLED`,
           {
             cache: "no-store",
           }
@@ -69,6 +69,7 @@ export default function OrderHistoryPage() {
               createdDate={order.createdDate}
               items={order.items}
               totalPayment={order.totalPayment}
+              status={order.status}
             />
           ))}
         </Show>
