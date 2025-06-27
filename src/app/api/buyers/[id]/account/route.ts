@@ -8,23 +8,21 @@ export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
-  const { params } = context;
+  const { id } = await context.params;
+  const buyerId = parseInt(id, 10);
 
-  const body = await req.json();
-
-  const id = parseInt(params.id);
-
-  if (isNaN(id)) {
+  if (isNaN(buyerId)) {
     return NextResponse.json({ error: "Invalid buyer ID" }, { status: 400 });
   }
 
+  const body = await req.json();
   const parsed = RegisterAccountSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.errors }, { status: 400 });
+    return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
   }
 
   const accountData = {
-    id: id,
+    id: buyerId,
     bankName: parsed.data.bank_name,
     accountNumber: parsed.data.account_number,
     accountName: parsed.data.account_name,
@@ -35,9 +33,13 @@ export async function POST(
   return NextResponse.json({ message: "Account created" }, { status: 201 });
 }
 
-export async function GET(_req: Request, props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const buyerId = parseInt(params.id);
+export async function GET(
+  _req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { id } = await context.params;
+  const buyerId = parseInt(id, 10);
+
   if (isNaN(buyerId)) {
     return NextResponse.json({ error: "Invalid buyer ID" }, { status: 400 });
   }

@@ -56,15 +56,18 @@ export default function ExploreKitchenPage() {
             }}
           >
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
-            {kitchens.map((kitchen, index) => (
-              <Link href={`/kitchens/${kitchen.id}`} key={kitchen.id}>
-                <KitchenCard
-                  name={kitchen.kitchenName}
-                  description={kitchen.kitchenDescription}
-                  color={COLORS[index % COLORS.length]}
-                />
-              </Link>
-            ))}
+              {kitchens.map((kitchen, index) => (
+                <Link
+                  href={`/buyers/explore-kitchens/${kitchen.id}`}
+                  key={kitchen.id}
+                >
+                  <KitchenCard
+                    name={kitchen.kitchenName}
+                    description={kitchen.kitchenDescription}
+                    color={COLORS[index % COLORS.length]}
+                  />
+                </Link>
+              ))}
             </div>
           </div>
         )}

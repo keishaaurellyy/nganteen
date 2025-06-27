@@ -3,17 +3,29 @@ import { db } from "@/db/client";
 import { orders, orderItems } from "@/drizzle/schema";
 import { eq, and, inArray } from "drizzle-orm";
 
-const validStatuses = ["INCOMING", "COOKING", "READY", "COMPLETED", "CANCELLED"] as const;
-type OrderStatus = typeof validStatuses[number];
+const validStatuses = [
+  "INCOMING",
+  "COOKING",
+  "READY",
+  "COMPLETED",
+  "CANCELLED",
+] as const;
+type OrderStatus = (typeof validStatuses)[number];
 
-export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+export async function GET(
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
   const params = await props.params;
   const kitchenId = Number(params.id);
   const { searchParams } = new URL(req.url);
   const rawStatus = searchParams.get("status")?.toUpperCase() ?? null;
 
   if (isNaN(kitchenId)) {
-    return NextResponse.json({ success: false, error: "Invalid kitchen ID" }, { status: 400 });
+    return NextResponse.json(
+      { success: false, error: "Invalid kitchen ID" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -24,7 +36,10 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
         .select()
         .from(orders)
         .where(
-          and(eq(orders.kitchenId, kitchenId), eq(orders.status, rawStatus as OrderStatus))
+          and(
+            eq(orders.kitchenId, kitchenId),
+            eq(orders.status, rawStatus as OrderStatus)
+          )
         );
     } else {
       foundOrders = await db
@@ -60,7 +75,6 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
           itemQty: item.itemQty,
           itemPrice: item.itemPrice,
           totalPrice: item.totalItemPrice,
-          itemUrl: item.itemUrl,
         })),
       };
     });
@@ -68,6 +82,9 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
     return NextResponse.json({ success: true, data: grouped });
   } catch (error: any) {
     console.error("Failed to fetch kitchen orders:", error);
-    return NextResponse.json({ success: false, error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

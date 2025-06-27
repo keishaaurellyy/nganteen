@@ -21,7 +21,7 @@ export default function OrderHistoryPage() {
 
       try {
         const res = await fetch(
-          `/api/buyers/${buyerId}/orders?status=COMPLETED`,
+          `/api/buyers/${buyerId}/orders?status=COMPLETED&status=CANCELLED`,
           {
             cache: "no-store",
           }
@@ -42,9 +42,7 @@ export default function OrderHistoryPage() {
   }, [session]);
 
   if (status === "loading") {
-    return (
-      <Spinner size="extraLarge"/>
-    );
+    return <Spinner size="extraLarge" />;
   }
 
   return (
@@ -55,7 +53,7 @@ export default function OrderHistoryPage() {
       </Header>
 
       {/* Order History */}
-      <main className="pt-4 px-5 pb-10 flex flex-col items-center">
+      <main className="pt-4 px-5 pb-10 flex flex-col gap-5 items-center">
         <Show
           when={orders.length > 0}
           fallback={
@@ -70,6 +68,8 @@ export default function OrderHistoryPage() {
               orderCode={order.orderCode}
               createdDate={order.createdDate}
               items={order.items}
+              totalPayment={order.totalPayment}
+              status={order.status}
             />
           ))}
         </Show>

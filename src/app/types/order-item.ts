@@ -1,8 +1,8 @@
 export type OrderItems = {
+  orderId?: number;
   itemId: number;
   itemName: string;
   itemPrice: number;
   itemQty: number;
-  totalPrice: number;
-  itemUrl: string;
+  totalItemPrice: number;
 };

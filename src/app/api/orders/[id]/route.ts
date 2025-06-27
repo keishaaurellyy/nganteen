@@ -1,14 +1,21 @@
 import { db } from "@/db/client";
-import { orders } from "@/drizzle/schema";
+import { orderItems, orders } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-export async function GET(_req: Request, props: { params: Promise<{ orderId: string }> }) {
+export async function GET(
+  _req: Request,
+  props: { params: Promise<{ id: string }> }
+) {
   const params = await props.params;
-  const orderId = parseInt(params.orderId);
+  const orderId = parseInt(params.id);
   if (isNaN(orderId)) {
     return NextResponse.json({ error: "Invalid order ID" }, { status: 400 });
   }
+  const items = await db
+    .select()
+    .from(orderItems)
+    .where(eq(orderItems.orderId, orderId));
 
   try {
     const [order] = await db
@@ -23,7 +30,10 @@ export async function GET(_req: Request, props: { params: Promise<{ orderId: str
       );
     }
 
-    return NextResponse.json({ success: true, data: order }, { status: 200 });
+    return NextResponse.json(
+      { success: true, data: { order, items } },
+      { status: 200 }
+    );
   } catch (error: any) {
     return NextResponse.json(
       {

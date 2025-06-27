@@ -1,180 +1,81 @@
-// "use client";
-
-// import { useEffect, useMemo, useState } from "react";
-// import { useSearchParams } from "next/navigation";
-// import { CalendarDays } from "lucide-react";
-// import dayjs from "dayjs";
-// import { Kitchen } from "@/app/types/kitchen";
-// import { OrderData } from "@/app/types/order";
-// import useCopyToClipboard from "@/hooks/components/useCopyToClipboard";
-
-// export default function OrderDetailKitchen() {
-//   const searchParams = useSearchParams();
-//   const kitchenId = searchParams.get("kitchenId");
-//   const orderId = searchParams.get("orderId");
-
-//   const { copy, icon } = useCopyToClipboard({ iconSize: "small" });
-//   const [kitchen, setKitchen] = useState<Kitchen | null>(null);
-//   const [order, setOrder] = useState<OrderData | null>(null);
-
-//   const text = useMemo(() => {
-//     if (!order) return "";
-//     return `${order.orderCode}`;
-//   }, [order]);
-
-//   useEffect(() => {
-//     if (!kitchenId) return;
-
-//     const fetchKitchen = async () => {
-//       try {
-//         const res = await fetch(`/api/kitchens/${kitchenId}`);
-//         const json = await res.json();
-//         if (json.success) {
-//           setKitchen(json.data);
-//         }
-//       } catch (error) {
-//         console.error("Failed to fetch kitchen data", error);
-//       }
-//     };
-
-//     fetchKitchen();
-//   }, [kitchenId]);
-
-//   useEffect(() => {
-//     if (!orderId) return;
-
-//     const fetchOrder = async () => {
-//       try {
-//         const res = await fetch(`/api/orders/${orderId}`);
-//         const json = await res.json();
-//         if (json.success) {
-//           setOrder(json.data);
-//         }
-//       } catch (error) {
-//         console.error("Failed to fetch order data", error);
-//       }
-//     };
-
-//     fetchOrder();
-//   }, [orderId]);
-
-//   return (
-//     <div className="w-full max-w-md min-h-screen bg-neutral-100 justify-self-center">
-//       <main className="px-5 pb-10 flex flex-col items-center">
-//         <div className="bg-white w-full p-4 rounded-xl mt-4 shadow flex flex-col gap-2">
-//           {/* Nama Dapur & Lokasi */}
-//           <div className="flex justify-between items-start">
-//             <div className="flex flex-col">
-//               <span className="font-semibold text-lg">
-//                 {kitchen?.kitchenName}
-//               </span>
-//               <span className="text-sm text-neutral-500">
-//                 {kitchen?.location}
-//               </span>
-//             </div>
-//           </div>
-
-//           {/* Tanggal & Transaksi */}
-//           <div className="flex items-center text-sm text-neutral-500 gap-2 mt-1">
-//             <CalendarDays className="w-4 h-4" />
-//             <span>
-//               {dayjs(order?.createdDate).format("DD MMM YYYY hh.mmA")}
-//             </span>
-//             <span>•</span>
-//             <span className="font-medium">{order?.orderCode}</span>
-//             <button
-//               onClick={() => copy(text)}
-//               className="text-orange-500 hover:text-orange-600"
-//             >
-//               {icon}
-//             </button>
-//           </div>
-//         </div>
-//       </main>
-//     </div>
-//   );
-// }
-
-// ---------------------------------------------------------------------------
-// "use client";
-
-// import { Copy } from "lucide-react";
-
-// export default function OrderDetailKitchen() {
-//   return (
-//     <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
-//       {/* Dapur Info */}
-//       <div className="border border-neutral-400 rounded-lg p-3">
-//         <h2 className="text-base font-bold">
-//           Dapur Nietta&nbsp;
-//           <span className="text-xs font-semibold">| Blok A1</span>
-//         </h2>
-//         <p className="flex items-center text-xs mt-1">
-//           07 Mar 2025 03.50PM&nbsp;
-//           <span className="flex items-center text-xs font-semibold text-neutral-800">• TRX000001&nbsp;<span><Copy className="w-4 h-4 text-secondary-500" /></span></span>
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 
-import { Copy, MessageCircleX } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Dialog } from "@/components/input/dialog";
+import { OrderData } from "@/app/types/order";
+import useCopyToClipboard from "@/hooks/components/useCopyToClipboard";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 
-export default function OrderDetailKitchen() {
-  const router = useRouter();
-  const [showDialog, setShowDialog] = useState(false);
+export default function OrderDetailKitchen({
+  orderId,
+}: {
+  orderId: string | null;
+}) {
+  // const router = useRouter();
+  // const [showDialog, setShowDialog] = useState(false);
 
-  const handleConfirm = () => {
-    setShowDialog(false);
-    router.push("/buyers/profile/account"); // ganti dengan page tujuan kamu
-  };
+  // const handleConfirm = () => {
+  //   setShowDialog(false);
+  //   router.push("/buyers/profile/account");
+  // };
+
+  const [order, setOrder] = useState<OrderData | null>(null);
+  useEffect(() => {
+    if (!orderId) return;
+
+    const fetchOrder = async () => {
+      const res = await fetch(`/api/orders/${orderId}`);
+      if (!res.ok) return;
+      const resData = await res.json();
+      setOrder(resData.data.order);
+    };
+
+    fetchOrder();
+  }, [orderId]);
+
+  const [kitchenName, setKitchenName] = useState("");
+  const [kitchenLocation, setKitchenLocation] = useState("");
+
+  useEffect(() => {
+    if (!order?.kitchenId) return;
+
+    const fetchKitchen = async () => {
+      const res = await fetch(`/api/kitchens/${order.kitchenId}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      setKitchenName(data.data.kitchenName);
+      setKitchenLocation(data.data.location);
+    };
+
+    fetchKitchen();
+  }, [order?.kitchenId]);
+
+  const { copy, icon } = useCopyToClipboard({ iconSize: "small" });
+  const text = order?.orderCode;
 
   return (
     <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
-      {/* Dialog Overlay */}
-      {showDialog && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-          <Dialog
-            icon={<MessageCircleX />}
-            color="error"
-            size="medium"
-            title="Kitchen Cancelled Order"
-            description="We’re sorry—the kitchen couldn’t fulfill your order.
-To request a refund, please fill in your account details on the
-profile page 👇"
-            buttonLabel="Fill Account Detail"
-            onConfirm={handleConfirm}
-            onClose={() => setShowDialog(false)}
-          />
-        </div>
-      )}
-
-      {/* Dapur Info */}
       <div className="border border-neutral-400 rounded-lg p-3">
         <h2 className="text-base font-bold">
-          Dapur Nietta&nbsp;
-          <span className="text-xs font-semibold">| Blok A1</span>
-        </h2>
-        <p className="flex items-center text-xs mt-1">
-          07 Mar 2025 03.50PM&nbsp;
-          <span className="flex items-center text-xs font-semibold text-neutral-800">
-            • TRX000001&nbsp;
-            <span>
-              <Copy
-                className="w-4 h-4 text-secondary-500 cursor-pointer"
-                onClick={() => {
-                  // Optional: bisa copy ke clipboard juga kalau mau
-                  setShowDialog(true); // Tampilkan dialog
-                }}
-              />
-            </span>
+          {kitchenName}&nbsp;
+          <span className="text-xs font-semibold">
+            |&nbsp;Blok&nbsp;{kitchenLocation}
           </span>
-        </p>
+        </h2>
+        <div className="flex flex-row items-center mt-1 gap-1">
+          <p className="text-xs">
+            {dayjs(order?.createdDate).format("DD MMM YYYY HH.mm A")}
+          </p>
+          <p className="text-xs font-semibold text-neutral-800">•</p>
+          <p className="text-xs font-semibold text-neutral-800">{text}</p>
+          <p className="items-center">
+            <button
+              className="text-secondary-500 mt-1"
+              onClick={() => copy(text ?? "")}
+            >
+              {icon}
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

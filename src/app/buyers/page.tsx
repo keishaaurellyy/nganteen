@@ -14,12 +14,7 @@ import { useRouter } from "next/navigation";
 import { OrderData } from "../types/order";
 import KitchenCard from "@/components/buyers/kitchen-card";
 import Spinner from "@/components/input/spinner";
-
-interface Kitchen {
-  id: number;
-  kitchenName: string;
-  kitchenDescription: string;
-}
+import { Kitchen } from "../types/kitchen";
 
 const COLORS = ["primary", "secondary", "tertiary"] as const;
 
@@ -59,7 +54,7 @@ export default function HomePage() {
 
       try {
         const res = await fetch(
-          `/api/buyers/${buyerId}/orders?status=COMPLETED&last=true`,
+          `/api/buyers/${buyerId}/orders?status=COMPLETED&status=CANCELLED&last=true`,
           { cache: "no-store" }
         );
 
@@ -128,15 +123,21 @@ export default function HomePage() {
           </Link>
 
           <div className="flex gap-3 overflow-x-auto pb-1">
-            {kitchens.map((kitchen, index) => (
-              <Link href={`/kitchens/${kitchen.id}`} key={kitchen.id}>
-                <KitchenCard
-                  name={kitchen.kitchenName}
-                  color={COLORS[index % COLORS.length]}
-                  variant="home"
-                />
-              </Link>
-            ))}
+            {kitchens?.map((kitchen, index) => {
+              if (!kitchen?.kitchenId) return null;
+              return (
+                <Link
+                  href={`/buyers/explore-kitchens/${kitchen.kitchenId}`}
+                  key={kitchen.kitchenId}
+                >
+                  <KitchenCard
+                    name={kitchen.kitchenName}
+                    color={COLORS[index % COLORS.length]}
+                    variant="home"
+                  />
+                </Link>
+              );
+            })}
           </div>
         </section>
 
@@ -153,7 +154,7 @@ export default function HomePage() {
           </Link>
 
           <Show when={!!lastOrder} fallback={<NoOrderHistory />}>
-            <HistoryCard {...lastOrder!} />
+            <HistoryCard {...lastOrder!} status={lastOrder?.status} />
           </Show>
         </section>
       </main>

@@ -15,6 +15,6 @@ export interface OrderData {
   createdDate: string;
   items: OrderItems[];
   notes?: string;
-  totalPayment?: number;
+  totalPayment: number;
   status?: OrderStatus;
 }
