@@ -5,15 +5,11 @@ import dayjs from "dayjs";
 
 export default function HistoryCard({
   orderCode,
+  totalPayment,
   createdDate,
   items,
 }: OrderData) {
   const safeItems = items ?? [];
-
-  const total_payment = safeItems.reduce(
-    (sum, item) => sum + item.itemPrice * item.itemQty,
-    0
-  );
 
   return (
     <div className="rounded-xl overflow-hidden text-sm w-full">
@@ -40,7 +36,7 @@ export default function HistoryCard({
         {/* Total Paid */}
         <div className="flex justify-between items-center bg-tertiary-100 font-bold px-4 py-2">
           <span>Total Paid</span>
-          <span>Rp {total_payment.toLocaleString("id-ID")}</span>
+          <span>Rp {totalPayment.toLocaleString("id-ID")}</span>
         </div>
       </div>
     </div>

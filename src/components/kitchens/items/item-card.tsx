@@ -5,21 +5,21 @@ import { Items } from "@/app/types/item";
 import Show from "@/components/input/show";
 
 export default function ItemCard({ item }: { item: Items }) {
-  const isAvailable = item.item_stock > 0;
+  const isAvailable = item.itemStock > 0;
 
   return (
     <div className="flex items-start gap-4 border-b pb-4">
       <div className="w-24 h-24 flex-shrink-0 relative rounded-md overflow-hidden">
         <Image
-          src={item.item_url || "/fallback.png"}
-          alt={item.item_name}
+          src={"/fallback.png"}
+          alt={item.itemName}
           fill
           className="object-cover"
         />
       </div>
       <div className="flex flex-col justify-between">
-        <p>{item.item_name}</p>
-        <p className="text-sm text-neutral-300">{item.item_description}</p>
+        <p>{item.itemName}</p>
+        <p className="text-sm text-neutral-300">{item.itemDescription}</p>
         <div className="flex flex-row justify-between">
           <Show
             when={isAvailable}
@@ -29,9 +29,9 @@ export default function ItemCard({ item }: { item: Items }) {
               </span>
             }
           >
-            <span>{item.item_price}</span>
+            <span>{item.itemPrice}</span>
           </Show>
-          <span>{item.item_stock}</span>
+          <span>{item.itemStock}</span>
         </div>
       </div>
     </div>

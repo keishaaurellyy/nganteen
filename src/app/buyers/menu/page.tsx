@@ -2,7 +2,7 @@
 
 import { Header } from "@/components/input/header";
 import KitchenDetailHeader from "@/components/buyers/buyer-detail-header";
-import KitchenItemsView from "@/components/buyers/buyer-items-view";
+import KitchenItemsView from "@/components/buyers/view-kitchen-detail";
 
 export default function KitchenDetail() {
   return (

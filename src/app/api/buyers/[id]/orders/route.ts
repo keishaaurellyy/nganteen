@@ -1,17 +1,101 @@
+import { CreateOrderSchema } from "@/app/schema/order-item";
 import { db } from "@/db/client";
 import { orderItems, orders, orderStatus } from "@/drizzle/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, desc } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { items as itemsTable } from "@/drizzle/schema";
 
 type OrderStatus = (typeof orderStatus.enumValues)[number];
 
-export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
+export async function POST(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
-    
+    const buyerId = parseInt(context.params.id, 10);
+    if (isNaN(buyerId)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid buyer ID" },
+        { status: 400 }
+      );
+    }
+
+    const body = await req.json();
+    const parsed = CreateOrderSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: parsed.error.format() },
+        { status: 400 }
+      );
+    }
+
+    const { kitchen_id, items, notes, total_payment } = parsed.data;
+
+    for (const item of items) {
+      const dbItem = await db.query.items.findFirst({
+        where: eq(itemsTable.itemId, item.item_id),
+      });
+
+      if (!dbItem || item.item_qty > dbItem.itemStock) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Item "${item.item_name}" exceeds available stock`,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    const [order] = await db
+      .insert(orders)
+      .values({
+        buyerId,
+        kitchenId: kitchen_id,
+        notes: notes ?? null,
+        totalPayment: total_payment,
+        status: "INCOMING",
+        createdDate: new Date().toISOString(),
+        orderCode: `TRX${Math.floor(0 + Math.random() * 900000)}`,
+      })
+      .returning({ orderId: orders.orderId });
+
+    const orderItemValues = items.map((item) => ({
+      orderId: order.orderId,
+      itemId: item.item_id,
+      itemName: item.item_name,
+      itemPrice: item.item_price,
+      itemQty: item.item_qty,
+      totalItemPrice: item.total_item_price,
+    }));
+
+    await db.insert(orderItems).values(orderItemValues);
+
+    return NextResponse.json({
+      success: true,
+      data: { orderId: order.orderId },
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to create order" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(
+  req: NextRequest,
+  props: { params: Promise<{ id: string }> }
+) {
+  const params = await props.params;
+
+  try {
     const buyerId = parseInt(params.id);
     const rawStatus =
       req.nextUrl.searchParams.get("status")?.toUpperCase() || "COMPLETED";
+    const lastOnly = req.nextUrl.searchParams.get("last") === "true";
 
     if (isNaN(buyerId)) {
       return NextResponse.json({ error: "Invalid buyer_id" }, { status: 400 });
@@ -24,11 +108,18 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
 
     const status = rawStatus as OrderStatus;
 
-    const foundOrders = await db
+    const query = db
       .select()
       .from(orders)
       .where(and(eq(orders.buyerId, buyerId), eq(orders.status, status)))
-      .orderBy(orders.createdDate);
+      .orderBy(desc(orders.createdDate));
+
+    let foundOrders;
+    if (lastOnly) {
+      foundOrders = await query.limit(1);
+    } else {
+      foundOrders = await query;
+    }
 
     if (foundOrders.length === 0) {
       return NextResponse.json({ success: true, data: [] });
@@ -57,7 +148,6 @@ export async function GET(req: NextRequest, props: { params: Promise<{ id: strin
           itemQty: item.itemQty,
           itemPrice: item.itemPrice,
           totalPrice: item.totalItemPrice,
-          itemUrl: item.itemUrl,
         })),
       };
     });

@@ -27,7 +27,10 @@ export async function GET(
       return NextResponse.json({ error: "Kitchen not found" }, { status: 404 });
     }
 
-    return NextResponse.json(kitchen[0], { status: 200 });
+    return NextResponse.json(
+      { success: true, data: kitchen[0] },
+      { status: 200 }
+    );
   } catch (error: any) {
     return NextResponse.json(
       { error: "Failed to fetch kitchen", details: error?.message ?? error },

@@ -7,7 +7,7 @@ import { DEFAULT_TIMEOUT } from "@/const/default";
 type IconSizeOption = "small" | "medium" | "large";
 
 const iconSizeMap: Record<IconSizeOption, number> = {
-  small: 18,
+  small: 16,
   medium: 24,
   large: 32,
 };

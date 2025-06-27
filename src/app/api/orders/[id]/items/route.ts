@@ -3,7 +3,10 @@ import { db } from "@/db/client";
 import { orderItems } from "@/drizzle/schema";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest, props: { params: Promise<{ orderId: string }> }) {
+export async function POST(
+  req: NextRequest,
+  props: { params: Promise<{ orderId: string }> }
+) {
   const params = await props.params;
   const orderId = parseInt(params.orderId);
   if (isNaN(orderId)) {
@@ -21,7 +24,6 @@ export async function POST(req: NextRequest, props: { params: Promise<{ orderId:
       itemName: item.item_name,
       itemPrice: item.item_price,
       itemQty: item.item_qty,
-      itemUrl: item.item_url ?? null,
       totalItemPrice: item.item_price * item.item_qty,
     }));
 

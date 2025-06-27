@@ -2,7 +2,7 @@
 
 import { SoupIcon } from "lucide-react";
 
-export default function OrderStatus() {
+export default function OrderDetailStatusCard() {
   return (
     <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
       {/* Status */}

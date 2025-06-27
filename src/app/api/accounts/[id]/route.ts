@@ -6,10 +6,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: { id: string } }
 ) {
-  const { params } = context;
-  const accountId = parseInt(params.id);
+  const { id } = context.params;
+  const accountId = parseInt(id, 10);
 
   if (isNaN(accountId)) {
     return NextResponse.json({ error: "Invalid account ID" }, { status: 400 });

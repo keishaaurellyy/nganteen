@@ -69,6 +69,7 @@ export default function OrderHistoryPage() {
               orderCode={order.orderCode}
               createdDate={order.createdDate}
               items={order.items}
+              totalPayment={order.totalPayment}
             />
           ))}
         </Show>

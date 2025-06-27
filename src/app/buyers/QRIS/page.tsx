@@ -2,12 +2,33 @@
 
 import AlertBox from "@/components/input/alert-box";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Accordion from "@/components/input/accordion";
-import { Copy } from "lucide-react";
+import useCopyToClipboard from "@/hooks/components/useCopyToClipboard";
+import { useSearchParams } from "next/navigation";
+import { OrderData } from "@/app/types/order";
+import OrderDetailEventHandler from "../order-detail/component-order-detail/order-detail-event-handler";
 
 export default function QRISPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [order, setOrder] = useState<OrderData | null>(null);
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("orderId");
+  useEffect(() => {
+    if (!orderId) return;
+
+    const fetchOrder = async () => {
+      const res = await fetch(`/api/orders/${orderId}`);
+      if (!res.ok) return;
+      const resData = await res.json();
+      setOrder(resData.data.order);
+    };
+
+    fetchOrder();
+  }, [orderId]);
+
+  const { copy, icon } = useCopyToClipboard({ iconSize: "small" });
+  const text = order?.totalPayment?.toLocaleString("id-ID");
 
   const handleToggle = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -35,8 +56,6 @@ export default function QRISPage() {
 
   return (
     <div className="min-h-screen w-full max-w-md justify-self-center">
-      
-
       <main className="bg-neutral-100 px-5 pt-5 pb-10 flex flex-col items-center">
         <div className="mt-4 bg-neutral-100 flex flex-col space-y-5">
           <AlertBox
@@ -51,29 +70,21 @@ export default function QRISPage() {
           />
 
           {/* Title */}
-          <h2 className="text-2xl font-bold text-center">
-            Scan QRIS to Pay
-          </h2>
+          <h2 className="text-2xl font-bold text-center">Scan QRIS to Pay</h2>
 
           {/* QR Code */}
           <div className="flex justify-center">
-            <Image
-              src="/images/qris.jpg"
-              alt="QRIS"
-              width={240}
-              height={240}
-            />
+            <Image src="/images/qris.jpg" alt="QRIS" width={240} height={240} />
           </div>
 
           {/* Total Payment */}
           <div className="bg-primary-100 rounded-md px-4 py-3 text-center">
             <p className="text-sm font-semibold">Total Payment</p>
             <div className="flex items-center justify-center gap-2 mt-1">
-              <p className="text-2xl font-bold text-secondary-500">Rp 26.000</p>
-              <Copy
-                className="w-4 h-4 text-gray-600 cursor-pointer"
-                onClick={() => navigator.clipboard.writeText("50011")}
-              />
+              <p className="text-2xl font-bold text-secondary-500">Rp {text}</p>
+              <p>
+                <button onClick={() => copy(text ?? "")}>{icon}</button>
+              </p>
             </div>
           </div>
 
@@ -90,6 +101,7 @@ export default function QRISPage() {
               />
             ))}
           </div>
+          <OrderDetailEventHandler />
         </div>
       </main>
     </div>
