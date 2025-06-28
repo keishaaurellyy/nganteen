@@ -1,25 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
-import { orders, orderItems } from "@/drizzle/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { orders, orderItems, orderStatus } from "@/drizzle/schema";
+import { eq, and, inArray, desc } from "drizzle-orm";
 
-const validStatuses = [
-  "INCOMING",
-  "COOKING",
-  "READY",
-  "COMPLETED",
-  "CANCELLED",
-] as const;
-type OrderStatus = (typeof validStatuses)[number];
+type OrderStatus = (typeof orderStatus.enumValues)[number];
 
 export async function GET(
   req: NextRequest,
   props: { params: Promise<{ id: string }> }
 ) {
-  const params = await props.params;
-  const kitchenId = Number(params.id);
+  const { id } = await props.params;
+  const kitchenId = Number(id);
   const { searchParams } = new URL(req.url);
-  const rawStatus = searchParams.get("status")?.toUpperCase() ?? null;
+  const rawStatus = searchParams.get("status");
 
   if (isNaN(kitchenId)) {
     return NextResponse.json(
@@ -30,22 +23,30 @@ export async function GET(
 
   try {
     let foundOrders;
+    const statusFilters = rawStatus
+      ?.split(",")
+      .map((s) => s.trim().toUpperCase())
+      .filter((s): s is OrderStatus =>
+        orderStatus.enumValues.includes(s as OrderStatus)
+      );
 
-    if (rawStatus && validStatuses.includes(rawStatus as OrderStatus)) {
+    if (statusFilters && statusFilters.length > 0) {
       foundOrders = await db
         .select()
         .from(orders)
         .where(
           and(
             eq(orders.kitchenId, kitchenId),
-            eq(orders.status, rawStatus as OrderStatus)
+            inArray(orders.status, statusFilters)
           )
-        );
+        )
+        .orderBy(desc(orders.createdDate));
     } else {
       foundOrders = await db
         .select()
         .from(orders)
-        .where(eq(orders.kitchenId, kitchenId));
+        .where(eq(orders.kitchenId, kitchenId))
+        .orderBy(desc(orders.createdDate));
     }
 
     if (foundOrders.length === 0) {
@@ -68,6 +69,7 @@ export async function GET(
         totalPayment: order.totalPayment,
         status: order.status,
         kitchenId: order.kitchenId,
+        buyerId: order.buyerId,
         notes: order.notes,
         items: itemsOfOrder.map((item) => ({
           itemId: item.itemId,
@@ -80,7 +82,7 @@ export async function GET(
     });
 
     return NextResponse.json({ success: true, data: grouped });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to fetch kitchen orders:", error);
     return NextResponse.json(
       { success: false, error: "Internal Server Error" },
