@@ -1,78 +1,77 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "@/components/input/header";
 import AlertBox from "@/components/input/alert-box";
 import { OrdersTab } from "@/components/kitchens/order-tab";
 import { OrderCard } from "@/components/kitchens/order-card";
+import { OrderData, OrderStatus } from "@/app/types/order";
+import { useSession } from "next-auth/react";
+import Show from "@/components/input/show";
+import NoOngoingOrder from "@/components/input/no-ongoing-orders";
 
 type OrderType = "incoming" | "confirmed";
 
-interface OrderItem {
-  name: string;
-  qty: number;
-  price: number;
-}
-
-interface Order {
-  id: string;
-  buyer: string;
-  date: string;
-  time: string;
-  type: OrderType;
-  items: OrderItem[];
-  notes?: string;
-}
-
-// 2. Component
 export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState<OrderType>("incoming");
+  const [orders, setOrders] = useState<OrderData[]>([]);
+  const { data: session } = useSession();
+  const kitchenId = session?.user?.kitchen_id;
 
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: "TRX001",
-      buyer: "Gorgeous Blud",
-      date: "25 Aug 2024",
-      time: "09:00 AM",
-      type: "incoming",
-      items: [
-        { name: "Nasi Goreng Gila", qty: 1, price: 25000 },
-        { name: "Kerupuk", qty: 2, price: 5000 },
-        { name: "Air", qty: 1, price: 7000 },
-      ],
-      notes:
-        "Mau sambel yang banyak, sambelnya dipisah saja, tidak pakai timun. Terimakasih, ya!",
-    },
-    {
-      id: "TRX002",
-      buyer: "Charming Man",
-      date: "26 Aug 2024",
-      time: "10:30 AM",
-      type: "confirmed",
-      items: [
-        { name: "Mie Ayam Bakso", qty: 2, price: 26000 },
-        { name: "Es Teh Manis", qty: 3, price: 5000 },
-      ],
-    },
-  ]);
+  useEffect(() => {
+    if (!kitchenId) return;
 
-  const handleConfirm = (id: string) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === id ? { ...order, type: "confirmed" } : order
-      )
-    );
+    const status =
+      activeTab === "incoming" ? OrderStatus.INCOMING : OrderStatus.COOKING;
+
+    fetch(`/api/kitchens/${kitchenId}/orders?status=${status}`)
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success) setOrders(res.data);
+      });
+  }, [activeTab, kitchenId]);
+
+  const handleConfirm = async (orderId?: number) => {
+    if (!orderId) return;
+
+    try {
+      const res = await fetch(`/api/orders/${orderId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "COOKING" }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setOrders((prev) => prev.filter((order) => order.orderId !== orderId));
+      } else {
+        console.error("Failed to confirm order:", data.error);
+      }
+    } catch (err) {
+      console.error("Error confirming order:", err);
+    }
   };
 
-  const handleCancel = (id: string) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === id ? { ...order, type: "confirmed" } : order
-      )
-    );
-  };
+  const handleCancel = async (orderId?: number) => {
+    if (!orderId) return;
 
-  const filteredOrders = orders.filter((o) => o.type === activeTab);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "CANCELLED" }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setOrders((prev) => prev.filter((order) => order.orderId !== orderId));
+      } else {
+        console.error("Failed to cancel order:", data.error);
+      }
+    } catch (err) {
+      console.error("Error cancelling order:", err);
+    }
+  };
 
   return (
     <div className="w-full min-h-screen max-w-md justify-self-center">
@@ -89,22 +88,26 @@ export default function OrdersPage() {
           }
         />
 
-        <div className="w-full">
-          {filteredOrders.map((order) => (
-            <OrderCard
-              key={order.id}
-              type={order.type}
-              orderId={order.id}
-              buyerName={order.buyer}
-              date={order.date}
-              time={order.time}
-              items={order.items}
-              notes={order.notes}
-              onConfirm={() => handleConfirm(order.id)}
-              onCancel={() => handleCancel(order.id)}
-            />
-          ))}
-        </div>
+        <Show
+          when={orders.length > 0}
+          fallback={
+            <div className="flex flex-1 justify-items-center w-full min-h-[calc(100vh-27vh)]">
+              <NoOngoingOrder />
+            </div>
+          }
+        >
+          <div className="w-full">
+            {orders.map((order) => (
+              <OrderCard
+                key={order.orderId}
+                orders={order}
+                type={activeTab}
+                onConfirm={() => handleConfirm(order.orderId)}
+                onCancel={() => handleCancel(order.orderId)}
+              />
+            ))}
+          </div>
+        </Show>
       </main>
     </div>
   );
