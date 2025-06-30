@@ -21,11 +21,13 @@ export async function POST(
     return NextResponse.json({ error: parsed.error.format() }, { status: 400 });
   }
 
+  const wibDate = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString();
   const accountData = {
     id: buyerId,
     bankName: parsed.data.bank_name,
     accountNumber: parsed.data.account_number,
     accountName: parsed.data.account_name,
+    createdDate: wibDate,
   };
 
   await db.insert(account).values(accountData);

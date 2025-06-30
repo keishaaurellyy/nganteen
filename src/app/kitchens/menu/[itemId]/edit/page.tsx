@@ -73,14 +73,17 @@ export default function EditItemPage() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col justify-self-center"
+    >
       <Header
         variant="logo"
         onLeftIconClick={() => {
           router.replace("/kitchens/menu");
         }}
       />
-      <div className="w-full flex flex-col px-5 py-2 max-w-md min-h-screen justify-self-center">
+      <div className="w-full flex flex-col px-5 py-2 max-w-md min-h-screen">
         <div className="flex flex-col gap-5 py-5">
           <TextField
             label="Name"
@@ -89,12 +92,16 @@ export default function EditItemPage() {
             {...register("itemName")}
             error={!!errors.itemName}
             helperText={errors.itemName?.message}
+            maxLength={50}
           />
           <TextField
             label="Description"
             placeholder="Item description"
             type="text"
+            maxLength={50}
             {...register("itemDescription")}
+            error={!!errors.itemDescription}
+            helperText={errors.itemDescription?.message}
           />
           <div className="grid grid-cols-2 gap-3">
             <TextField

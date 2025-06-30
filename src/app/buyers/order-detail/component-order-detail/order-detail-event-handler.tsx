@@ -1,61 +1,71 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { MessageCircleX } from "lucide-react";
 import { Dialog } from "@/components/input/dialog";
+import { OrderStatus } from "@/app/types/order";
 
 export default function OrderDetailEventHandler() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [hasChecked, setHasChecked] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
 
-  const handleConfirm = () => {
+  const [showDialog, setShowDialog] = useState(false);
+  const hasCheckedRef = useRef(false);
+
+  const handleConfirmDialog = () => {
     setShowDialog(false);
     router.push("/buyers/profile");
   };
 
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+    router.replace("/buyers/order-history?from=cancelled");
+  };
+
   useEffect(() => {
-    if (status !== "authenticated" || hasChecked) return;
+    if (
+      status !== "authenticated" ||
+      !session?.user?.id ||
+      hasCheckedRef.current
+    )
+      return;
 
-    const checkActiveOrder = async () => {
-      const buyerId = session?.user?.id;
-      if (!buyerId) return;
+    hasCheckedRef.current = true;
 
+    const checkLatestOrder = async () => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 300));
 
         const res = await fetch(
-          `/api/orders/active?buyerId=${buyerId}&status=COOKING`
+          `/api/orders/active?buyerId=${session.user.id}`
         );
         const result = await res.json();
+        const order = Array.isArray(result?.data)
+          ? result.data[0]
+          : result.data;
 
-        if (result.success && result.data.length > 0) {
-          const order = result.data[0];
+        if (!order || typeof order !== "object" || !("status" in order)) return;
 
-          switch (order.status) {
-            case "COOKING":
-              router.replace(`/buyers/order-detail?orderId=${order.orderId}`);
-              break;
-            case "CANCELLED":
-              setShowDialog(true);
-              break;
-            default:
-              break;
-          }
+        switch (order.status) {
+          case OrderStatus.CANCELLED:
+            setShowDialog(true);
+            break;
+          case OrderStatus.COOKING:
+            router.replace(`/buyers/order-detail?orderId=${order.orderId}`);
+            break;
+          default:
+            break;
         }
-
-        setHasChecked(true);
       } catch (err) {
         console.error("Failed to check order:", err);
       }
     };
 
-    checkActiveOrder();
-  }, [status, session, hasChecked, router]);
+    checkLatestOrder();
+  }, [status, session, router]);
 
   return (
     <>
@@ -68,8 +78,8 @@ export default function OrderDetailEventHandler() {
             title="Kitchen Cancelled Order"
             description={`We’re sorry—the kitchen couldn’t fulfill your order.\nTo request a refund, please fill in your account details on the profile page 👇`}
             buttonLabel="Fill Account Detail"
-            onConfirm={handleConfirm}
-            onClose={() => setShowDialog(false)}
+            onConfirm={handleConfirmDialog}
+            onClose={handleCloseDialog}
           />
         </div>
       )}

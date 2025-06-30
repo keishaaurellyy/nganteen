@@ -1,7 +1,6 @@
 import { ButtonHTMLAttributes, forwardRef } from "react";
 import { cn } from "@/config";
 import Spinner from "./spinner";
-import Show from "./show";
 import { Color, ColorClasses } from "@/styles/color";
 
 type ButtonVariant = "solid" | "outline";
@@ -86,15 +85,17 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || isLoading}
         {...props}
       >
-        <Show
-          when={!isLoading}
-          fallback={
-            <div className="flex items-center justify-center gap-2">
-              <Spinner size={size} color={color} variant={variant} />
-              {!iconOnly && <span className="text-sm">Loading...</span>}
-            </div>
-          }
-        >
+        {isLoading ? (
+          <div className="flex items-center justify-center gap-2">
+            <Spinner
+              size="small"
+              color={color}
+              variant={variant}
+              className="!min-h-0 !h-4"
+            />
+            {!iconOnly && <span className="text-sm">Loading...</span>}
+          </div>
+        ) : (
           <>
             {leftIcon && (
               <span className={`flex items-center justify-center ${iconSize}`}>
@@ -110,7 +111,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               </span>
             )}
           </>
-        </Show>
+        )}
       </button>
     );
   }

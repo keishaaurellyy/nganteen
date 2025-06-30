@@ -66,9 +66,17 @@ export default function CreateItemsForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-      <Header variant="logo" />
-      <div className="w-full flex flex-col px-5 py-2 max-w-md min-h-screen justify-self-center">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col justify-self-center"
+    >
+      <Header
+        variant="logo"
+        onLeftIconClick={() => {
+          router.replace("/kitchens/menu");
+        }}
+      />
+      <div className="w-full flex flex-col px-5 py-2 max-w-md min-h-screen">
         <div className="flex flex-row justify-between items-center">
           <span className="font-bold text-xl">Items</span>
           <FAB
@@ -106,6 +114,8 @@ export default function CreateItemsForm() {
               placeholder="Item description"
               type="text"
               {...register(`items.${index}.item_description`)}
+              error={!!errors.items?.[index]?.item_description}
+              helperText={errors.items?.[index]?.item_description?.message}
             />
             <div className="flex flex-row gap-2">
               <TextField

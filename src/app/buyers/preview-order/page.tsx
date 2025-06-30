@@ -32,6 +32,7 @@ export default function PreviewOrderPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [notes, setNotes] = useState("");
   const [totalPrice, setTotalPrice] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const handleConfirmOrder = async () => {
     const raw = localStorage.getItem("cartPreview");
@@ -139,7 +140,13 @@ export default function PreviewOrderPage() {
             title="Order Confirmation"
             description="Are you sure you want to proceed your order?"
             buttonLabel="Process Order"
-            onConfirm={handleConfirmOrder}
+            isLoading={loading}
+            disableCloseOnConfirm
+            onConfirm={async () => {
+              setLoading(true);
+              await handleConfirmOrder();
+              setLoading(false);
+            }}
             onClose={() => setShowDialog(false)}
           />
         </div>

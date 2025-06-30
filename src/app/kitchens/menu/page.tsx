@@ -12,6 +12,8 @@ export default function KitchenDetail() {
       <Header
         variant="logo"
         rightIcon="create"
+        leftIcon
+        onLeftIconClick={() => router.replace("/kitchens")}
         onRightIconClick={() => {
           router.replace("/kitchens/menu/create");
         }}

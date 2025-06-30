@@ -61,7 +61,7 @@ export default function KitchenItemsView() {
               <p className="font-semibold text-base">
                 {item.itemPrice.toLocaleString("id-ID")}
               </p>
-              <p className="text-xs font-light w-full">
+              <p className="text-xs font-light w-full text-right">
                 Stock: {item.itemStock}
               </p>
             </div>

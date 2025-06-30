@@ -7,7 +7,8 @@ export default function RecommendCard() {
   const url = "https://nganteen.vercel.app";
 
   const handleShare = async () => {
-    if (typeof window === "undefined" || typeof navigator === "undefined") return;
+    if (typeof window === "undefined" || typeof navigator === "undefined")
+      return;
 
     const fullText = `${text} ${url}`;
 
@@ -30,7 +31,6 @@ export default function RecommendCard() {
         alert("Link copied to clipboard!");
       } catch (err) {
         console.error("Clipboard fallback failed:", err);
-        alert("Sharing is not supported, and copying failed.");
       }
     } else {
       alert("Sharing and clipboard are not supported in this browser.");

@@ -11,6 +11,8 @@ type DialogProps = {
   buttonLabel?: string;
   onConfirm: () => void;
   onClose: () => void;
+  isLoading?: boolean;
+  disableCloseOnConfirm?: boolean;
 };
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -63,10 +65,7 @@ export const Dialog: React.FC<DialogProps> = ({
             variant="solid"
             size={buttonSize}
             color={color}
-            onClick={() => {
-              onConfirm();
-              onClose();
-            }}
+            onClick={onConfirm}
             className="flex-1"
           >
             {buttonLabel}
