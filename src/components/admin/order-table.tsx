@@ -14,8 +14,8 @@ export default function OrderTable({ orders }: OrderTableProps) {
         <thead className="bg-neutral-100 text-neutral-700 font-semibold">
           <tr>
             <th className="px-3 py-2 text-left">Order Code</th>
-            <th className="px-3 py-2 text-left">Buyer Name</th>
-            <th className="px-3 py-2 text-left">Kitchen Name</th>
+            <th className="px-3 py-2 text-left">Buyer Id</th>
+            <th className="px-3 py-2 text-left">Kitchen Id</th>
             <th className="px-3 py-2 text-left">Total Payment</th>
             <th className="px-3 py-2 text-left">Created Date</th>
           </tr>

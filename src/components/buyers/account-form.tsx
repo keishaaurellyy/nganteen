@@ -126,7 +126,6 @@ export default function RegisterAccountPage() {
           Submit
         </Button>
       </form>
-      
     </div>
   );
 }

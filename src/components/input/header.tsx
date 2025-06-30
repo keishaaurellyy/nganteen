@@ -85,7 +85,13 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(
           <div className="w-10 flex justify-start">
             {leftIcon && (
               <button
-                onClick={onLeftIconClick ?? (() => window.history.back())}
+                onClick={() => {
+                  if (onLeftIconClick) {
+                    onLeftIconClick();
+                  } else {
+                    window.history.back();
+                  }
+                }}
                 className="text-neutral-900"
                 aria-label="Back"
               >

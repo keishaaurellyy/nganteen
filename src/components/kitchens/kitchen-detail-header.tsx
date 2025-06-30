@@ -7,9 +7,13 @@ import { cn } from "@/config";
 
 interface Props {
   kitchenId?: string;
+  onStatusChange?: (status: KitchenStatus) => void;
 }
 
-export default function KitchenDetailHeader({ kitchenId }: Props) {
+export default function KitchenDetailHeader({
+  kitchenId,
+  onStatusChange,
+}: Props) {
   const { data: session } = useSession();
   const id = kitchenId ?? session?.user?.kitchen_id;
 
@@ -25,6 +29,7 @@ export default function KitchenDetailHeader({ kitchenId }: Props) {
 
         if (res.ok) {
           setKitchen(result.data);
+          onStatusChange?.(result.data.status);
         } else {
           console.error("Failed to fetch kitchen:", result.error);
         }
@@ -34,7 +39,7 @@ export default function KitchenDetailHeader({ kitchenId }: Props) {
     };
 
     fetchKitchen();
-  }, [id]);
+  }, [id, onStatusChange]);
 
   return (
     <div className="px-3 rounded-xl items-center flex flex-col gap-2">
@@ -58,11 +63,13 @@ export default function KitchenDetailHeader({ kitchenId }: Props) {
       <span className="text-2xl font-bold">
         {kitchen?.kitchenName || "Loading..."}
       </span>
-      <span className="text-sm font-light">
-        {kitchen
-          ? `${kitchen.location}\u2003|\u2003${kitchen.kitchenDescription}`
-          : ""}
-      </span>
+      <div className="flex flex-row gap-3 items-center">
+        <span className="text-sm font-light">{kitchen?.location}</span>
+        <span>|</span>
+        <span className="text-sm font-light">
+          {kitchen?.kitchenDescription ? kitchen.kitchenDescription : "-"}
+        </span>
+      </div>
     </div>
   );
 }

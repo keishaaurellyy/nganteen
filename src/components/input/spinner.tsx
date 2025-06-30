@@ -1,21 +1,21 @@
-import React, { forwardRef } from 'react';
-import { Loader2Icon } from 'lucide-react';
-import { cn } from '@/config';
+import React, { forwardRef } from "react";
+import { Loader2Icon } from "lucide-react";
+import { cn } from "@/config";
 
-type Size = 'small' | 'medium' | 'large' | 'extraLarge';
-type Variant = 'solid' | 'outline';
+type Size = "small" | "medium" | "large" | "extraLarge";
+type Variant = "solid" | "outline";
 type Color =
-  | 'primary'
-  | 'secondary'
-  | 'tertiary'
-  | 'neutral'
-  | 'success'
-  | 'error'
-  | 'warning'
-  | 'form'
-  | 'globe';
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "neutral"
+  | "success"
+  | "error"
+  | "warning"
+  | "form"
+  | "globe";
 
-interface SpinnerProps extends React.ComponentPropsWithoutRef<'div'> {
+interface SpinnerProps extends React.ComponentPropsWithoutRef<"div"> {
   size?: Size;
   color?: Color;
   variant?: Variant;
@@ -30,52 +30,55 @@ const sizeMap: Record<Size, number> = {
 
 const colorMap: Record<Color, Record<Variant, string>> = {
   primary: {
-    solid: 'text-neutral-100',
-    outline: 'text-primary-500',
+    solid: "text-neutral-100",
+    outline: "text-primary-500",
   },
   secondary: {
-    solid: 'text-neutral-100',
-    outline: 'text-secondary-500',
+    solid: "text-neutral-100",
+    outline: "text-secondary-500",
   },
   tertiary: {
-    solid: 'text-neutral-100',
-    outline: 'text-tertiary-600',
+    solid: "text-neutral-100",
+    outline: "text-tertiary-600",
   },
   neutral: {
-    solid: 'text-neutral-100',
-    outline: 'text-neutral-900',
+    solid: "text-neutral-100",
+    outline: "text-neutral-900",
   },
   success: {
-    solid: 'text-neutral-100',
-    outline: 'text-success-medium',
+    solid: "text-neutral-100",
+    outline: "text-success-medium",
   },
   error: {
-    solid: 'text-neutral-100',
-    outline: 'text-error-medium',
+    solid: "text-neutral-100",
+    outline: "text-error-medium",
   },
   warning: {
-    solid: 'text-neutral-100',
-    outline: 'text-warning-medium',
+    solid: "text-neutral-100",
+    outline: "text-warning-medium",
   },
   form: {
-    solid: 'text-neutral-900',
-    outline: 'text-primary-500',
+    solid: "text-neutral-900",
+    outline: "text-primary-500",
   },
   globe: {
-    solid: 'text-secondary-500',
-    outline: 'text-secondary-500',
+    solid: "text-secondary-500",
+    outline: "text-secondary-500",
   },
 };
 
 const Spinner = forwardRef<HTMLDivElement, SpinnerProps>(
-  ({ size = 'extraLarge', color = 'primary', variant = 'solid', ...props }, ref) => {
+  (
+    { size = "extraLarge", color = "primary", variant = "solid", ...props },
+    ref
+  ) => {
     const spinnerColor =
-      size === 'extraLarge' ? 'text-primary-500' : colorMap[color][variant];
+      size === "extraLarge" ? "text-primary-500" : colorMap[color][variant];
 
     return (
-      <div ref={ref} className="flex justify-center items-center min-h-screen" {...props}>
+      <div ref={ref} className="flex justify-center items-center" {...props}>
         <Loader2Icon
-          className={cn(spinnerColor, 'animate-spin [animation-duration:1s]')}
+          className={cn(spinnerColor, "animate-spin [animation-duration:1s]")}
           size={sizeMap[size]}
         />
       </div>
@@ -83,6 +86,6 @@ const Spinner = forwardRef<HTMLDivElement, SpinnerProps>(
   }
 );
 
-Spinner.displayName = 'Spinner';
+Spinner.displayName = "Spinner";
 
 export default Spinner;

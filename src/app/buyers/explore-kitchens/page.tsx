@@ -1,16 +1,11 @@
 "use client";
 
+import { Kitchen } from "@/app/types/kitchen";
 import KitchenCard from "@/components/buyers/kitchen-card";
+import SkeletonKitchenCard from "@/components/buyers/skeleton";
 import { Header } from "@/components/input/header";
-import Spinner from "@/components/input/spinner";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-interface Kitchen {
-  id: number;
-  kitchenName: string;
-  kitchenDescription: string;
-}
 
 const COLORS = ["primary", "secondary", "tertiary"] as const;
 
@@ -39,6 +34,8 @@ export default function ExploreKitchenPage() {
     fetchKitchens();
   }, []);
 
+  const kitchensToRender = loading ? Array(8).fill(null) : kitchens;
+
   return (
     <div className="w-full min-h-screen max-w-md justify-self-center">
       <Header leftIcon rightIcon="sidebar">
@@ -46,31 +43,33 @@ export default function ExploreKitchenPage() {
       </Header>
 
       <main className="px-5 pt-4 pb-10">
-        {loading ? (
-          <Spinner size="extraLarge" />
-        ) : (
-          <div
-            className="grid justify-items-center gap-3"
-            style={{
-              gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
-            }}
-          >
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
-              {kitchens.map((kitchen, index) => (
-                <Link
-                  href={`/buyers/explore-kitchens/${kitchen.id}`}
-                  key={kitchen.id}
-                >
-                  <KitchenCard
-                    name={kitchen.kitchenName}
-                    description={kitchen.kitchenDescription}
-                    color={COLORS[index % COLORS.length]}
-                  />
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
+          {kitchensToRender.map((kitchen, index) => {
+            if (loading) {
+              return (
+                <SkeletonKitchenCard
+                  key={index}
+                  variant="explore"
+                  color={COLORS[index % COLORS.length]}
+                />
+              );
+            }
+
+            return (
+              <Link
+                key={kitchen.kitchenId}
+                href={`/buyers/explore-kitchens/${kitchen.kitchenId}`}
+              >
+                <KitchenCard
+                  name={kitchen.kitchenName}
+                  description={kitchen.kitchenDescription}
+                  color={COLORS[index % COLORS.length]}
+                  variant="explore"
+                />
+              </Link>
+            );
+          })}
+        </div>
       </main>
     </div>
   );

@@ -23,6 +23,8 @@ export default function HomePage() {
   const [buyer, setBuyer] = useState<Buyer | null>(null);
   const [lastOrder, setLastOrder] = useState<OrderData | null>(null);
   const [kitchens, setKitchens] = useState<Kitchen[]>([]);
+  const [isKitchenLoading, setIsKitchenLoading] = useState(true);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -68,6 +70,7 @@ export default function HomePage() {
     };
 
     const fetchKitchens = async () => {
+      setIsKitchenLoading(true);
       try {
         const res = await fetch("/api/kitchens");
         const data = await res.json();
@@ -79,6 +82,8 @@ export default function HomePage() {
         }
       } catch (err) {
         console.error("Error fetching kitchens:", err);
+      } finally {
+        setIsKitchenLoading(false);
       }
     };
 
@@ -105,7 +110,12 @@ export default function HomePage() {
 
       <main className="space-y-4 px-5 pt-4 pb-10 flex flex-col">
         {/* Greeting */}
-        <h1 className="text-lg font-bold">Hi, {buyer?.firstName} 👋</h1>
+        <Show
+          when={!!buyer}
+          fallback={<div className="h-3 w-32 bg-neutral-300 rounded mb-1" />}
+        >
+          <h1 className="text-lg font-bold">Hi, {buyer?.firstName} 👋</h1>
+        </Show>
 
         {/* Hero */}
         <Hero />
@@ -123,21 +133,31 @@ export default function HomePage() {
           </Link>
 
           <div className="flex gap-3 overflow-x-auto pb-1">
-            {kitchens?.map((kitchen, index) => {
-              if (!kitchen?.kitchenId) return null;
-              return (
-                <Link
-                  href={`/buyers/explore-kitchens/${kitchen.kitchenId}`}
-                  key={kitchen.kitchenId}
-                >
+            {(isKitchenLoading ? Array(4).fill(null) : kitchens).map(
+              (kitchen, index) => {
+                if (!isKitchenLoading && !kitchen?.kitchenId) return null;
+
+                return isKitchenLoading ? (
                   <KitchenCard
-                    name={kitchen.kitchenName}
-                    color={COLORS[index % COLORS.length]}
+                    key={index}
+                    isLoading
                     variant="home"
+                    color={COLORS[index % COLORS.length]}
                   />
-                </Link>
-              );
-            })}
+                ) : (
+                  <Link
+                    href={`/buyers/explore-kitchens/${kitchen.kitchenId}`}
+                    key={kitchen.kitchenId}
+                  >
+                    <KitchenCard
+                      name={kitchen.kitchenName}
+                      color={COLORS[index % COLORS.length]}
+                      variant="home"
+                    />
+                  </Link>
+                );
+              }
+            )}
           </div>
         </section>
 

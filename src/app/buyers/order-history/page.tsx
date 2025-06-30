@@ -8,8 +8,21 @@ import NoOrderHistory from "@/components/input/no-order-history";
 import HistoryCard from "@/components/input/history-card";
 import { OrderData } from "@/app/types/order";
 import Spinner from "@/components/input/spinner";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function OrderHistoryPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const from = searchParams.get("from");
+
+  const handleBack = () => {
+    if (from === "cancelled") {
+      router.replace("/buyers");
+    } else {
+      window.history.back();
+    }
+  };
+
   const { data: session, status } = useSession();
   const [orders, setOrders] = useState<OrderData[]>([]);
 
@@ -48,7 +61,7 @@ export default function OrderHistoryPage() {
   return (
     <div className="w-full max-w-md min-h-screen bg-neutral-100 justify-self-center">
       {/* Header */}
-      <Header leftIcon rightIcon="sidebar">
+      <Header leftIcon onLeftIconClick={handleBack} rightIcon="sidebar">
         Order History
       </Header>
 

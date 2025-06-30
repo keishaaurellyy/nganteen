@@ -1,4 +1,5 @@
 import Image from "next/image";
+import SkeletonKitchenCard from "./skeleton";
 
 type KitchenCardVariant = "explore" | "home";
 
@@ -7,6 +8,7 @@ interface KitchenCardProps {
   description?: string;
   color?: "primary" | "secondary" | "tertiary";
   variant?: KitchenCardVariant;
+  isLoading?: boolean;
 }
 
 export default function KitchenCard({
@@ -14,6 +16,7 @@ export default function KitchenCard({
   description,
   color = "primary",
   variant = "explore",
+  isLoading = false,
 }: KitchenCardProps) {
   const bgColor =
     {
@@ -24,8 +27,11 @@ export default function KitchenCard({
 
   const isHome = variant === "home";
 
+  if (isLoading) {
+    return <SkeletonKitchenCard variant={variant} color={color} />;
+  }
+
   if (isHome) {
-    // Layout: Home
     return (
       <div className="flex flex-col items-center space-y-2">
         <div
@@ -47,7 +53,6 @@ export default function KitchenCard({
     );
   }
 
-  // Default layout: Explore Kitchen
   return (
     <div
       className={`w-full max-w-[170px] h-[170px] rounded-lg shadow p-2 flex flex-col justify-between cursor-pointer active:opacity-80 transition-opacity duration-200 ${bgColor}`}

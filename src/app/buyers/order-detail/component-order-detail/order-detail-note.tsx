@@ -26,12 +26,13 @@ export default function OrderDetailNoteAndPayment({
   return (
     <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
       {/* Order Notes */}
-      <div className="rounded-lg p-3 border border-neutral-400">
-        <h3 className="font-bold text-sm mb-1">Order Notes</h3>
-        <Show when={!!order?.notes} fallback="---">
+      <Show when={!!order?.notes}>
+        <div className="rounded-lg p-3 border border-neutral-400">
+          <h3 className="font-bold text-sm mb-1">Order Notes</h3>
+
           <p className="text-xs text-neutral-800">{order?.notes}</p>
-        </Show>
-      </div>
+        </div>
+      </Show>
 
       {/* Payment Details */}
       <div className="rounded-lg p-3 border border-neutral-400">

@@ -3,21 +3,30 @@
 import { useEffect, useState } from "react";
 import { viewBuyerById } from "@/app/buyers/mutations/view";
 import { Buyer } from "@/app/types/buyer";
+import { SkeletonProfile } from "./skeleton";
 
 export default function ProfileCard() {
   const [buyer, setBuyer] = useState<Buyer | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const id = localStorage.getItem("buyer_id");
     if (id) {
-      viewBuyerById("/api/buyers", { arg: { id } }).then((res: any) => {
-        if (res.success) {
-          setBuyer(res.data);
-        }
-      });
+      viewBuyerById("/api/buyers", { arg: { id } })
+        .then((res: any) => {
+          if (res.success) {
+            setBuyer(res.data);
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
+  if (isLoading) return <SkeletonProfile />;
   if (!buyer) return null;
 
   return (
