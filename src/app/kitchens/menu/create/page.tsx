@@ -20,7 +20,7 @@ export default function CreateItemsForm() {
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<RegisterItem>({
     resolver: zodResolver(ExtendedRegisterItemSchema),
     defaultValues: {
@@ -158,6 +158,7 @@ export default function CreateItemsForm() {
           variant="solid"
           color="primary"
           className="flex gap-4 my-5 w-full"
+          isLoading={isSubmitting}
         >
           Create
         </Button>

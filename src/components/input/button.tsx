@@ -86,15 +86,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading ? (
-          <div className="flex items-center justify-center gap-2">
+          <span className="flex-1 flex items-center justify-center gap-2 text-sm">
             <Spinner
               size="small"
               color={color}
               variant={variant}
               className="!min-h-0 !h-4"
             />
-            {!iconOnly && <span className="text-sm">Loading...</span>}
-          </div>
+            {!iconOnly && <span>Loading...</span>}
+          </span>
         ) : (
           <>
             {leftIcon && (

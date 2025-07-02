@@ -23,7 +23,7 @@ export async function POST(
 
   const wibDate = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString();
   const accountData = {
-    id: buyerId,
+    buyerId: buyerId,
     bankName: parsed.data.bank_name,
     accountNumber: parsed.data.account_number,
     accountName: parsed.data.account_name,
@@ -43,13 +43,31 @@ export async function GET(
   const buyerId = parseInt(id, 10);
 
   if (isNaN(buyerId)) {
-    return NextResponse.json({ error: "Invalid buyer ID" }, { status: 400 });
+    return NextResponse.json(
+      { success: false, error: "Invalid buyer ID" },
+      { status: 400 }
+    );
   }
 
-  const existingAccount = await db
-    .select()
-    .from(account)
-    .where(eq(account.id, buyerId));
+  try {
+    const existingAccount = await db
+      .select()
+      .from(account)
+      .where(eq(account.buyerId, buyerId));
 
-  return NextResponse.json(existingAccount[0] ?? null);
+    if (!existingAccount.length) {
+      return NextResponse.json({ success: true, data: null }, { status: 200 });
+    }
+
+    return NextResponse.json(
+      { success: true, data: existingAccount[0] },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("GET /api/buyers/[id]/account error:", error);
+    return NextResponse.json(
+      { success: false, error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }

@@ -13,13 +13,12 @@ import { Buyer } from "../types/buyer";
 import { useRouter } from "next/navigation";
 import { OrderData } from "../types/order";
 import KitchenCard from "@/components/buyers/kitchen-card";
-import Spinner from "@/components/input/spinner";
 import { Kitchen } from "../types/kitchen";
 
 const COLORS = ["primary", "secondary", "tertiary"] as const;
 
 export default function HomePage() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [buyer, setBuyer] = useState<Buyer | null>(null);
   const [lastOrder, setLastOrder] = useState<OrderData | null>(null);
   const [kitchens, setKitchens] = useState<Kitchen[]>([]);
@@ -94,14 +93,11 @@ export default function HomePage() {
     }
   }, [session]);
 
-  if (status === "loading") {
-    return <Spinner size="extraLarge" />;
-  }
-
-  if (!session || session.user.role !== "buyer") {
-    router.replace("/unauthorized");
-    return;
-  }
+  useEffect(() => {
+    if (session && session.user.role !== "buyer") {
+      router.replace("/unauthorized");
+    }
+  }, [session, router]);
 
   return (
     <div className="min-h-screen w-full max-w-md justify-self-center">

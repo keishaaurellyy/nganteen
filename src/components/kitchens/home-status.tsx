@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import Spinner from "../input/spinner";
 import KitchenStatus from "../input/toggle";
 import { KitchenStatus as StatusEnum } from "@/app/types/kitchen";
+import { SkeletonKitchenStatus } from "../buyers/skeleton";
 
 export default function KitchenUpdateStatus() {
   const { data: session, status } = useSession();
@@ -39,7 +39,7 @@ export default function KitchenUpdateStatus() {
   }, [kitchenId]);
 
   if (status === "loading" || loading) {
-    return <Spinner size="extraLarge" />;
+    return <SkeletonKitchenStatus />;
   }
 
   if (!kitchenId || initialStatus === null) {

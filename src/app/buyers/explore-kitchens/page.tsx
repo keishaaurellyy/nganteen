@@ -2,7 +2,7 @@
 
 import { Kitchen } from "@/app/types/kitchen";
 import KitchenCard from "@/components/buyers/kitchen-card";
-import SkeletonKitchenCard from "@/components/buyers/skeleton";
+import { SkeletonKitchenCard } from "@/components/buyers/skeleton";
 import { Header } from "@/components/input/header";
 import Link from "next/link";
 import { useEffect, useState } from "react";

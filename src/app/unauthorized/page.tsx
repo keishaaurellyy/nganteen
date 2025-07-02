@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/input/button";
 import Link from "next/link";
 

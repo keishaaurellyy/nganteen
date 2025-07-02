@@ -1,79 +1,90 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { TextField } from "@/components/input/text-field";
-import { Button } from "@/components/input/button";
-import {
-  EditAccount,
-  EditAccountSchema,
-  RegisterAccount,
-  RegisterAccountSchema,
-} from "@/app/schema/account";
-import { editAccount } from "@/app/accounts/mutation/edit";
-import { useEffect } from "react";
-import { getAccountById } from "@/app/accounts/mutation/view";
-import { registerAccount } from "@/app/accounts/mutation/register";
-import AlertBox from "../input/alert-box";
 import Link from "next/link";
 
-export default function RegisterAccountPage() {
-  const { data: session } = useSession();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+import {
+  RegisterAccount,
+  RegisterAccountSchema,
+  EditAccount,
+  EditAccountSchema,
+} from "@/app/schema/account";
+import { registerAccount } from "@/app/accounts/mutation/register";
+import { editAccount } from "@/app/accounts/mutation/edit";
+import { getAccountByBuyerId } from "@/app/accounts/mutation/view";
 
-  const isEdit = searchParams.get("edit") === "true";
-  const accountId = searchParams.get("id");
+import { TextField } from "@/components/input/text-field";
+import { Button } from "@/components/input/button";
+import AlertBox from "@/components/input/alert-box";
+
+export default function AccountForm() {
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const [accountId, setAccountId] = useState<string | null>(null);
+  const [isEdit, setIsEdit] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
   } = useForm<RegisterAccount | EditAccount>({
     resolver: zodResolver(isEdit ? EditAccountSchema : RegisterAccountSchema),
   });
 
   useEffect(() => {
-    if (isEdit && accountId) {
-      getAccountById(accountId).then((data) => {
-        reset({
-          bank_name: data.bankName ?? "",
-          account_number: data.accountNumber ?? "",
-          account_name: data.accountName ?? "",
-        });
-      });
-    }
-  }, [isEdit, accountId, reset]);
+    const fetchAccount = async () => {
+      const buyerId = session?.user?.buyer_id;
+      if (!buyerId) return;
 
-  const handleCreate = async (data: RegisterAccount, buyerId: string) => {
-    await registerAccount({ ...data, buyer_id: buyerId });
-  };
+      try {
+        const account = await getAccountByBuyerId(Number(buyerId));
+        if (account) {
+          setAccountId(account.accountId);
+          setIsEdit(true);
+          reset({
+            bank_name: account.bankName ?? "",
+            account_number: account.accountNumber ?? "",
+            account_name: account.accountName ?? "",
+          });
+        } else {
+          setIsEdit(false);
+        }
+      } catch {
+        console.log("No account yet, will register.");
+        setIsEdit(false);
+      }
+    };
 
-  const handleEdit = async (accountId: string, data: EditAccount) => {
-    await editAccount(accountId, data);
-  };
+    fetchAccount();
+  }, [session, reset]);
 
   const onSubmit = async (data: RegisterAccount | EditAccount) => {
     const buyerId = session?.user?.buyer_id;
-
-    if (!buyerId) {
-      console.error("Buyer ID not found in session");
-      return;
-    }
+    if (!buyerId) return;
 
     try {
       if (isEdit && accountId) {
-        await handleEdit(accountId, data as EditAccount);
+        await editAccount(String(accountId), data as EditAccount);
       } else {
-        await handleCreate(data as RegisterAccount, buyerId);
+        const { bank_name, account_number, account_name } =
+          data as RegisterAccount;
+        await registerAccount({
+          bank_name,
+          account_number,
+          account_name,
+          buyer_id: buyerId,
+        });
       }
 
       router.push("/buyers/profile");
     } catch (err) {
-      console.error("Submit Failed:", err);
+      console.error("Submit failed:", err);
     }
   };
 
@@ -122,7 +133,13 @@ export default function RegisterAccountPage() {
           helperText={errors.account_name?.message}
           withAsterisk
         />
-        <Button type="submit" size="medium" color="tertiary" className="w-full">
+        <Button
+          type="submit"
+          size="medium"
+          color="tertiary"
+          className="w-full"
+          isLoading={isSubmitting}
+        >
           Submit
         </Button>
       </form>

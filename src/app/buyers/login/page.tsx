@@ -14,7 +14,7 @@ export default function LoginBuyerPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginBuyer>({
     resolver: zodResolver(LoginBuyerSchema),
   });
@@ -83,6 +83,7 @@ export default function LoginBuyerPage() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-[343px] space-y-4 overflow-visible"
+        noValidate
       >
         <TextField
           {...register("email")}
@@ -105,6 +106,7 @@ export default function LoginBuyerPage() {
         <Button
           type="submit"
           className="flex gap-4 mb-8 justify-start w-full max-w-[343px]"
+          isLoading={isSubmitting}
         >
           Login
         </Button>

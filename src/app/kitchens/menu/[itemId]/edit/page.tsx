@@ -26,7 +26,7 @@ export default function EditItemPage() {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<UpdateItem>({
     resolver: zodResolver(UpdateItemSchema),
     defaultValues: {
@@ -127,6 +127,7 @@ export default function EditItemPage() {
           variant="solid"
           color="primary"
           className="w-full mt-2"
+          isLoading={isSubmitting}
         >
           Modify
         </Button>

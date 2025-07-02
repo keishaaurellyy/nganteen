@@ -96,7 +96,7 @@ interface SkeletonKitchenCardProps {
   color?: "primary" | "secondary" | "tertiary";
 }
 
-export default function SkeletonKitchenCard({
+export function SkeletonKitchenCard({
   variant = "explore",
   color = "primary",
 }: SkeletonKitchenCardProps) {
@@ -137,6 +137,51 @@ export default function SkeletonKitchenCard({
       </div>
       <div className="mt-2 rounded-md overflow-hidden bg-white">
         <div className="w-full h-[86px] bg-neutral-200" />
+      </div>
+    </div>
+  );
+}
+
+export function SkeletonKitchenInfo() {
+  return (
+    <div className="w-full max-w-md space-y-6 animate-pulse">
+      {/* Header / Kitchen Info */}
+      <div className="flex items-start gap-4 p-4 border border-neutral-300 rounded-xl bg-neutral-50">
+        <div className="w-12 h-12 rounded-full bg-neutral-200" />
+        <div className="flex-1 space-y-2">
+          <div className="w-1/2 h-4 bg-neutral-200 rounded" />
+          <div className="w-3/4 h-3 bg-neutral-200 rounded" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function SkeletonKitchenStatus() {
+  return (
+    <div className="w-full max-w-md space-y-6 animate-pulse">
+      <div className="grid grid-cols-2 gap-3">
+        <div className="p-4 border border-neutral-300 rounded-xl bg-neutral-50">
+          <div className="h-6 w-full bg-neutral-200 rounded" />
+        </div>
+        <div className="p-4 border border-neutral-300 rounded-xl bg-neutral-50">
+          <div className="h-6 w-full bg-neutral-200 rounded" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function SkeletonKitchenOrders() {
+  return (
+    <div className="w-full max-w-md space-y-6 animate-pulse">
+      <div className="grid grid-cols-2 gap-3">
+        <div className="p-4 border border-neutral-300 rounded-xl bg-neutral-50">
+          <div className="h-8 w-full bg-neutral-200 rounded" />
+        </div>
+        <div className="p-4 border border-neutral-300 rounded-xl bg-neutral-50">
+          <div className="h-8 w-full bg-neutral-200 rounded" />
+        </div>
       </div>
     </div>
   );
