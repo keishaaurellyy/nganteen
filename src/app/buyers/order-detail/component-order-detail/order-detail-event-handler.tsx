@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { MessageCircleX } from "lucide-react";
@@ -13,7 +13,6 @@ export default function OrderDetailEventHandler() {
   const router = useRouter();
 
   const [showDialog, setShowDialog] = useState(false);
-  const hasCheckedRef = useRef(false);
 
   const handleConfirmDialog = () => {
     setShowDialog(false);
@@ -26,19 +25,10 @@ export default function OrderDetailEventHandler() {
   };
 
   useEffect(() => {
-    if (
-      status !== "authenticated" ||
-      !session?.user?.id ||
-      hasCheckedRef.current
-    )
-      return;
+    if (status !== "authenticated" || !session?.user?.id) return;
 
-    hasCheckedRef.current = true;
-
-    const checkLatestOrder = async () => {
+    const interval = setInterval(async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 300));
-
         const res = await fetch(
           `/api/orders/active?buyerId=${session.user.id}`
         );
@@ -52,9 +42,11 @@ export default function OrderDetailEventHandler() {
         switch (order.status) {
           case OrderStatus.CANCELLED:
             setShowDialog(true);
+            clearInterval(interval);
             break;
           case OrderStatus.COOKING:
             router.replace(`/buyers/order-detail?orderId=${order.orderId}`);
+            clearInterval(interval);
             break;
           default:
             break;
@@ -62,9 +54,9 @@ export default function OrderDetailEventHandler() {
       } catch (err) {
         console.error("Failed to check order:", err);
       }
-    };
+    }, 3000);
 
-    checkLatestOrder();
+    return () => clearInterval(interval);
   }, [status, session, router]);
 
   return (

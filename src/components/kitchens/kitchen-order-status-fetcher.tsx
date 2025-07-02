@@ -9,7 +9,7 @@ export default function KitchenOrderStatusFetcher() {
   const { data: session, status } = useSession();
   const [onGoingCount, setOnGoingCount] = useState(0);
   const [historyCount, setHistoryCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
     const kitchenId = session?.user?.kitchen_id;
@@ -24,8 +24,8 @@ export default function KitchenOrderStatusFetcher() {
       return result.success ? result.data.length : 0;
     };
 
-    const fetchCounts = async () => {
-      setIsLoading(true); // 👈 start loading
+    const fetchCounts = async (isInitial = false) => {
+      if (isInitial) setIsInitialLoading(true);
       const [incoming, cooking, completed, cancelled] = await Promise.all([
         fetchOrders("INCOMING"),
         fetchOrders("COOKING"),
@@ -34,15 +34,19 @@ export default function KitchenOrderStatusFetcher() {
       ]);
       setOnGoingCount(incoming + cooking);
       setHistoryCount(completed + cancelled);
-      setIsLoading(false);
+      if (isInitial) setIsInitialLoading(false);
     };
 
-    if (session?.user?.role === "kitchen") {
+    fetchCounts(true);
+    const interval = setInterval(() => {
       fetchCounts();
-    }
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [session]);
 
-  if (status === "loading" || isLoading) return <SkeletonKitchenOrders />;
+  if (status === "loading" || isInitialLoading)
+    return <SkeletonKitchenOrders />;
 
   return <KitchenOrder onGoing={onGoingCount} history={historyCount} />;
 }

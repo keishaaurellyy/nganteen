@@ -186,3 +186,38 @@ export function SkeletonKitchenOrders() {
     </div>
   );
 }
+
+export function SkeletonOrderCard() {
+  return (
+    <div className="w-full max-w-md animate-pulse">
+      <div className="p-4 border border-neutral-300 rounded-lg bg-white">
+        {/* Warning Section */}
+        <div className="mb-4">
+          <div className="h-4 w-24 bg-neutral-200 rounded mb-2" />
+          <div className="h-4 w-full bg-neutral-200 rounded mb-1" />
+        </div>
+        <div className="border-t border-neutral-300 my-3" />
+
+        {/* Order Items */}
+        <div className="mb-4">
+          <div className="flex justify-between mb-2">
+            <div className="h-4 w-3/5 bg-neutral-200 rounded" />
+            <div className="h-4 w-1/4 bg-neutral-200 rounded" />
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="border-t border-neutral-300 my-3" />
+
+        {/* Total */}
+        <div className="flex justify-between mb-6">
+          <div className="h-5 w-16 bg-neutral-200 rounded" />
+          <div className="h-5 w-1/4 bg-neutral-200 rounded" />
+        </div>
+
+        {/* Confirm Button */}
+        <div className="h-10 w-full bg-neutral-200 rounded-lg" />
+      </div>
+    </div>
+  );
+}

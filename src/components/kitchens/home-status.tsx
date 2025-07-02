@@ -14,17 +14,16 @@ export default function KitchenUpdateStatus() {
   const kitchenId = session?.user?.kitchen_id;
 
   useEffect(() => {
+    if (!kitchenId) return;
+
     const fetchKitchenStatus = async () => {
-      if (!kitchenId) return;
-
       try {
-        const res = await fetch(`/api/kitchens/${kitchenId}`);
+        const res = await fetch(`/api/kitchens/${kitchenId}`, {
+          cache: "no-store",
+        });
         const result = await res.json();
-
         if (res.ok && result?.data?.status) {
           setInitialStatus(result.data.status);
-        } else {
-          console.error("Failed to fetch kitchen status:", result.error);
         }
       } catch (err) {
         console.error("Error fetching kitchen status:", err);
@@ -33,9 +32,10 @@ export default function KitchenUpdateStatus() {
       }
     };
 
-    if (kitchenId) {
-      fetchKitchenStatus();
-    }
+    fetchKitchenStatus();
+    const interval = setInterval(fetchKitchenStatus, 5000);
+
+    return () => clearInterval(interval);
   }, [kitchenId]);
 
   if (status === "loading" || loading) {

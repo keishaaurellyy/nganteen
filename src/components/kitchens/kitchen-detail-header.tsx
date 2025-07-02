@@ -24,12 +24,21 @@ export default function KitchenDetailHeader({
 
     const fetchKitchen = async () => {
       try {
-        const res = await fetch(`/api/kitchens/${id}`);
+        const res = await fetch(`/api/kitchens/${id}`, { cache: "no-store" });
         const result = await res.json();
 
         if (res.ok) {
-          setKitchen(result.data);
-          onStatusChange?.(result.data.status);
+          setKitchen((prev) => {
+            const newKitchen = result.data;
+
+            if (prev?.status !== newKitchen.status) {
+              setTimeout(() => {
+                onStatusChange?.(newKitchen.status);
+              }, 0);
+            }
+
+            return newKitchen;
+          });
         } else {
           console.error("Failed to fetch kitchen:", result.error);
         }
@@ -39,6 +48,8 @@ export default function KitchenDetailHeader({
     };
 
     fetchKitchen();
+    const intervalId = setInterval(fetchKitchen, 5000);
+    return () => clearInterval(intervalId);
   }, [id, onStatusChange]);
 
   return (

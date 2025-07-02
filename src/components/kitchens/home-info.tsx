@@ -11,25 +11,39 @@ export default function KitchenInfo() {
   const { data: session, status } = useSession();
   const kitchenId = session?.user?.kitchen_id;
   const [data, setData] = useState<Kitchen | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
     if (!kitchenId) return;
 
-    setIsLoading(true);
-    fetch(`/api/kitchens/${kitchenId}`)
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.success) {
-          setData(res.data);
+    const fetchKitchenInfo = async (isInitial = false) => {
+      if (isInitial) setIsInitialLoading(true);
+
+      try {
+        const res = await fetch(`/api/kitchens/${kitchenId}`, {
+          cache: "no-store",
+        });
+        const result = await res.json();
+        if (result.success) {
+          setData(result.data);
         }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      } catch (error) {
+        console.error("Failed to fetch kitchen info:", error);
+      } finally {
+        if (isInitial) setIsInitialLoading(false);
+      }
+    };
+
+    fetchKitchenInfo(true);
+
+    const interval = setInterval(() => {
+      fetchKitchenInfo();
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [kitchenId]);
 
-  if (status === "loading" || !kitchenId || isLoading) {
+  if (status === "loading" || !kitchenId || isInitialLoading) {
     return <SkeletonKitchenInfo />;
   }
 

@@ -9,26 +9,48 @@ import { OrderData, OrderStatus } from "@/app/types/order";
 import { useSession } from "next-auth/react";
 import Show from "@/components/input/show";
 import NoOngoingOrder from "@/components/input/no-ongoing-orders";
+import { SkeletonOrderCard } from "@/components/buyers/skeleton";
 
 type OrderType = "incoming" | "confirmed";
 
 export default function OrdersPage() {
   const [activeTab, setActiveTab] = useState<OrderType>("incoming");
   const [orders, setOrders] = useState<OrderData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { data: session } = useSession();
   const kitchenId = session?.user?.kitchen_id;
 
   useEffect(() => {
     if (!kitchenId) return;
 
+    setIsLoading(true);
+
     const status =
       activeTab === "incoming" ? OrderStatus.INCOMING : OrderStatus.COOKING;
 
-    fetch(`/api/kitchens/${kitchenId}/orders?status=${status}`)
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.success) setOrders(res.data);
-      });
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch(
+          `/api/kitchens/${kitchenId}/orders?status=${status}`,
+          {
+            cache: "no-store",
+          }
+        );
+        const result = await res.json();
+        if (result.success) {
+          setOrders(result.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrders();
+
+    const interval = setInterval(fetchOrders, 5000);
+    return () => clearInterval(interval);
   }, [activeTab, kitchenId]);
 
   const handleConfirm = async (orderId?: number) => {
@@ -88,26 +110,30 @@ export default function OrdersPage() {
           }
         />
 
-        <Show
-          when={orders.length > 0}
-          fallback={
-            <div className="flex flex-1 justify-items-center w-full min-h-[calc(100vh-27vh)]">
-              <NoOngoingOrder />
+        {isLoading ? (
+          <SkeletonOrderCard />
+        ) : (
+          <Show
+            when={orders.length > 0}
+            fallback={
+              <div className="flex flex-1 justify-items-center w-full min-h-[calc(100vh-27vh)]">
+                <NoOngoingOrder />
+              </div>
+            }
+          >
+            <div className="w-full">
+              {orders.map((order) => (
+                <OrderCard
+                  key={order.orderId}
+                  orders={order}
+                  type={activeTab}
+                  onConfirm={() => handleConfirm(order.orderId)}
+                  onCancel={() => handleCancel(order.orderId)}
+                />
+              ))}
             </div>
-          }
-        >
-          <div className="w-full">
-            {orders.map((order) => (
-              <OrderCard
-                key={order.orderId}
-                orders={order}
-                type={activeTab}
-                onConfirm={() => handleConfirm(order.orderId)}
-                onCancel={() => handleCancel(order.orderId)}
-              />
-            ))}
-          </div>
-        </Show>
+          </Show>
+        )}
       </main>
     </div>
   );
