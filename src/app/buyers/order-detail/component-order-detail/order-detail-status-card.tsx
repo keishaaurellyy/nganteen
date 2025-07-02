@@ -4,7 +4,7 @@ import { SoupIcon } from "lucide-react";
 
 export default function OrderDetailStatusCard() {
   return (
-    <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
+    <div className="w-full max-w-md justify-self-center space-y-4">
       {/* Status */}
       <div className="bg-primary-100 border-primary-500 rounded-lg p-3 flex items-center gap-3 border">
         <SoupIcon className="bg-primary-500 rounded-xl p-3 w-10 h-10 text-neutral-100" />

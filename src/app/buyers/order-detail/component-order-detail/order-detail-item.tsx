@@ -1,6 +1,5 @@
-"use client";
-
 import { OrderItems } from "@/app/types/order-item";
+import { SkeletonOrderDetailItem } from "@/components/buyers/skeleton";
 import { useEffect, useState } from "react";
 
 export default function OrderDetailItem({
@@ -9,22 +8,30 @@ export default function OrderDetailItem({
   orderId: string | null;
 }) {
   const [items, setItems] = useState<OrderItems[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!orderId) return;
 
     const fetchOrderItems = async () => {
+      setIsLoading(true);
       const res = await fetch(`/api/orders/${orderId}`);
-      if (!res.ok) return;
+      if (!res.ok) {
+        setIsLoading(false);
+        return;
+      }
       const resData = await res.json();
       setItems(resData.data.items);
+      setIsLoading(false);
     };
 
     fetchOrderItems();
   }, [orderId]);
 
+  if (isLoading) return <SkeletonOrderDetailItem count={3} />;
+
   return (
-    <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
+    <div className="w-full max-w-md justify-self-center space-y-4">
       <div className="rounded-lg p-3 border border-neutral-400">
         <h3 className="font-bold text-sm mb-1">Item Details</h3>
 

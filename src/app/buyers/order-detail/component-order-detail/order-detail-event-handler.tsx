@@ -17,7 +17,7 @@ export default function OrderDetailEventHandler() {
 
   const handleConfirmDialog = () => {
     setShowDialog(false);
-    router.push("/buyers/profile");
+    router.push("/buyers/profile?from=cancelled");
   };
 
   const handleCloseDialog = () => {
