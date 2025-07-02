@@ -5,23 +5,34 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Badge } from "@/components/input/badge";
 import { Kitchen } from "@/app/types/kitchen";
+import { SkeletonKitchenInfo } from "../buyers/skeleton";
 
 export default function KitchenInfo() {
   const { data: session, status } = useSession();
   const kitchenId = session?.user?.kitchen_id;
   const [data, setData] = useState<Kitchen | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!kitchenId) return;
 
+    setIsLoading(true);
     fetch(`/api/kitchens/${kitchenId}`)
       .then((res) => res.json())
       .then((res) => {
-        if (res.success) setData(res.data);
+        if (res.success) {
+          setData(res.data);
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [kitchenId]);
 
-  if (status === "loading" || !kitchenId) return null;
+  if (status === "loading" || !kitchenId || isLoading) {
+    return <SkeletonKitchenInfo />;
+  }
+
   if (!data) return null;
 
   return (

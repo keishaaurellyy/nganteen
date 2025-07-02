@@ -13,7 +13,7 @@ export default function LoginKitchenPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginKitchen>({
     resolver: zodResolver(LoginKitchenSchema),
   });
@@ -82,6 +82,7 @@ export default function LoginKitchenPage() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-[343px] space-y-4 overflow-visible"
+        noValidate
       >
         <TextField
           {...register("email")}
@@ -104,6 +105,7 @@ export default function LoginKitchenPage() {
         <Button
           type="submit"
           className="flex gap-4 mb-8 justify-start w-full max-w-[343px]"
+          isLoading={isSubmitting}
         >
           Login
         </Button>

@@ -81,7 +81,7 @@ export default function PreviewOrderPage() {
       router.push(`/buyers/QRIS?orderId=${data.orderId}`);
     } catch (err) {
       console.error(err);
-      alert("Failed to process order");
+      alert("Failed to process order, kitchen might be closed.");
     }
   };
 

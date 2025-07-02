@@ -19,7 +19,7 @@ export default function RegisterBuyerPage() {
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<RegisterBuyer>({
     resolver: zodResolver(RegisterBuyerSchema),
     defaultValues: {
@@ -91,6 +91,7 @@ export default function RegisterBuyerPage() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-[343px] space-y-4 overflow-visible"
+        noValidate
       >
         <Controller
           name="university_name"
@@ -174,6 +175,7 @@ export default function RegisterBuyerPage() {
         <Button
           type="submit"
           className="flex gap-4 mb-8 justify-start w-full max-w-[343px]"
+          isLoading={isSubmitting}
         >
           Register
         </Button>

@@ -13,7 +13,7 @@ export default function RegisterKitchenPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<RegisterKitchen>({
     resolver: zodResolver(RegisterKitchenSchema),
     defaultValues: {
@@ -45,6 +45,7 @@ export default function RegisterKitchenPage() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-[343px] space-y-4 overflow-visible"
+        noValidate
       >
         <TextField
           placeholder="Email"
@@ -105,6 +106,7 @@ export default function RegisterKitchenPage() {
         <Button
           type="submit"
           className="flex gap-4 mb-8 justify-start w-full max-w-[343px]"
+          isLoading={isSubmitting}
         >
           Register Account
         </Button>

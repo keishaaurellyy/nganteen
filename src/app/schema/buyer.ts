@@ -13,7 +13,7 @@ export const RegisterBuyerSchema = z
       .max(15, "Password must be at most 15 characters")
       .regex(/[0-9!@#$%^&*]/, "Password must contain number or symbol"),
     confirm_password: z.string().min(1, "Confirm password is required"),
-    first_name: z.string().optional(),
+    first_name: z.string().min(1, "Please input your name"),
     last_name: z.string().optional(),
     phone_number: z
       .string()

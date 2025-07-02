@@ -13,7 +13,7 @@ export default function LoginForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginAdmin>();
   const [error, setError] = useState("");
 
@@ -46,6 +46,7 @@ export default function LoginForm() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-[343px] space-y-4 overflow-visible"
+        noValidate
       >
         <TextField
           {...register("email")}
@@ -68,6 +69,7 @@ export default function LoginForm() {
         <Button
           type="submit"
           className="flex gap-4 mb-8 justify-start w-full max-w-[343px]"
+          isLoading={isSubmitting}
         >
           Login
         </Button>

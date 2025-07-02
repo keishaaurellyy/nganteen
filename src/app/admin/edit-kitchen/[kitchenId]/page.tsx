@@ -20,7 +20,7 @@ export default function EditKitchenPage() {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<EditKitchen>({
     resolver: zodResolver(EditKitchenSchema),
     defaultValues: {
@@ -53,7 +53,14 @@ export default function EditKitchenPage() {
       if (!kitchenId) return;
 
       const res = await fetch(`/api/kitchens/${kitchenId}`);
-      const data = await res.json();
+      const json = await res.json();
+
+      if (!json.success || !json.data) {
+        console.error("API failed or data missing:", json);
+        return;
+      }
+
+      const data = json.data;
 
       reset({
         status: data.status,
@@ -70,14 +77,14 @@ export default function EditKitchenPage() {
         KITCHEN_STATUS.find((opt) => opt.value === data.status) ??
           KITCHEN_STATUS[0]
       );
+
+      setIsReady(true);
     };
 
     fetchData();
-    setIsReady(true);
   }, [kitchenId, reset, KITCHEN_STATUS]);
 
   const onSubmit = async (data: EditKitchen) => {
-    console.log(data);
     const res = await fetch(`/api/kitchens/${kitchenId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -99,8 +106,12 @@ export default function EditKitchenPage() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col">
-      <div className="min-h-screen max-w-md justify-self-center w-full bg-neutral-100 px-5 pt-[44px] pb-10 flex flex-col items-center">
+    <form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      className="flex flex-col justify-self-center min-h-screen max-w-md w-full"
+      noValidate
+    >
+      <div className="bg-neutral-100 px-5 pt-[44px] pb-10 flex flex-col items-center">
         <h1 className="w-full max-w-[343px] mb-6 text-left text-lg font-bold text-primary-500">
           Edit
           <br />
@@ -109,72 +120,74 @@ export default function EditKitchenPage() {
 
         <div className="w-full max-w-[343px] space-y-4 overflow-visible">
           {isReady && (
-            <ReactSelect
-              value={statusValue}
-              onChange={(selected) => {
-                const option =
-                  (selected as { label: string; value: KitchenStatus }) ??
-                  KITCHEN_STATUS[0];
-                setStatusValue(option);
-                setValue("status", option.value);
-              }}
-              options={KITCHEN_STATUS}
-              placeholder="Kitchen Status"
-            />
+            <>
+              <ReactSelect
+                value={statusValue}
+                onChange={(selected) => {
+                  const option =
+                    (selected as { label: string; value: KitchenStatus }) ??
+                    KITCHEN_STATUS[0];
+                  setStatusValue(option);
+                  setValue("status", option.value);
+                }}
+                options={KITCHEN_STATUS}
+                placeholder="Kitchen Status"
+              />
+              <TextField
+                placeholder="Kitchen Email"
+                type="email"
+                {...register("kitchen_email")}
+                error={!!errors.kitchen_email}
+                helperText={errors.kitchen_email?.message}
+              />
+              <TextField
+                placeholder="Kitchen Password"
+                type="password"
+                {...register("kitchen_password")}
+                error={!!errors.kitchen_password}
+                helperText={errors.kitchen_password?.message}
+              />
+              <TextField
+                placeholder="Kitchen Name"
+                type="text"
+                {...register("kitchen_name")}
+                error={!!errors.kitchen_name}
+                helperText={errors.kitchen_name?.message}
+              />
+              <TextField
+                placeholder="Admin Name"
+                type="text"
+                {...register("admin_name")}
+              />
+              <TextField
+                placeholder="Admin Phone"
+                type="tel"
+                {...register("admin_phone")}
+                error={!!errors.admin_phone}
+                helperText={errors.admin_phone?.message}
+              />
+              <TextField
+                placeholder="Location"
+                type="text"
+                {...register("location")}
+                error={!!errors.location}
+                helperText={errors.location?.message}
+              />
+              <TextField
+                placeholder="Description"
+                type="text"
+                {...register("kitchen_description")}
+                error={!!errors.kitchen_description}
+                helperText={errors.kitchen_description?.message}
+              />
+            </>
           )}
-
-          <TextField
-            placeholder="Kitchen Email"
-            type="email"
-            {...register("kitchen_email")}
-            error={!!errors.kitchen_email}
-            helperText={errors.kitchen_email?.message}
-          />
-          <TextField
-            placeholder="Kitchen Password"
-            type="password"
-            {...register("kitchen_password")}
-            error={!!errors.kitchen_password}
-            helperText={errors.kitchen_password?.message}
-          />
-          <TextField
-            placeholder="Kitchen Name"
-            type="text"
-            {...register("kitchen_name")}
-            error={!!errors.kitchen_name}
-            helperText={errors.kitchen_name?.message}
-          />
-          <TextField
-            placeholder="Admin Name"
-            type="text"
-            {...register("admin_name")}
-          />
-          <TextField
-            placeholder="Admin Phone"
-            type="tel"
-            {...register("admin_phone")}
-            error={!!errors.admin_phone}
-            helperText={errors.admin_phone?.message}
-          />
-          <TextField
-            placeholder="Location"
-            type="text"
-            {...register("location")}
-            error={!!errors.location}
-            helperText={errors.location?.message}
-          />
-          <TextField
-            placeholder="Description"
-            type="text"
-            {...register("kitchen_description")}
-            error={!!errors.kitchen_description}
-            helperText={errors.kitchen_description?.message}
-          />
           <Button
             type="submit"
             variant="solid"
             color="primary"
             className="flex gap-4 mb-8 justify-start w-full max-w-[343px]"
+            isLoading={isSubmitting}
           >
             Edit Kitchen
           </Button>

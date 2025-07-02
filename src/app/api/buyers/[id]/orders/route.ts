@@ -1,11 +1,10 @@
 import { CreateOrderSchema } from "@/app/schema/order-item";
 import { db } from "@/db/client";
-import { orderItems, orders, orderStatus } from "@/drizzle/schema";
+import { kitchens, orderItems, orders, orderStatus } from "@/drizzle/schema";
 import { eq, and, inArray, desc, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { items as itemsTable } from "@/drizzle/schema";
-
-type OrderStatus = (typeof orderStatus.enumValues)[number];
+import { OrderStatus } from "@/app/types/order";
 
 export async function POST(
   req: NextRequest,
@@ -31,6 +30,17 @@ export async function POST(
     }
 
     const { kitchen_id, items, notes, total_payment } = parsed.data;
+
+    const kitchen = await db.query.kitchens.findFirst({
+      where: eq(kitchens.kitchenId, kitchen_id),
+    });
+
+    if (!kitchen || kitchen.status !== "ACTIVE") {
+      return NextResponse.json(
+        { success: false, error: "Kitchen is not available" },
+        { status: 400 }
+      );
+    }
 
     for (const item of items) {
       const dbItem = await db.query.items.findFirst({
@@ -122,7 +132,7 @@ export async function GET(
         ? (rawStatuses.filter((s) =>
             orderStatus.enumValues.includes(s as OrderStatus)
           ) as OrderStatus[])
-        : ["COMPLETED"];
+        : ["COMPLETED" as OrderStatus];
 
     if (statuses.length === 0) {
       return NextResponse.json(

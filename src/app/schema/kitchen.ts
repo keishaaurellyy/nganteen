@@ -2,11 +2,11 @@ import { z } from "zod";
 import { KitchenStatus } from "../types/kitchen";
 
 export const RegisterKitchenSchema = z.object({
-  kitchen_email: z.string().email(),
+  kitchen_email: z.string().email("That's an invalid email"),
   kitchen_password: z.string().min(5).max(15),
-  kitchen_name: z.string().min(1),
-  kitchen_description: z.string().min(1),
-  admin_name: z.string().min(1),
+  kitchen_name: z.string().min(1, "Please input kitchen's name"),
+  kitchen_description: z.string().min(1, "Please input kitchen's description"),
+  admin_name: z.string().min(1, "Please input kitchen PIC's name"),
   admin_phone: z.string().regex(/^08[0-9]{8,12}$/, "Invalid phone number"),
   location: z
     .string()
@@ -22,7 +22,7 @@ export type RegisterKitchen = z.infer<typeof RegisterKitchenSchema>;
 
 export const EditKitchenSchema = z
   .object({
-    kitchen_email: z.string().email().optional(),
+    kitchen_email: z.string().email("That's an invalid email").optional(),
     kitchen_password: z.string().min(5).max(15).optional(),
     kitchen_name: z.string().optional(),
     kitchen_description: z.string().nullish(),

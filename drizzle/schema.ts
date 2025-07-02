@@ -23,14 +23,14 @@ export const items = pgTable("items", {
 
 export const account = pgTable("account", {
 	accountId: integer("account_id").primaryKey().generatedAlwaysAsIdentity({ name: "account_account_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
-	id: integer().notNull(),
+	buyerId: integer("buyer_id").notNull(),
 	bankName: text("bank_name").notNull(),
 	accountNumber: text("account_number").notNull(),
 	accountName: text("account_name").notNull(),
 	createdDate: timestamp("created_date", { mode: 'string' }).notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.id],
+			columns: [table.buyerId],
 			foreignColumns: [buyers.buyerId],
 			name: "buyer_id_fk"
 		}),
