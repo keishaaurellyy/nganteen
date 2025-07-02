@@ -28,6 +28,69 @@ export function SkeletonProfile() {
   );
 }
 
+export function SkeletonOrderDetailKitchen() {
+  return (
+    <div className="w-full max-w-md space-y-4 animate-pulse">
+      <div className="border border-neutral-400 rounded-lg p-3 bg-white">
+        <div className="h-4 w-1/2 bg-neutral-200 rounded mb-2" />
+        <div className="flex items-center gap-2">
+          <div className="h-3 w-24 bg-neutral-200 rounded" />
+          <div className="h-3 w-1.5 bg-neutral-200 rounded" />
+          <div className="h-3 w-20 bg-neutral-200 rounded" />
+          <div className="h-3 w-4 bg-neutral-200 rounded" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function SkeletonOrderDetailItem({ count = 3 }: { count?: number }) {
+  return (
+    <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
+      <div className="rounded-lg p-3 border border-neutral-400 animate-pulse">
+        <div className="h-4 w-28 bg-neutral-200 rounded mb-2" />
+
+        {[...Array(count)].map((_, index) => (
+          <div key={index} className="flex justify-between items-center py-1">
+            <div className="flex-1 h-3 bg-neutral-200 rounded" />
+            <div className="w-8 h-3 bg-neutral-200 rounded mx-2" />
+            <div className="w-16 h-3 bg-neutral-300 rounded" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function SkeletonOrderNote() {
+  return (
+    <div className="w-full pb-4 max-w-md justify-self-center space-y-4 animate-pulse">
+      <div className="rounded-lg p-3 border border-neutral-400 space-y-2">
+        {/* Title */}
+        <div className="h-4 w-24 bg-neutral-200 rounded" />
+        {/* Note text */}
+        <div className="h-3 w-full bg-neutral-300 rounded" />
+        <div className="h-3 w-5/6 bg-neutral-300 rounded" />
+      </div>
+    </div>
+  );
+}
+
+export function SkeletonOrderPayment() {
+  return (
+    <div className="w-full pb-4 max-w-md justify-self-center space-y-4 animate-pulse">
+      {/* Skeleton for Payment Details */}
+      <div className="rounded-lg p-3 border border-neutral-400 space-y-2">
+        <div className="h-4 w-28 bg-neutral-200 rounded" />
+        <div className="flex justify-between items-center mt-2">
+          <div className="h-5 w-20 bg-neutral-300 rounded" />
+          <div className="h-5 w-24 bg-neutral-300 rounded" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface SkeletonKitchenCardProps {
   variant?: "home" | "explore";
   color?: "primary" | "secondary" | "tertiary";

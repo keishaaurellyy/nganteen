@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import SearchBar from "../input/search-bar";
 import { Items } from "@/app/types/item";
 import { MinusCircle, PlusCircle, ShoppingBasket } from "lucide-react";
 import Show from "../input/show";
 import { restoreCartFromLocalStorage } from "@/utils/order.utils";
+import { useCartStore } from "./store/use-cart-store";
 
 function calculateOrderSummary(
   cartItems: Items[],
@@ -29,8 +30,14 @@ export default function ViewKitchenDetail() {
 
   const [items, setItems] = useState<Items[]>([]);
   const [filteredItems, setFilteredItems] = useState<Items[]>([]);
-  const [quantities, setQuantities] = useState<Record<number, number>>({});
-  const [cartItems, setCartItems] = useState<Items[]>([]);
+
+  const {
+    cartItems,
+    quantities,
+    setCartItems,
+    setQuantities,
+    updateItemQuantity,
+  } = useCartStore();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -57,23 +64,7 @@ export default function ViewKitchenDetail() {
     };
 
     fetchItems();
-  }, [kitchenId]);
-
-  const handleQuantityChange = (item: Items, delta: number) => {
-    const currentQty = quantities[item.itemId] || 0;
-    const newQty = Math.max(0, Math.min(item.itemStock, currentQty + delta));
-
-    setQuantities((prev) => ({ ...prev, [item.itemId]: newQty }));
-
-    if (newQty > 0) {
-      setCartItems((prev) => {
-        const exists = prev.find((i) => i.itemId === item.itemId);
-        return exists ? prev : [...prev, item];
-      });
-    } else {
-      setCartItems((prev) => prev.filter((i) => i.itemId !== item.itemId));
-    }
-  };
+  }, [kitchenId, setCartItems, setQuantities]);
 
   const { total, count } = useMemo(
     () => calculateOrderSummary(cartItems, quantities),
@@ -111,7 +102,7 @@ export default function ViewKitchenDetail() {
           key={item.itemId}
           className="flex flex-row justify-between border-b border-neutral-400 pb-4"
         >
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 max-w-64">
             <p className="font-semibold text-base">{item.itemName}</p>
             <p className="text-xs font-light">{item.itemDescription}</p>
           </div>
@@ -136,7 +127,7 @@ export default function ViewKitchenDetail() {
                       ? "text-primary-500 hover:text-primary-600"
                       : "text-neutral-500"
                   }`}
-                  onClick={() => handleQuantityChange(item, -1)}
+                  onClick={() => updateItemQuantity(item, -1)}
                 />
                 <span className="text-sm font-bold">
                   {quantities[item.itemId] || 0}
@@ -148,7 +139,7 @@ export default function ViewKitchenDetail() {
                       ? "text-primary-500 hover:text-primary-600"
                       : "text-neutral-500"
                   }`}
-                  onClick={() => handleQuantityChange(item, 1)}
+                  onClick={() => updateItemQuantity(item, 1)}
                 />
               </div>
             </Show>

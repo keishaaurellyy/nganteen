@@ -9,11 +9,13 @@ import { OrderStatus } from "@/app/types/order";
 import OrderDetailStatusCard from "./order-detail-status-card";
 import OrderDetailItem from "./order-detail-item";
 import OrderDetailNoteAndPayment from "./order-detail-note";
+import { useCartStore } from "@/components/buyers/store/use-cart-store";
 
 export default function OrderDetailPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
+  const { clearCart } = useCartStore();
 
   const handleSubmit = async () => {
     if (!orderId) return;
@@ -29,6 +31,7 @@ export default function OrderDetailPage() {
     const result = await res.json();
 
     if (res.ok) {
+      clearCart();
       router.push("/buyers");
     } else {
       console.error("Failed to complete order:", result.error);
@@ -38,11 +41,9 @@ export default function OrderDetailPage() {
 
   return (
     <div className="w-full max-w-md min-h-screen bg-neutral-100 justify-self-center space-y-4">
-      {/* Header */}
       <Header leftIcon={false}>Order Detail</Header>
 
-      {/* Order Detail */}
-      <main className="px-5 pb-10 flex flex-col items-center">
+      <main className="px-5 gap-4 flex flex-col items-center">
         <OrderDetailKitchen orderId={orderId} />
         <OrderDetailStatusCard />
         <OrderDetailItem orderId={orderId} />
@@ -52,7 +53,7 @@ export default function OrderDetailPage() {
           type="button"
           size="medium"
           color="tertiary"
-          className="w-full mb-4"
+          className="w-full"
           onClick={handleSubmit}
         >
           Complete Order

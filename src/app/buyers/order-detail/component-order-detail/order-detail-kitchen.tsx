@@ -1,6 +1,7 @@
 "use client";
 
 import { OrderData } from "@/app/types/order";
+import { SkeletonOrderDetailKitchen } from "@/components/buyers/skeleton";
 import useCopyToClipboard from "@/hooks/components/useCopyToClipboard";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -10,14 +11,6 @@ export default function OrderDetailKitchen({
 }: {
   orderId: string | null;
 }) {
-  // const router = useRouter();
-  // const [showDialog, setShowDialog] = useState(false);
-
-  // const handleConfirm = () => {
-  //   setShowDialog(false);
-  //   router.push("/buyers/profile/account");
-  // };
-
   const [order, setOrder] = useState<OrderData | null>(null);
   useEffect(() => {
     if (!orderId) return;
@@ -52,8 +45,10 @@ export default function OrderDetailKitchen({
   const { copy, icon } = useCopyToClipboard({ iconSize: "small" });
   const text = order?.orderCode;
 
+  if (!order) return <SkeletonOrderDetailKitchen />;
+
   return (
-    <div className="w-full pb-4 max-w-md justify-self-center space-y-4">
+    <div className="w-full max-w-md justify-self-center space-y-4">
       <div className="border border-neutral-400 rounded-lg p-3">
         <h2 className="text-base font-bold">
           {kitchenName}&nbsp;

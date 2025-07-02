@@ -8,6 +8,7 @@ import useCopyToClipboard from "@/hooks/components/useCopyToClipboard";
 import { useSearchParams } from "next/navigation";
 import { OrderData } from "@/app/types/order";
 import OrderDetailEventHandler from "@/app/buyers/order-detail/component-order-detail/order-detail-event-handler";
+import Show from "@/components/input/show";
 
 export default function QRISPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -81,7 +82,16 @@ export default function QRISPage() {
           <div className="bg-primary-100 rounded-md px-4 py-3 text-center">
             <p className="text-sm font-semibold">Total Payment</p>
             <div className="flex items-center justify-center gap-2 mt-1">
-              <p className="text-2xl font-bold text-secondary-500">Rp {text}</p>
+              <Show
+                when={!!text}
+                fallback={
+                  <div className="h-5 w-32 bg-primary-200 rounded mb-1 animate-pulse" />
+                }
+              >
+                <p className="text-2xl font-bold text-secondary-500">
+                  Rp {text}
+                </p>
+              </Show>
               <p>
                 <button onClick={() => copy(text ?? "")}>{icon}</button>
               </p>
