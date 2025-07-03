@@ -21,7 +21,7 @@ export default function AccountTable({ accounts }: AccountTableProps) {
         <tbody>
           {accounts.map((account) => (
             <tr key={account.accountId} className="border-t border-neutral-200">
-              <td className="p-3 text-neutral-800">{account.id}</td>
+              <td className="p-3 text-neutral-800">{account.buyerId}</td>
               <td className="p-3">
                 <div className="font-medium text-neutral-900">
                   {account.bankName}

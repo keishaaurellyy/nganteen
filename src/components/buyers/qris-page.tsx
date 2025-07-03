@@ -15,6 +15,7 @@ export default function QRISPage() {
   const [order, setOrder] = useState<OrderData | null>(null);
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
+
   useEffect(() => {
     if (!orderId) return;
 
@@ -55,6 +56,18 @@ export default function QRISPage() {
     },
   ];
 
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    const onPopState = () => {
+      window.history.pushState(null, "", window.location.href);
+    };
+    window.addEventListener("popstate", onPopState);
+
+    return () => {
+      window.removeEventListener("popstate", onPopState);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen w-full max-w-md justify-self-center">
       <main className="bg-neutral-100 px-5 pt-5 pb-10 flex flex-col items-center">
@@ -70,15 +83,12 @@ export default function QRISPage() {
             }
           />
 
-          {/* Title */}
           <h2 className="text-2xl font-bold text-center">Scan QRIS to Pay</h2>
 
-          {/* QR Code */}
           <div className="flex justify-center">
             <Image src="/images/qris.jpg" alt="QRIS" width={240} height={240} />
           </div>
 
-          {/* Total Payment */}
           <div className="bg-primary-100 rounded-md px-4 py-3 text-center">
             <p className="text-sm font-semibold">Total Payment</p>
             <div className="flex items-center justify-center gap-2 mt-1">
@@ -98,7 +108,6 @@ export default function QRISPage() {
             </div>
           </div>
 
-          {/* Accordion: How to Pay */}
           <div className="space-y-5">
             {faqs.map((faq, index) => (
               <Accordion
@@ -111,6 +120,7 @@ export default function QRISPage() {
               />
             ))}
           </div>
+
           <OrderDetailEventHandler />
         </div>
       </main>

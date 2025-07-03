@@ -1,6 +1,6 @@
 export interface Account {
   accountId?: number;
-  id: number;
+  buyerId: number;
   orderId?: number;
   bankName: string;
   accountNumber: string;

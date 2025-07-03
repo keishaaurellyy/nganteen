@@ -82,7 +82,7 @@ export default function AccountForm() {
         });
       }
 
-      router.push("/buyers/profile");
+      router.replace("/buyers/profile?from=cancelled");
     } catch (err) {
       console.error("Submit failed:", err);
     }
