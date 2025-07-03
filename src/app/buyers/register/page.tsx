@@ -9,10 +9,13 @@ import { registerBuyer } from "@/app/buyers/mutations/register";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { UniversityName } from "@/app/types/buyer";
-import ReactSelect from "@/components/input/react-select";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import dynamic from "next/dynamic";
+
+const ReactSelect = dynamic(() => import("@/components/input/react-select"), {
+  ssr: false,
+});
 
 export default function RegisterBuyerPage() {
   const {
@@ -28,8 +31,6 @@ export default function RegisterBuyerPage() {
   });
 
   const router = useRouter();
-  const [isReady, setIsReady] = useState(false);
-  useEffect(() => setIsReady(true), []);
 
   const onSubmit = async (data: RegisterBuyer) => {
     try {
@@ -98,18 +99,16 @@ export default function RegisterBuyerPage() {
           control={control}
           render={({ field }) => (
             <div>
-              {isReady && (
-                <ReactSelect
-                  {...field}
-                  placeholder="Select University"
-                  options={UNIVERSITY_NAME}
-                  value={
-                    UNIVERSITY_NAME.find((opt) => opt.value === field.value) ??
-                    null
-                  }
-                  onChange={(selected) => field.onChange(selected?.value)}
-                />
-              )}
+              <ReactSelect
+                {...field}
+                placeholder="Select University"
+                options={UNIVERSITY_NAME}
+                value={
+                  UNIVERSITY_NAME.find((opt) => opt.value === field.value) ??
+                  null
+                }
+                onChange={(selected) => field.onChange(selected?.value)}
+              />
             </div>
           )}
         />
