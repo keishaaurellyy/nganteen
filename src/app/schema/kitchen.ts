@@ -17,6 +17,7 @@ export const RegisterKitchenSchema = z.object({
   status: z.nativeEnum(KitchenStatus, {
     required_error: "Please define kitchen status",
   }),
+  is_busy: z.boolean().optional(),
 });
 export type RegisterKitchen = z.infer<typeof RegisterKitchenSchema>;
 
@@ -36,6 +37,7 @@ export const EditKitchenSchema = z
       .regex(/^[a-zA-Z0-9 ]+$/)
       .optional(),
     status: z.nativeEnum(KitchenStatus).optional(),
+    is_busy: z.boolean().optional(),
   })
   .refine((data) => Object.keys(data).length > 1, {
     message: "At least one field must be updated",

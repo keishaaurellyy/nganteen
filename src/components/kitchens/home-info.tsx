@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Badge } from "@/components/input/badge";
 import { Kitchen } from "@/app/types/kitchen";
 import { SkeletonKitchenInfo } from "../buyers/skeleton";
 
@@ -59,9 +58,8 @@ export default function KitchenInfo() {
         className="rounded-full border-2 border-primary-500"
       />
       <div className="flex-1 justify-between truncate">
-        <div className="flex justify-between items-center">
+        <div className="flex gap-2 items-start">
           <h3 className="text-base-bold mb-1">{data.kitchenName}</h3>
-          <Badge>Kitchen</Badge>
         </div>
         <p className="text-sm">
           {data.location}&ensp;|&ensp;{data.kitchenDescription}

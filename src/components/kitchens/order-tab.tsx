@@ -1,9 +1,9 @@
 interface OrdersTabProps {
   activeTab: "incoming" | "confirmed";
-  setActiveTab: (tab: "incoming" | "confirmed") => void;
+  onTabChange: (tab: "incoming" | "confirmed") => void;
 }
 
-export function OrdersTab({ activeTab, setActiveTab }: OrdersTabProps) {
+export function OrdersTab({ activeTab, onTabChange }: OrdersTabProps) {
   return (
     <div className="w-full flex text-sm">
       <button
@@ -12,7 +12,7 @@ export function OrdersTab({ activeTab, setActiveTab }: OrdersTabProps) {
             ? "text-neutral-900 font-extrabold border-neutral-900"
             : "text-neutral-600 font-normal border-neutral-600"
         }`}
-        onClick={() => setActiveTab("incoming")}
+        onClick={() => onTabChange("incoming")}
       >
         Incoming Order
       </button>
@@ -22,7 +22,7 @@ export function OrdersTab({ activeTab, setActiveTab }: OrdersTabProps) {
             ? "text-neutral-900 font-extrabold border-neutral-900"
             : "text-neutral-600 font-normal border-neutral-600"
         }`}
-        onClick={() => setActiveTab("confirmed")}
+        onClick={() => onTabChange("confirmed")}
       >
         Order Confirmed
       </button>
