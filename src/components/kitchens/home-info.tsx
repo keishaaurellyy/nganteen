@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Kitchen } from "@/app/types/kitchen";
 import { SkeletonKitchenInfo } from "../buyers/skeleton";
+import * as Switch from "@radix-ui/react-switch";
 
 export default function KitchenInfo() {
   const { data: session, status } = useSession();
   const kitchenId = session?.user?.kitchen_id;
   const [data, setData] = useState<Kitchen | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isBusy, setIsBusy] = useState(false);
 
   useEffect(() => {
     if (!kitchenId) return;
@@ -25,6 +27,7 @@ export default function KitchenInfo() {
         const result = await res.json();
         if (result.success) {
           setData(result.data);
+          setIsBusy(result.data.isBusy);
         }
       } catch (error) {
         console.error("Failed to fetch kitchen info:", error);
@@ -42,6 +45,23 @@ export default function KitchenInfo() {
     return () => clearInterval(interval);
   }, [kitchenId]);
 
+  const handleToggleBusy = async (checked: boolean) => {
+    if (!kitchenId) return;
+    setIsBusy(checked);
+
+    try {
+      await fetch(`/api/kitchens/${kitchenId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ is_busy: checked }),
+      });
+    } catch (error) {
+      console.error("Failed to update busy status:", error);
+    }
+  };
+
   if (status === "loading" || !kitchenId || isInitialLoading) {
     return <SkeletonKitchenInfo />;
   }
@@ -49,7 +69,7 @@ export default function KitchenInfo() {
   if (!data) return null;
 
   return (
-    <div className="w-full p-3 rounded-xl border border-neutral-400 flex gap-3 items-start">
+    <div className="w-full p-3 rounded-xl border border-neutral-400 flex gap-3 items-center bg-neutral-100">
       <Image
         src="/images/kitchen.svg"
         alt="kitchen profile"
@@ -61,9 +81,25 @@ export default function KitchenInfo() {
         <div className="flex gap-2 items-start">
           <h3 className="text-base-bold mb-1">{data.kitchenName}</h3>
         </div>
-        <p className="text-sm">
+        <p className="text-sm text-neutral-700">
           {data.location}&ensp;|&ensp;{data.kitchenDescription}
         </p>
+      </div>
+      <div className="flex flex-col gap-2 justify-center text-center">
+        <label
+          className="text-xs leading-none text-center text-neutral-800"
+          htmlFor="isBusy"
+        >
+          Busy?
+        </label>
+        <Switch.Root
+          className="relative h-[26px] w-[48px] rounded-full transition-colors bg-neutral-400 data-[state=checked]:bg-primary-500"
+          id="isBusy"
+          checked={isBusy}
+          onCheckedChange={handleToggleBusy}
+        >
+          <Switch.Thumb className="block size-[22px] rounded-full bg-neutral-100 shadow-md transition-transform translate-x-[2px] data-[state=checked]:translate-x-[23px]" />
+        </Switch.Root>
       </div>
     </div>
   );

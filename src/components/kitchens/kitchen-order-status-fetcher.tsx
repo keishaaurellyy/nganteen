@@ -7,8 +7,8 @@ import { SkeletonKitchenOrders } from "../buyers/skeleton";
 
 export default function KitchenOrderStatusFetcher() {
   const { data: session, status } = useSession();
-  const [onGoingCount, setOnGoingCount] = useState(0);
-  const [historyCount, setHistoryCount] = useState(0);
+  const [incomingCount, setIncomingCount] = useState(0);
+  const [cookingCount, setCookingCount] = useState(0);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
@@ -26,14 +26,12 @@ export default function KitchenOrderStatusFetcher() {
 
     const fetchCounts = async (isInitial = false) => {
       if (isInitial) setIsInitialLoading(true);
-      const [incoming, cooking, completed, cancelled] = await Promise.all([
+      const [incoming, cooking] = await Promise.all([
         fetchOrders("INCOMING"),
         fetchOrders("COOKING"),
-        fetchOrders("COMPLETED"),
-        fetchOrders("CANCELLED"),
       ]);
-      setOnGoingCount(incoming + cooking);
-      setHistoryCount(completed + cancelled);
+      setIncomingCount(incoming);
+      setCookingCount(cooking);
       if (isInitial) setIsInitialLoading(false);
     };
 
@@ -48,5 +46,5 @@ export default function KitchenOrderStatusFetcher() {
   if (status === "loading" || isInitialLoading)
     return <SkeletonKitchenOrders />;
 
-  return <KitchenOrder onGoing={onGoingCount} history={historyCount} />;
+  return <KitchenOrder incoming={incomingCount} cooking={cookingCount} />;
 }

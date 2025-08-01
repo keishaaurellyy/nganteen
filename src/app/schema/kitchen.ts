@@ -39,7 +39,7 @@ export const EditKitchenSchema = z
     status: z.nativeEnum(KitchenStatus).optional(),
     is_busy: z.boolean().optional(),
   })
-  .refine((data) => Object.keys(data).length > 1, {
+  .refine((data) => Object.values(data).some((value) => value !== undefined), {
     message: "At least one field must be updated",
   });
 export type EditKitchen = z.infer<typeof EditKitchenSchema>;

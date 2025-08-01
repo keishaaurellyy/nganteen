@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { OrderData } from "../types/order";
 import KitchenCard from "@/components/buyers/kitchen-card";
 import { Kitchen } from "../types/kitchen";
+import OrderDetailEntryPoint from "@/components/buyers/order-detail-entry-point";
 
 const COLORS = ["primary", "secondary", "tertiary"] as const;
 
@@ -173,6 +174,7 @@ export default function HomePage() {
             <HistoryCard {...lastOrder!} status={lastOrder?.status} />
           </Show>
         </section>
+        <OrderDetailEntryPoint />
       </main>
     </div>
   );
