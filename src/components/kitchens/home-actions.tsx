@@ -1,27 +1,33 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
-import { FileText, HelpCircle, LogOut } from 'lucide-react';
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { FileText, HelpCircle, HistoryIcon, LogOut } from "lucide-react";
 
 const actions = [
   {
-    label: 'Contract Policy',
+    label: "Order History",
+    icon: <HistoryIcon size={24} />,
+    href: "/kitchens/order-history",
+    className: "bg-primary-500",
+  },
+  {
+    label: "Contract",
     icon: <FileText size={24} />,
-    href: '/kitchens/contract-policy',
-    className: 'bg-primary-500',
+    href: "/kitchens/contract-policy",
+    className: "bg-primary-500",
   },
   {
-    label: 'Help Center',
+    label: "Help Center",
     icon: <HelpCircle size={24} />,
-    href: '/kitchens/help',
-    className: 'bg-primary-500',
+    href: "/kitchens/help",
+    className: "bg-primary-500",
   },
   {
-    label: 'Logout',
+    label: "Logout",
     icon: <LogOut size={24} />,
-    onClick: () => signOut({ callbackUrl: '/' }),
-    className: 'bg-error-medium',
+    onClick: () => signOut({ callbackUrl: "/" }),
+    className: "bg-error-medium",
   },
 ];
 
@@ -29,7 +35,7 @@ export default function KitchenActions() {
   const router = useRouter();
 
   return (
-    <div className="border border-neutral-400 px-3 py-5 rounded-xl grid grid-cols-3 gap-4">
+    <div className="border border-neutral-400 p-3 rounded-xl grid grid-cols-4 gap-2">
       {actions.map((action, index) => (
         <div key={index} className="flex flex-col items-center gap-2">
           <button
@@ -40,7 +46,9 @@ export default function KitchenActions() {
           >
             {action.icon}
           </button>
-          <span className="text-xs font-semibold text-center">{action.label}</span>
+          <span className="text-xs font-semibold text-center">
+            {action.label}
+          </span>
         </div>
       ))}
     </div>

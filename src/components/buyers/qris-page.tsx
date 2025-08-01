@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { OrderData } from "@/app/types/order";
 import OrderDetailEventHandler from "@/app/buyers/order-detail/component-order-detail/order-detail-event-handler";
 import Show from "@/components/input/show";
+import { formatToRupiah } from "@/utils";
 
 export default function QRISPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -30,7 +31,9 @@ export default function QRISPage() {
   }, [orderId]);
 
   const { copy, icon } = useCopyToClipboard({ iconSize: "small" });
-  const text = order?.totalPayment?.toLocaleString("id-ID");
+  const text =
+    order?.totalPayment !== undefined ? formatToRupiah(order.totalPayment) : "";
+  const handleCopy = () => copy(order?.totalPayment as any);
 
   const handleToggle = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
@@ -98,12 +101,10 @@ export default function QRISPage() {
                   <div className="h-5 w-32 bg-primary-200 rounded mb-1 animate-pulse" />
                 }
               >
-                <p className="text-2xl font-bold text-secondary-500">
-                  Rp {text}
-                </p>
+                <p className="text-2xl font-bold text-secondary-500">{text}</p>
               </Show>
               <p>
-                <button onClick={() => copy(text ?? "")}>{icon}</button>
+                <button onClick={handleCopy}>{icon}</button>
               </p>
             </div>
           </div>

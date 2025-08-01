@@ -45,7 +45,7 @@ export default function OrderDetailPage() {
 
       <main className="px-5 gap-4 flex flex-col items-center">
         <OrderDetailKitchen orderId={orderId} />
-        <OrderDetailStatusCard />
+        <OrderDetailStatusCard orderId={orderId} />
         <OrderDetailItem orderId={orderId} />
         <OrderDetailNoteAndPayment orderId={orderId} />
 

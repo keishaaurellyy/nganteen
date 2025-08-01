@@ -65,6 +65,7 @@ export async function PATCH(
         adminPhone: validated.admin_phone,
         location: validated.location,
         status: validated.status,
+        isBusy: validated.is_busy,
       })
       .where(eq(kitchensTable.kitchenId, kitchenId))
       .returning();

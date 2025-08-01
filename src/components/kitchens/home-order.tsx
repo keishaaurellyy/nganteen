@@ -1,30 +1,30 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
 type Props = {
-  onGoing: number;
-  history: number;
+  incoming: number;
+  cooking: number;
 };
 
 const orders = [
   {
-    href: '/kitchens/orders',
-    label: 'On-going orders',
-    countKey: 'onGoing' as const,
+    href: "/kitchens/orders?status=incoming",
+    label: "Waiting confirmation",
+    countKey: "incoming" as const,
   },
   {
-    href: '/kitchens/order-history',
-    label: 'Order history',
-    countKey: 'history' as const,
+    href: "/kitchens/orders?status=cooking",
+    label: "Orders",
+    countKey: "cooking" as const,
   },
 ];
 
-export default function KitchenOrder({ onGoing, history }: Props) {
+export default function KitchenOrder({ incoming, cooking }: Props) {
   const baseClass =
-    'bg-primary-100 active:bg-neutral-100 rounded-xl shadow-sm py-2 px-1 space-y-2 flex flex-col items-center';
+    "bg-primary-100 active:bg-neutral-100 rounded-md shadow-sm py-2 px-1 space-y-2 flex flex-col items-center";
 
-  const countMap = { onGoing, history };
+  const countMap = { incoming, cooking };
 
   return (
     <div className="w-full grid grid-cols-2 gap-4">
