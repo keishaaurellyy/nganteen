@@ -7,7 +7,9 @@ import "dotenv/config";
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 export const db = drizzle(pool, { schema });
 
-// Kitchen columns that are safe to send to clients: everything except the password.
+// Columns that are safe to send to clients: everything except the password.
 const { kitchenPassword: _kitchenPassword, ...kitchenPublicColumns } =
   getTableColumns(schema.kitchens);
-export { kitchenPublicColumns };
+const { password: _buyerPassword, ...buyerPublicColumns } =
+  getTableColumns(schema.buyers);
+export { kitchenPublicColumns, buyerPublicColumns };

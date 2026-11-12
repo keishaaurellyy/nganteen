@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
-import { db } from "@/db/client";
+import { db, buyerPublicColumns } from "@/db/client";
 import { buyers } from "@/drizzle/schema";
 
 export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
@@ -15,7 +15,7 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
 
   try {
     const result = await db
-      .select()
+      .select(buyerPublicColumns)
       .from(buyers)
       .where(eq(buyers.buyerId, buyerId))
       .limit(1);
@@ -60,7 +60,7 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
       .update(buyers)
       .set(updateData)
       .where(eq(buyers.buyerId, buyerId))
-      .returning();
+      .returning(buyerPublicColumns);
     if (result.length === 0) {
       return NextResponse.json({ error: "Buyer not found." }, { status: 404 });
     }
