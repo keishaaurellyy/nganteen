@@ -28,7 +28,7 @@ At lunch, the BINUS canteens get packed: long queues, sold-out menus, and orders
 
 ## Features
 
-| 🧑‍🎓 Buyers | 🍳 Kitchens | 🛠️ Admin |
+| Buyers | Kitchens | Admin |
 |---|---|---|
 | Register with a BINUS email and campus | Manage the menu: add, edit, set stock | Add and edit canteen kitchens |
 | Browse kitchens and menus by campus | See incoming orders live (refreshes every 5 s) | Set kitchen login credentials |
@@ -38,10 +38,10 @@ At lunch, the BINUS canteens get packed: long queues, sold-out menus, and orders
 | Save bank account details | Help and contract policy pages | |
 
 **Under the hood**
-- 🔒 **Role-based access:** every API route checks the signed-in user's role and ownership, and middleware guards the buyer, kitchen and admin pages.
-- 💸 **Server-side prices:** order totals are calculated from the database, never trusted from the browser.
-- 📦 **Stock that can't go negative:** stock is taken atomically inside a transaction, and given back when an order is cancelled.
-- 🔑 **Hashed passwords:** buyer, kitchen and admin passwords are stored as bcrypt hashes.
+- **Role-based access:** every API route checks the signed-in user's role and ownership, and middleware guards the buyer, kitchen and admin pages.
+- **Server-side prices:** order totals are calculated from the database, never trusted from the browser.
+- **Stock that can't go negative:** stock is taken atomically inside a transaction, and given back when an order is cancelled.
+- **Hashed passwords:** buyer, kitchen and admin passwords are stored as bcrypt hashes.
 
 ## Order flow
 
@@ -157,12 +157,12 @@ nganteen/
 
 Built as a thesis project at **BINUS University** by:
 
+- [Patrick Darmawan](https://github.com/PatrickDarmawanR)
 - [Keisha Aurelly](https://github.com/keishaaurellyy)
 - [Safira Syahada](https://github.com/firasur)
-- [Patrick](https://github.com/PatrickDarmawanR)
 
 ---
 
 <div align="center">
-Made with 🍜 and too much canteen coffee · <a href="https://nganteen.vercel.app">nganteen.vercel.app</a>
+<a href="https://nganteen.vercel.app">nganteen.vercel.app</a>
 </div>
