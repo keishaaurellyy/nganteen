@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 import { CreateOrderSchema } from "@/app/schema/order-item";
 import { db } from "@/db/client";
 import { kitchens, orderItems, orders, orderStatus } from "@/drizzle/schema";
@@ -56,10 +57,6 @@ export async function POST(
       );
     }
 
-    const randomCode = Math.floor(Math.random() * 900000)
-      .toString()
-      .padStart(6, "0");
-
     const wibDate = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString();
 
     // Prices come from the database, never from the request. Each stock update only
@@ -109,7 +106,7 @@ export async function POST(
           ),
           status: "INCOMING",
           createdDate: wibDate,
-          orderCode: `TRX${randomCode}`,
+          orderCode: `TRX${randomBytes(4).toString("hex").toUpperCase()}`,
         })
         .returning({ orderId: orders.orderId });
 
@@ -215,8 +212,9 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: grouped });
   } catch (err: any) {
+    console.error("Error fetching buyer orders:", err);
     return NextResponse.json(
-      { error: "Internal Server Error", details: err.message },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }

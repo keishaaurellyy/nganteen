@@ -43,11 +43,11 @@ export async function GET(
       { status: 200 }
     );
   } catch (error: any) {
+    console.error("Error fetching order:", error);
     return NextResponse.json(
       {
         success: false,
         error: "Failed to fetch order",
-        details: error?.message ?? error,
       },
       { status: 500 }
     );

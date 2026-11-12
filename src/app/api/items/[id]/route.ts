@@ -4,8 +4,11 @@ import { NextResponse } from "next/server";
 import { items } from "@/drizzle/schema";
 import { requireUser } from "@/lib/auth";
 
-export async function GET(_req: Request, context: { params: { id: string } }) {
-  const itemId = Number(context.params.id);
+export async function GET(
+  _req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  const itemId = Number((await context.params).id);
   if (isNaN(itemId)) {
     return NextResponse.json({ error: "Invalid itemId" }, { status: 400 });
   }

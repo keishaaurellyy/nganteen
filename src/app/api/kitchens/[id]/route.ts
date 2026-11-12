@@ -34,8 +34,9 @@ export async function GET(
       { status: 200 }
     );
   } catch (error: any) {
+    console.error("Error fetching kitchen:", error);
     return NextResponse.json(
-      { error: "Failed to fetch kitchen", details: error?.message ?? error },
+      { error: "Failed to fetch kitchen" },
       { status: 500 }
     );
   }
@@ -78,10 +79,11 @@ export async function PATCH(
 
     return NextResponse.json({ updated }, { status: 200 });
   } catch (error: any) {
+    console.error("Error updating kitchen:", error);
     return NextResponse.json(
       {
         error: "Failed to update kitchen",
-        details: error?.errors ?? error?.message,
+        details: error?.errors,
       },
       { status: 400 }
     );

@@ -4,9 +4,6 @@ const nextConfig: NextConfig = {
   experimental: {
     useCache: true,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   eslint: {
     ignoreDuringBuilds: true,
   },

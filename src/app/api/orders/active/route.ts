@@ -41,11 +41,11 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ success: true, data: result[0] });
   } catch (err: any) {
+    console.error("Error fetching active order:", err);
     return NextResponse.json(
       {
         success: false,
         error: "Database error",
-        details: err?.message ?? err,
       },
       { status: 500 }
     );
