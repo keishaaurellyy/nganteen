@@ -157,8 +157,8 @@ nganteen/
 
 Built as a thesis project at **BINUS University** by:
 
-- [Patrick Darmawan](https://github.com/PatrickDarmawanR)
 - [Keisha Aurelly](https://github.com/keishaaurellyy)
+- [Patrick Darmawan](https://github.com/PatrickDarmawanR)
 - [Safira Syahada](https://github.com/firasur)
 
 ---
