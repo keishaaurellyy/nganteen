@@ -1,10 +1,12 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcrypt";
 import { db, kitchenPublicColumns } from "@/db/client";
 import { kitchens as kitchensTable } from "@/drizzle/schema";
 import { EditKitchenSchema } from "@/app/schema/kitchen";
 import { eq } from "drizzle-orm";
+import { requireUser } from "@/lib/auth";
 
 export async function GET(
   _req: NextRequest,
@@ -49,6 +51,8 @@ export async function PATCH(
   if (isNaN(kitchenId)) {
     return NextResponse.json({ error: "Invalid kitchen ID" }, { status: 400 });
   }
+  const auth = await requireUser({ admin: true, kitchenId });
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const body = await req.json();
@@ -58,7 +62,9 @@ export async function PATCH(
       .update(kitchensTable)
       .set({
         kitchenEmail: validated.kitchen_email,
-        kitchenPassword: validated.kitchen_password,
+        kitchenPassword: validated.kitchen_password
+          ? await bcrypt.hash(validated.kitchen_password, 10)
+          : undefined,
         kitchenName: validated.kitchen_name,
         kitchenDescription: validated.kitchen_description,
         adminName: validated.admin_name,

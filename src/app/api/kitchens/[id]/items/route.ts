@@ -9,6 +9,7 @@ import {
   RegisterItem,
 } from "@/app/schema/item";
 import { and, eq } from "drizzle-orm";
+import { requireUser } from "@/lib/auth";
 
 export async function POST(
   req: NextRequest,
@@ -19,6 +20,8 @@ export async function POST(
   if (isNaN(kitchenId)) {
     return NextResponse.json({ error: "Invalid kitchen ID" }, { status: 400 });
   }
+  const auth = await requireUser({ admin: true, kitchenId });
+  if (auth instanceof NextResponse) return auth;
 
   const formData = await req.formData();
 
@@ -71,6 +74,8 @@ export async function PATCH(
   if (isNaN(kitchenId)) {
     return NextResponse.json({ error: "Invalid kitchen ID" }, { status: 400 });
   }
+  const auth = await requireUser({ admin: true, kitchenId });
+  if (auth instanceof NextResponse) return auth;
 
   const formData = await req.formData();
 

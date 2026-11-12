@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../[...nextauth]/route";
+import { authOptions } from "@/lib/auth-option";
 import { db, buyerPublicColumns } from "@/db/client";
 import { buyers } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";

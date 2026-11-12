@@ -2,6 +2,7 @@ import { db } from "@/db/client";
 import { orderItems, orders } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { requireUser } from "@/lib/auth";
 
 export async function GET(
   _req: Request,
@@ -12,11 +13,6 @@ export async function GET(
   if (isNaN(orderId)) {
     return NextResponse.json({ error: "Invalid order ID" }, { status: 400 });
   }
-  const items = await db
-    .select()
-    .from(orderItems)
-    .where(eq(orderItems.orderId, orderId));
-
   try {
     const [order] = await db
       .select()
@@ -29,6 +25,18 @@ export async function GET(
         { status: 404 }
       );
     }
+
+    const auth = await requireUser({
+      admin: true,
+      buyerId: order.buyerId,
+      kitchenId: order.kitchenId,
+    });
+    if (auth instanceof NextResponse) return auth;
+
+    const items = await db
+      .select()
+      .from(orderItems)
+      .where(eq(orderItems.orderId, orderId));
 
     return NextResponse.json(
       { success: true, data: { order, items } },

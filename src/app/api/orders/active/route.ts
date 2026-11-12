@@ -3,6 +3,7 @@ import { db } from "@/db/client";
 import { orders } from "@/drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { requireUser } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -18,6 +19,8 @@ export async function GET(req: NextRequest) {
       { status: 400 }
     );
   }
+  const auth = await requireUser({ buyerId });
+  if (auth instanceof NextResponse) return auth;
 
   const status =
     rawStatus && allowedStatuses.includes(rawStatus as OrderStatus)

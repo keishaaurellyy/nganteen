@@ -3,6 +3,7 @@ import { db } from "@/db/client";
 import { account } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { requireUser } from "@/lib/auth";
 
 export async function POST(
   req: NextRequest,
@@ -14,6 +15,8 @@ export async function POST(
   if (isNaN(buyerId)) {
     return NextResponse.json({ error: "Invalid buyer ID" }, { status: 400 });
   }
+  const auth = await requireUser({ buyerId });
+  if (auth instanceof NextResponse) return auth;
 
   const body = await req.json();
   const parsed = RegisterAccountSchema.safeParse(body);
@@ -48,6 +51,8 @@ export async function GET(
       { status: 400 }
     );
   }
+  const auth = await requireUser({ admin: true, buyerId });
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const existingAccount = await db

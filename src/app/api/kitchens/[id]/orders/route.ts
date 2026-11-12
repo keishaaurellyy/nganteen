@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { orders, orderItems, orderStatus } from "@/drizzle/schema";
 import { eq, and, inArray, desc } from "drizzle-orm";
+import { requireUser } from "@/lib/auth";
 
 type OrderStatus = (typeof orderStatus.enumValues)[number];
 
@@ -20,6 +21,8 @@ export async function GET(
       { status: 400 }
     );
   }
+  const auth = await requireUser({ admin: true, kitchenId });
+  if (auth instanceof NextResponse) return auth;
 
   try {
     let foundOrders;

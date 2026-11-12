@@ -36,7 +36,6 @@ export const kitchens = pgTable("kitchens", {
 	unique("kitchens_admin_phone_key").on(table.adminPhone),
 	unique("kitchens_location_key").on(table.location),
 	check("format_phone_number", sql`admin_phone ~ '^08[0-9]{8,12}$'::text`),
-	check("password_length", sql`(char_length(kitchen_password) >= 5) AND (char_length(kitchen_password) <= 15)`),
 	check("location_alphanumeric", sql`location ~ '^[a-zA-Z0-9 ]+$'::text`),
 ]);
 
