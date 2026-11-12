@@ -1,8 +1,9 @@
 import { describe, expect, it } from "@jest/globals";
 import type { jest as Jest } from "@jest/globals";
 import { NextRequest } from "next/server";
+import { unstable_doesMiddlewareMatch as runsOn } from "next/experimental/testing/server";
 import type { JWT } from "next-auth/jwt";
-import { middleware } from "@/middleware";
+import { config, middleware } from "@/middleware";
 
 // The global jest, not the @jest/globals import: next/jest only hoists jest.mock for the global.
 declare const jest: typeof Jest;
@@ -39,5 +40,31 @@ describe("middleware", () => {
     ["admin", "/kitchens/menu"],
   ])("redirects a %s away from %s", async (role, path) => {
     expect(isRedirectToUnauthorized(await visit(path, role))).toBe(true);
+  });
+});
+
+describe("middleware matcher", () => {
+  it.each([
+    "/admin",
+    "/admin/create-kitchen",
+    "/buyers",
+    "/buyers/order-history",
+    "/buyers/explore-kitchens/3",
+    "/kitchens",
+    "/kitchens/menu/3/edit",
+  ])("guards %s", (url) => {
+    expect(runsOn({ config, url })).toBe(true);
+  });
+
+  it.each([
+    "/",
+    "/unauthorized",
+    "/admin/login",
+    "/buyers/login",
+    "/buyers/register",
+    "/kitchens/login",
+    "/api/orders",
+  ])("leaves %s public", (url) => {
+    expect(runsOn({ config, url })).toBe(false);
   });
 });
