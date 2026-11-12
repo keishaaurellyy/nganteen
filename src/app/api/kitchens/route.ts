@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/db/client";
+import { db, kitchenPublicColumns } from "@/db/client";
 import { kitchens } from "@/drizzle/schema";
 import { asc, eq, or } from "drizzle-orm";
 import { RegisterKitchenSchema } from "@/app/schema/kitchen";
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
 export async function GET() {
   try {
     const exploreKitchens = await db
-      .select()
+      .select(kitchenPublicColumns)
       .from(kitchens)
       .orderBy(asc(kitchens.kitchenName));
 

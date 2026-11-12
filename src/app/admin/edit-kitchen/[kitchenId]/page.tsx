@@ -65,7 +65,6 @@ export default function EditKitchenPage() {
       reset({
         status: data.status,
         kitchen_email: data.kitchenEmail,
-        kitchen_password: data.kitchenPassword,
         kitchen_name: data.kitchenName,
         kitchen_description: data.kitchenDescription ?? "",
         admin_name: data.adminName,
@@ -141,9 +140,11 @@ export default function EditKitchenPage() {
                 helperText={errors.kitchen_email?.message}
               />
               <TextField
-                placeholder="Kitchen Password"
+                placeholder="New Password (leave blank to keep)"
                 type="password"
-                {...register("kitchen_password")}
+                {...register("kitchen_password", {
+                  setValueAs: (value) => value || undefined,
+                })}
                 error={!!errors.kitchen_password}
                 helperText={errors.kitchen_password?.message}
               />

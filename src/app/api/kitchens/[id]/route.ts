@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/db/client";
+import { db, kitchenPublicColumns } from "@/db/client";
 import { kitchens as kitchensTable } from "@/drizzle/schema";
 import { EditKitchenSchema } from "@/app/schema/kitchen";
 import { eq } from "drizzle-orm";
@@ -19,7 +19,7 @@ export async function GET(
 
   try {
     const kitchen = await db
-      .select()
+      .select(kitchenPublicColumns)
       .from(kitchensTable)
       .where(eq(kitchensTable.kitchenId, kitchenId));
 
@@ -68,7 +68,7 @@ export async function PATCH(
         isBusy: validated.is_busy,
       })
       .where(eq(kitchensTable.kitchenId, kitchenId))
-      .returning();
+      .returning(kitchenPublicColumns);
 
     return NextResponse.json({ updated }, { status: 200 });
   } catch (error: any) {
