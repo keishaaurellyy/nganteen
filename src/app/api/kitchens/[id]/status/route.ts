@@ -1,5 +1,5 @@
 import { UpdateStatusSchema } from "@/app/schema/kitchen";
-import { db } from "@/db/client";
+import { db, kitchenPublicColumns } from "@/db/client";
 import { kitchens } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -25,7 +25,7 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
       .update(kitchens)
       .set({ status: parse.data.status })
       .where(eq(kitchens.kitchenId, kitchenId))
-      .returning();
+      .returning(kitchenPublicColumns);
 
     if (result.length === 0) {
       return NextResponse.json({ error: "Kitchen not found" }, { status: 404 });

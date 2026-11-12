@@ -5,6 +5,8 @@ import { NextRequest } from "next/server";
 import { GET as getOrders } from "@/app/api/orders/route";
 import { POST as login } from "@/app/api/login/route";
 import { PATCH as patchKitchenStatus } from "@/app/api/kitchens/[id]/status/route";
+import { GET as getKitchens } from "@/app/api/kitchens/route";
+import { GET as getKitchen, PATCH as patchKitchen } from "@/app/api/kitchens/[id]/route";
 
 // The global jest, not the @jest/globals import: next/jest only hoists jest.mock for the global.
 declare const jest: typeof Jest;
@@ -152,6 +154,37 @@ describe("POST /api/login", () => {
   });
 });
 
+// Column order of kitchens without kitchen_password.
+const kitchenRow = [1, "dapur@binus.ac.id", "Dapur Bu Ani", "Ani", "081234567890", "Kantin A", "INACTIVE", null, false];
+
+describe("kitchen responses never include the password", () => {
+  const params = { params: Promise.resolve({ id: "1" }) };
+  const request = (body?: unknown) =>
+    new NextRequest("http://localhost/api/kitchens/1", {
+      method: body ? "PATCH" : "GET",
+      body: body ? JSON.stringify(body) : undefined,
+    });
+
+  it.each([
+    ["GET /api/kitchens", () => getKitchens()],
+    ["GET /api/kitchens/[id]", () => getKitchen(request(), params)],
+    ["PATCH /api/kitchens/[id]", () => patchKitchen(request({ kitchen_password: "baru12345" }), params)],
+    ["PATCH /api/kitchens/[id]/status", () =>
+      patchKitchenStatus(request({ status: "INACTIVE" }), params)],
+  ])("%s", async (_, call) => {
+    mockQuery.mockResolvedValueOnce({ rows: [kitchenRow] });
+
+    const res = await call();
+    const body = JSON.stringify(await res.json());
+
+    expect(res.status).toBe(200);
+    expect(body).toContain("Dapur Bu Ani");
+    expect(body).not.toMatch(/password/i);
+    // The password may be written (set ... = $n) but never read back.
+    expect(lastSql()).not.toMatch(/(select|returning).*kitchen_password/);
+  });
+});
+
 describe("PATCH /api/kitchens/[id]/status", () => {
   const patch = (id: string, body: unknown) =>
     patchKitchenStatus(
@@ -175,7 +208,7 @@ describe("PATCH /api/kitchens/[id]/status", () => {
   it("updates the status and returns the kitchen", async () => {
     mockQuery.mockResolvedValueOnce({
       rows: [
-        [1, "dapur@binus.ac.id", "dapur123", "Dapur Bu Ani", "Ani", "081234567890", "Kantin A", "INACTIVE", null, false],
+        kitchenRow,
       ],
     });
 
