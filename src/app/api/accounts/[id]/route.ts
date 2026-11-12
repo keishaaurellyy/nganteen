@@ -3,6 +3,7 @@ import { db } from "@/db/client";
 import { account } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { requireUser } from "@/lib/auth";
 
 export async function PATCH(
   req: NextRequest,
@@ -14,6 +15,16 @@ export async function PATCH(
   if (isNaN(accountId)) {
     return NextResponse.json({ error: "Invalid account ID" }, { status: 400 });
   }
+
+  const [existing] = await db
+    .select({ buyerId: account.buyerId })
+    .from(account)
+    .where(eq(account.accountId, accountId));
+  if (!existing) {
+    return NextResponse.json({ error: "Account not found" }, { status: 404 });
+  }
+  const auth = await requireUser({ buyerId: existing.buyerId });
+  if (auth instanceof NextResponse) return auth;
 
   const body = await req.json();
   const parsed = EditAccountSchema.safeParse(body);
@@ -37,9 +48,10 @@ export async function PATCH(
 
 export async function GET(
   _req: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const accountId = parseInt(context.params.id, 10);
+  const { id } = await context.params;
+  const accountId = parseInt(id, 10);
 
   if (isNaN(accountId)) {
     return NextResponse.json(
@@ -57,6 +69,9 @@ export async function GET(
     if (!result.length) {
       return NextResponse.json({ success: true, data: null }, { status: 200 });
     }
+
+    const auth = await requireUser({ admin: true, buyerId: result[0].buyerId });
+    if (auth instanceof NextResponse) return auth;
 
     return NextResponse.json(
       { success: true, data: result[0] },

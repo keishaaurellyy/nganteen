@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { db, buyerPublicColumns } from "@/db/client";
-import { buyers } from "@/drizzle/schema";
+import { buyers, orders } from "@/drizzle/schema";
+import { requireUser } from "@/lib/auth";
 
 export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -12,6 +13,18 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
   if (isNaN(buyerId) || buyerId <= 0) {
     return NextResponse.json({ error: "Invalid buyer ID." }, { status: 400 });
   }
+
+  // Kitchens may see buyers who ordered from them: order cards show the buyer's name.
+  const orderedFrom = await db
+    .selectDistinct({ kitchenId: orders.kitchenId })
+    .from(orders)
+    .where(eq(orders.buyerId, buyerId));
+  const auth = await requireUser({
+    admin: true,
+    buyerId,
+    kitchenId: orderedFrom.map((o) => o.kitchenId),
+  });
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const result = await db
@@ -49,6 +62,8 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
   if (isNaN(buyerId)) {
     return NextResponse.json({ error: "ID invalid." }, { status: 400 });
   }
+  const auth = await requireUser({ buyerId });
+  if (auth instanceof NextResponse) return auth;
 
   const updateData: any = { ...body };
 

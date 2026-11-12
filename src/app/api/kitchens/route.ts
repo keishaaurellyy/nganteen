@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
+import bcrypt from "bcrypt";
 import { db, kitchenPublicColumns } from "@/db/client";
 import { kitchens } from "@/drizzle/schema";
 import { asc, eq, or } from "drizzle-orm";
 import { RegisterKitchenSchema } from "@/app/schema/kitchen";
+import { requireUser } from "@/lib/auth";
 
 export async function POST(req: Request) {
+  const auth = await requireUser({ admin: true });
+  if (auth instanceof NextResponse) return auth;
   try {
     const body = await req.json();
     const parsed = RegisterKitchenSchema.parse(body);
@@ -37,7 +41,7 @@ export async function POST(req: Request) {
       .insert(kitchens)
       .values({
         kitchenEmail: parsed.kitchen_email,
-        kitchenPassword: parsed.kitchen_password,
+        kitchenPassword: await bcrypt.hash(parsed.kitchen_password, 10),
         kitchenName: parsed.kitchen_name,
         kitchenDescription: parsed.kitchen_description,
         adminName: parsed.admin_name,

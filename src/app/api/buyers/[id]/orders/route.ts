@@ -1,23 +1,29 @@
 import { CreateOrderSchema } from "@/app/schema/order-item";
 import { db } from "@/db/client";
 import { kitchens, orderItems, orders, orderStatus } from "@/drizzle/schema";
-import { eq, and, inArray, desc, sql } from "drizzle-orm";
+import { eq, and, gte, inArray, desc, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { items as itemsTable } from "@/drizzle/schema";
 import { OrderStatus } from "@/app/types/order";
+import { requireUser } from "@/lib/auth";
+
+// Thrown inside the order transaction to roll it back with a 400 for the buyer.
+class OrderRejected extends Error {}
 
 export async function POST(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const buyerId = parseInt(context.params.id, 10);
+    const buyerId = parseInt((await context.params).id, 10);
     if (isNaN(buyerId)) {
       return NextResponse.json(
         { success: false, error: "Invalid buyer ID" },
         { status: 400 }
       );
     }
+    const auth = await requireUser({ buyerId });
+    if (auth instanceof NextResponse) return auth;
 
     const body = await req.json();
     const parsed = CreateOrderSchema.safeParse(body);
@@ -29,10 +35,18 @@ export async function POST(
       );
     }
 
-    const { kitchen_id, items, notes, total_payment } = parsed.data;
+    const { kitchen_id, items, notes } = parsed.data;
+
+    if (new Set(items.map((item) => item.item_id)).size !== items.length) {
+      return NextResponse.json(
+        { success: false, error: "Each item may appear only once" },
+        { status: 400 }
+      );
+    }
 
     const kitchen = await db.query.kitchens.findFirst({
       where: eq(kitchens.kitchenId, kitchen_id),
+      columns: { status: true },
     });
 
     if (!kitchen || kitchen.status !== "ACTIVE") {
@@ -42,66 +56,83 @@ export async function POST(
       );
     }
 
-    for (const item of items) {
-      const dbItem = await db.query.items.findFirst({
-        where: eq(itemsTable.itemId, item.item_id),
-      });
-
-      if (!dbItem || item.item_qty > dbItem.itemStock) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `Item "${item.item_name}" exceeds available stock`,
-          },
-          { status: 400 }
-        );
-      }
-    }
-
     const randomCode = Math.floor(Math.random() * 900000)
       .toString()
       .padStart(6, "0");
 
     const wibDate = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString();
 
-    const [order] = await db
-      .insert(orders)
-      .values({
-        buyerId,
-        kitchenId: kitchen_id,
-        notes: notes ?? null,
-        totalPayment: total_payment,
-        status: "INCOMING",
-        createdDate: wibDate,
-        orderCode: `TRX${randomCode}`,
-      })
-      .returning({ orderId: orders.orderId });
+    // Prices come from the database, never from the request. Each stock update only
+    // succeeds while enough stock is left, so two buyers cannot both take the last one.
+    const order = await db.transaction(async (tx) => {
+      const orderItemValues = [];
+      for (const item of items) {
+        const [dbItem] = await tx
+          .update(itemsTable)
+          .set({ itemStock: sql`${itemsTable.itemStock} - ${item.item_qty}` })
+          .where(
+            and(
+              eq(itemsTable.itemId, item.item_id),
+              eq(itemsTable.kitchenId, kitchen_id),
+              gte(itemsTable.itemStock, item.item_qty)
+            )
+          )
+          .returning({
+            itemName: itemsTable.itemName,
+            itemPrice: itemsTable.itemPrice,
+          });
 
-    const orderItemValues = items.map((item) => ({
-      orderId: order.orderId,
-      itemId: item.item_id,
-      itemName: item.item_name,
-      itemPrice: item.item_price,
-      itemQty: item.item_qty,
-      totalItemPrice: item.total_item_price,
-    }));
+        if (!dbItem) {
+          throw new OrderRejected(
+            `Item "${item.item_name}" exceeds available stock`
+          );
+        }
 
-    await db.insert(orderItems).values(orderItemValues);
+        orderItemValues.push({
+          itemId: item.item_id,
+          itemName: dbItem.itemName,
+          itemPrice: dbItem.itemPrice,
+          itemQty: item.item_qty,
+          totalItemPrice: dbItem.itemPrice * item.item_qty,
+        });
+      }
 
-    for (const item of items) {
-      await db
-        .update(itemsTable)
-        .set({
-          itemStock: sql`${itemsTable.itemStock} - ${item.item_qty}`,
+      const [created] = await tx
+        .insert(orders)
+        .values({
+          buyerId,
+          kitchenId: kitchen_id,
+          notes: notes ?? null,
+          totalPayment: orderItemValues.reduce(
+            (sum, item) => sum + item.totalItemPrice,
+            0
+          ),
+          status: "INCOMING",
+          createdDate: wibDate,
+          orderCode: `TRX${randomCode}`,
         })
-        .where(eq(itemsTable.itemId, item.item_id));
-    }
+        .returning({ orderId: orders.orderId });
+
+      await tx
+        .insert(orderItems)
+        .values(
+          orderItemValues.map((item) => ({ ...item, orderId: created.orderId }))
+        );
+
+      return created;
+    });
 
     return NextResponse.json({
       success: true,
       data: { orderId: order.orderId },
     });
   } catch (error) {
+    if (error instanceof OrderRejected) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 400 }
+      );
+    }
     console.error("Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to create order" },
@@ -121,6 +152,8 @@ export async function GET(
     if (isNaN(buyerId)) {
       return NextResponse.json({ error: "Invalid buyer_id" }, { status: 400 });
     }
+    const auth = await requireUser({ admin: true, buyerId });
+    if (auth instanceof NextResponse) return auth;
 
     const lastOnly = req.nextUrl.searchParams.get("last") === "true";
 

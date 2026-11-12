@@ -3,6 +3,7 @@ import { db, kitchenPublicColumns } from "@/db/client";
 import { kitchens } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { requireUser } from "@/lib/auth";
 
 export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -11,6 +12,8 @@ export async function PATCH(req: Request, props: { params: Promise<{ id: string 
   if (isNaN(kitchenId)) {
     return NextResponse.json({ error: "Invalid kitchen ID" }, { status: 400 });
   }
+  const auth = await requireUser({ admin: true, kitchenId });
+  if (auth instanceof NextResponse) return auth;
 
   const body = await req.json();
 
