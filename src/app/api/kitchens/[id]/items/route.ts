@@ -55,10 +55,11 @@ export async function POST(
 
     return NextResponse.json(inserted, { status: 201 });
   } catch (error: any) {
+    console.error("Error creating items:", error);
     return NextResponse.json(
       {
         error: "Failed to create items",
-        details: error?.errors ?? error?.message ?? error,
+        details: error?.errors,
       },
       { status: 400 }
     );
@@ -126,8 +127,9 @@ export async function PATCH(
 
     return NextResponse.json({ updated: results.flat() }, { status: 200 });
   } catch (err: any) {
+    console.error("Error updating items:", err);
     return NextResponse.json(
-      { error: "Failed to update items", details: err?.errors ?? err?.message },
+      { error: "Failed to update items", details: err?.errors },
       { status: 400 }
     );
   }
@@ -150,12 +152,11 @@ export async function GET(
       .where(eq(itemsTable.kitchenId, kitchenId))
       .orderBy(itemsTable.itemName);
 
-    console.log("✅ kitchenItems:", kitchenItems);
-
     return NextResponse.json(kitchenItems, { status: 200 });
   } catch (error: any) {
+    console.error("Error fetching items:", error);
     return NextResponse.json(
-      { error: "Failed to fetch items", details: error?.message ?? error },
+      { error: "Failed to fetch items" },
       { status: 500 }
     );
   }

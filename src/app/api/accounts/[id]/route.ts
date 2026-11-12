@@ -39,7 +39,6 @@ export async function PATCH(
       bankName: parsed.data.bank_name,
       accountNumber: parsed.data.account_number,
       accountName: parsed.data.account_name,
-      createdDate: new Date().toISOString(),
     })
     .where(eq(account.accountId, accountId));
 
