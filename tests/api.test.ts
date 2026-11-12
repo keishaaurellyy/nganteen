@@ -6,6 +6,8 @@ import { GET as getOrders } from "@/app/api/orders/route";
 import { POST as login } from "@/app/api/login/route";
 import { PATCH as patchKitchenStatus } from "@/app/api/kitchens/[id]/status/route";
 import { GET as getKitchens } from "@/app/api/kitchens/route";
+import { GET as getBuyer, PATCH as patchBuyer } from "@/app/api/buyers/[id]/route";
+import { GET as getMe } from "@/app/api/auth/me/route";
 import { GET as getKitchen, PATCH as patchKitchen } from "@/app/api/kitchens/[id]/route";
 
 // The global jest, not the @jest/globals import: next/jest only hoists jest.mock for the global.
@@ -23,6 +25,12 @@ jest.mock("pg", () => {
   }));
   return { __esModule: true, ...actual, Pool, default: { ...actual, Pool } };
 });
+
+jest.mock("next-auth", () => ({
+  __esModule: true,
+  default: () => () => {},
+  getServerSession: async () => ({ user: { id: "3", role: "buyer" } }),
+}));
 
 const lastSql = () => mockQuery.mock.calls.at(-1)![0].text;
 const lastParams = () => mockQuery.mock.calls.at(-1)![1];
@@ -182,6 +190,34 @@ describe("kitchen responses never include the password", () => {
     expect(body).not.toMatch(/password/i);
     // The password may be written (set ... = $n) but never read back.
     expect(lastSql()).not.toMatch(/(select|returning).*kitchen_password/);
+  });
+});
+
+describe("buyer responses never include the password hash", () => {
+  // Column order of buyers without password.
+  const row = [3, "Budi", null, "081234567890", null, "BINUS_ALAM_SUTERA", "budi@binus.ac.id"];
+  const params = { params: Promise.resolve({ id: "3" }) };
+  const request = (body?: unknown) =>
+    new NextRequest("http://localhost/api/buyers/3", {
+      method: body ? "PATCH" : "GET",
+      body: body ? JSON.stringify(body) : undefined,
+    });
+
+  it.each([
+    ["GET /api/buyers/[id]", () => getBuyer(request(), params)],
+    ["PATCH /api/buyers/[id]", () => patchBuyer(request({ password: "baru12345" }), params)],
+    ["GET /api/auth/me", () => getMe()],
+  ])("%s", async (_, call) => {
+    mockQuery.mockResolvedValueOnce({ rows: [row] });
+
+    const res = await call();
+    const body = JSON.stringify(await res.json());
+
+    expect(res.status).toBe(200);
+    expect(body).toContain("budi@binus.ac.id");
+    expect(body).not.toMatch(/password/i);
+    // The hash may be written (set ... = $n) but never read back.
+    expect(lastSql()).not.toMatch(/(select|returning).*"password"/);
   });
 });
 

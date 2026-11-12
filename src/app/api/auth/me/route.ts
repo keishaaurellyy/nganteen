@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../[...nextauth]/route";
-import { db } from "@/db/client";
+import { db, buyerPublicColumns } from "@/db/client";
 import { buyers } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 
@@ -13,7 +13,7 @@ export async function GET() {
   }
 
   const buyer = await db
-    .select()
+    .select(buyerPublicColumns)
     .from(buyers)
     .where(eq(buyers.buyerId, parseInt(user.id)))
     .limit(1);
